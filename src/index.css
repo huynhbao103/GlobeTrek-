@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    font-family: Godwit, MuseoSans, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+    padding:0%;
+    margin: 0%;
+    box-sizing: border-box;
+}
+::selection{
+    background: #00875A;
+    color: beige;
+}
+
+.background-cover {
+    background-image: url('./assets/image.png');
+    background-size: cover;
+    
+    background-repeat: no-repeat;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+  @layer utilities {
+  .gradient-background {
+    background: linear-gradient(
+      to bottom, 
+      rgba(47, 138, 84, 0.8) 6%, 
+      rgba(47, 138, 84, 1) 40%, 
+      rgba(1, 50, 55, 0.7) 100%
+    );
+  }
+}
+    .day-item.selected {
+        background-color: #4CA771;
+        color: white;
+        font-weight: bold;
+    } 
+
+
+/* Modal overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal content */
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+
