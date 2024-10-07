@@ -290,10 +290,10 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
                                         : "Đăng ký"}
                                 </button>
                             </form>
-                            <div className="flex flex-col gap-2 mb-6">
+                            {/* <div className="flex flex-col gap-2 mb-6">
                                 <GoogleSignIn recaptchaToken={recaptchaToken} disabled={!submitEnabled} />
                                 <LoginFB />
-                            </div>
+                            </div> */}
                             <div className="flex mx-auto mb-6 justify-center items-center">
                                 <ReCaptcha
                                     sitekey="6Le4TBoqAAAAAPQljcyv-mNasoIjpAgJGkR6g534"
