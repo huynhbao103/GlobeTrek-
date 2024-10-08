@@ -1,40 +1,62 @@
-import React, { useState, useCallback } from 'react';
+// ModalCalendar.js
+import React, { useState, useEffect, useCallback } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { useDate } from '../Context/DateContext'; // Import useDate hook
+import { useDate } from '../Context/DateContext';
+import { fetchTourById } from '../API/apiService';
+import { isSpecialDay } from '../API/utils';
 
-function ModalCalendar({ setShowModal }) {
+function ModalCalendar({ setShowModal, onDateChange }) {
     const { setSelectedDate } = useDate();
     const [date, setDate] = useState(new Date());
+    const [tourPrice, setTourPrice] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const minDate = new Date();
     minDate.setDate(minDate.getDate() + 1);
+    const selectedTourId = window.location.pathname.split('/').pop();
 
-    const handleDateChange = useCallback((newDate) => {
-        if (newDate >= minDate) {
-            setDate(newDate);
-            setSelectedDate(newDate); // Cập nhật ngày đã chọn trong context
-            setShowModal(false);
-        }
-    }, [setShowModal, minDate, setSelectedDate]);
+    useEffect(() => {
+        const fetchTourData = async () => {
+            try {
+                const tour = await fetchTourById(selectedTourId);
+                setTourPrice(tour.price);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching tour data:', error);
+                setLoading(false);
+            }
+        };
 
-    const isSpecialDay = (date) => {
-        const dayOfWeek = date.getDay();
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const vietnameseHolidays = [
-            { day: 1, month: 1 },
-            { day: 30, month: 4 },
-            { day: 2, month: 9 },
-        ];
-        return (
-            (dayOfWeek === 0 || dayOfWeek === 6) ||
-            vietnameseHolidays.some(holiday => holiday.day === day && holiday.month === month)
-        );
+        fetchTourData();
+    }, [selectedTourId]);
+
+    // ModalCalendar.js
+const handleDateChange = useCallback((newDate) => {
+    if (newDate >= minDate) {
+        setDate(newDate);
+        setSelectedDate(newDate);
+        setShowModal(false);
+        const adjustedPrice = getPriceForDate(newDate); // Lấy giá điều chỉnh
+        onDateChange(newDate, adjustedPrice); // Truyền giá đã điều chỉnh
+    }
+}, [setShowModal, minDate, setSelectedDate, tourPrice, onDateChange]);
+
+    const formatPrice = (price) => {
+        if (price < 1000) return price;
+        return `${Math.round(price / 1000)}k`;
     };
 
     const getPriceForDate = (date) => {
-        return isSpecialDay(date) ? '360k' : '300k';
+        if (tourPrice === null) return 'N/A';
+
+        let price = tourPrice;
+
+        if (isSpecialDay(date)) {
+            price *= 1.1; // Tăng giá 10% cho ngày đặc biệt
+        }
+
+        return formatPrice(price);
     };
 
     const tileContent = ({ date, view }) => {
@@ -55,16 +77,20 @@ function ModalCalendar({ setShowModal }) {
                     &times;
                 </button>
                 <h2 className="text-xl font-bold mb-4">Chọn ngày</h2>
-                <div className="my-4">
-                    <Calendar
-                        onChange={handleDateChange}
-                        value={date}
-                        tileContent={tileContent}
-                        showNeighboringMonth={true}
-                        minDetail="year"
-                        minDate={minDate}
-                    />
-                </div>
+                {loading ? (
+                    <p>Đang tải dữ liệu giá...</p>
+                ) : (
+                    <div className="my-4">
+                        <Calendar
+                            onChange={handleDateChange}
+                            value={date}
+                            tileContent={tileContent}
+                            showNeighboringMonth={true}
+                            minDetail="year"
+                            minDate={minDate}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -1,16 +1,45 @@
 import React, { useState, useEffect } from 'react';
+import { Element } from 'react-scroll';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import {  useParams } from 'react-router-dom'; // Sử dụng useParams để lấy ID từ URL
 import { Link } from 'react-scroll'; // Import Link từ react-scroll
+import { fetchTourById } from '../API/apiService';
 
 const SeachDetour = () => {
+  const { id } = useParams(); // Lấy ID từ URL
   const [loading, setLoading] = useState(true);
+  const [tour, setTour] = useState(null);
+  const [error, setError] = useState(null); // Khai báo biến lỗi
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    const loadTour = async () => {
+      setLoading(true);
+      try {
+        const tourData = await fetchTourById(id); // Lấy dữ liệu tour
+        if (!tourData) {
+          throw new Error('Tour not found');
+        }
+        setTour(tourData); // Cập nhật dữ liệu tour
+      } catch (error) {
+        setError('Error fetching tour: ' + error.message); // Cập nhật lỗi nếu có
+        console.error('Error fetching tour:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTour(); // Gọi hàm tải dữ liệu tour
+  }, [id]); // Chỉ gọi lại khi id thay đổi
+
+  // Hiển thị loading hoặc lỗi nếu có
+  if (loading) return <div>Loading...</div>;
+  if (error) return (
+    <div className="text-red-500">
+      {error}
+      <button onClick={() => loadTour()} className="ml-2 text-blue-500">Try Again</button>
+    </div>
+  );
 
   return (
     <div className="bg-opacity-60 bg-[#d5ffe7] items-center justify-between flex shadow-md h-28 w-[80%] p-6 m-6">
@@ -25,7 +54,7 @@ const SeachDetour = () => {
         {loading ? (
           <Skeleton width={150} height={30} />
         ) : (
-          <p className='font-bold text-lg text-[#4CA771]'>300.000 VND</p>
+          <p className='font-bold text-lg text-[#4CA771]'>{tour?.price} VND</p>
         )}
       </div>
       <div className='flex items-center justify-center'>
@@ -33,7 +62,7 @@ const SeachDetour = () => {
           <Skeleton width={100} height={40} borderRadius={4} />
         ) : (
           <Link
-            to="tourCardSection" // ID của phần TourCard
+            to="tourCardSection" 
             smooth={true}
             duration={500}
             offset={-340}
