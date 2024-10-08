@@ -1,15 +1,36 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import tour from '../assets/tour.png';
-import tour1 from '../assets/tour1.png';
+import { useParams } from 'react-router-dom'; 
+import { fetchTourById } from '../API/apiService'; 
 import '../index.css';
 
 const TravelTour = () => {
+  const { id } = useParams(); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImage, setCurrentImage] = useState(0);
-  const [loading, setLoading] = useState(true); // Add loading state
-  const images = [tour, tour1, tour, tour1, tour, tour1, tour, tour1, tour, tour1];
+  const [loading, setLoading] = useState(true);
+  const [tour, setTour] = useState(null); 
+  const [images, setImages] = useState([]); 
+  const [videos, setVideos] = useState([]); 
+
+  useEffect(() => {
+    const loadTour = async () => {
+      try {
+        const tourData = await fetchTourById(id); 
+        setTour(tourData); // Set the fetched tour data
+        setImages(tourData.images); 
+        setVideos(tourData.videos); 
+      } catch (error) {
+        console.error('Error fetching tour:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTour(); 
+  }, [id]);
 
   const openModal = (index) => {
     setCurrentImage(index);
@@ -28,77 +49,100 @@ const TravelTour = () => {
     setCurrentImage((currentImage + 1) % images.length);
   };
 
-  // Simulate image loading
-  setTimeout(() => setLoading(false), 1000);
-
   return (
     <>
       <div className="relative container mx-auto mt-8 p-4">
         <h1 className="text-xl text-white font-bold mb-4 md:text-4xl max-md:text-[#013237]">
-          {loading ? <Skeleton width={300} /> : 'Tour 3 đảo bằng Cano Nam Phú Quốc - 1 ngày'}
+          {loading ? <Skeleton width={300} /> : tour?.title}
         </h1>
         <p className="text-white max-md:text-[#013237] text-lg mb-2">
           <span className="font-bold">
-            {loading ? <Skeleton width={200} /> : '143 Trần Hưng Đạo, KP 7, TT Dương Đông, H.Phú Quốc, tỉnh Kiên Giang, Vietnam'}
+            {loading ? <Skeleton width={200} /> : tour?.location}
           </span>
           <span className="text-[#4CA771] ml-2 cursor-pointer">
-            {loading ? <Skeleton width={100} /> : 'Xem bản đồ'}
           </span>
         </p>
-        <div className="flex">
-          <p className="text-white max-md:text-[#013237] text-sm md:text-lg mb-2">
-            {loading ? <Skeleton width={200} /> : 'Ngày tour gần nhất | Thứ, 13 Jul 2024'}
-          </p>
-          <p className="text-white max-md:text-[#013237] text-sm md:text-lg ml-3 mb-4">
-            {loading ? <Skeleton width={200} /> : 'Thời gian tour | 8 Hours 30 Minutes'}
+        <div className="flex gap-4 mb-4">
+        
+          <p className="text-white max-md:text-[#013237] text-sm md:text-lg mb-4">
+            {loading ? <Skeleton width={200} /> : `Thời gian tour | ${tour?.duration}`}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="relative">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {/* Video Tour Section */}
+          <div className="relative mb-4">
             {loading ? (
               <Skeleton height={256} />
             ) : (
-              <img
-                src={tour}
-                alt="Tour Image"
-                className="w-full h-64 object-cover rounded cursor-pointer"
-                onClick={() => openModal(0)}
-              />
-            )}
-            {loading ? null : (
-              <div
-                className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg rounded cursor-pointer"
-                onClick={() => openModal(0)}
-              >
-                <i className="fas fa-play-circle text-4xl"></i>
-              </div>
+              videos.length > 0 && (
+                <div>
+                  <video controls className="w-full h-full object-cover rounded">
+                    <source src={videos[0]} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {images.slice(1, 5).map((image, index) => (
-              <div className="relative" key={index}>
-                {loading ? (
-                  <Skeleton height={128} />
-                ) : (
+
+          {/* Images Section */}
+          <div className="grid grid-cols-1 gap-4">
+            {/* Main Image Section */}
+            <div className="relative">
+              {loading ? (
+                <Skeleton height={256} />
+              ) : (
+                images.length > 0 && (
                   <img
-                    src={image}
+                    src={images[0]} 
                     alt="Tour Image"
-                    className={`w-96 h-32 object-cover rounded cursor-pointer ${index === 3 ? 'opacity-50' : ''}`}
-                    onClick={() => openModal(index + 1)}
+                    className="w-full h-64 object-cover rounded cursor-pointer"
+                    onClick={() => openModal(0)}
                   />
-                )}
-                {index === 3 && !loading && (
-                  <div
-                    className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg bg-black bg-opacity-50 rounded cursor-pointer"
-                    onClick={() => openModal(4)}
-                  >
-                    Xem Tất Cả Hình Ảnh
+                )
+              )}
+              {loading ? null : (
+                <div
+                  className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg rounded cursor-pointer"
+                  onClick={() => openModal(0)}
+                >
+                  <i className="fas fa-play-circle text-4xl"></i>
+                </div>
+              )}
+            </div>
+
+            {/* Hidden Images Section - Displaying 2 images */}
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              {loading ? (
+                <Skeleton count={2} height={128} />
+              ) : (
+                images.slice(1, 3).map((image, index) => (
+                  <div className="relative" key={index}>
+                    <img
+                      src={image}
+                      alt="Tour Image"
+                      className="w-full h-64 object-cover rounded cursor-pointer"
+                      onClick={() => openModal(index + 1)}
+                    />
                   </div>
-                )}
+                ))
+              )}
+            </div>
+            
+            {/* Button to view all images if more than 2 images exist */}
+            {images.length > 3 && (
+              <div
+                className="flex items-center justify-center text-white font-bold text-lg bg-black bg-opacity-50 rounded cursor-pointer"
+                onClick={() => openModal(4)}
+              >
+                Xem Tất Cả Hình Ảnh
               </div>
-            ))}
+            )}
           </div>
         </div>
+
+        {/* Modal for Images */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
             <button
@@ -120,7 +164,7 @@ const TravelTour = () => {
                 <img
                   src={images[currentImage]}
                   alt="Tour Image"
-                  className="w-96 h-auto max-h-screen rounded transition duration-500 ease-in-out transform"
+                  className="w-auto h-auto max-h-screen rounded transition duration-500 ease-in-out transform"
                 />
               )}
               <div className="absolute bottom-4 text-white w-full text-center">

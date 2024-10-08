@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 
-function SidebarCalendar({ selectedDate, onDateChange }) {
+function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
     const sliderRef = useRef(null);
 
     const getDatesForCurrentMonth = () => {
@@ -64,18 +64,22 @@ function SidebarCalendar({ selectedDate, onDateChange }) {
         ]
     };
 
+    const handleDateChange = (date) => {
+        const adjustedPrice = tourPrices[date.toDateString()] || null; // Lấy giá tương ứng với ngày đã chọn
+        onDateChange(date, adjustedPrice); // Gọi hàm onDateChange để cập nhật ngày và giá
+    };
+
     return (
-    
-        <div className="w-[100%]  ">
+        <div className="w-[90%]">
             <Slider {...settings} ref={sliderRef}>
                 {dates.map((date, index) => (
                     <button
                         id={date.toDateString()}
                         key={index}
                         className={`p-2 m-4 rounded border ${
-                            date.toDateString() === selectedDate.toDateString() ? 'bg-[#4CA771] text-white font-bold' : ' font-bold'
+                            date.toDateString() === selectedDate.toDateString() ? 'bg-[#4CA771] text-white font-bold' : 'font-bold'
                         }`}
-                        onClick={() => onDateChange(date)}
+                        onClick={() => handleDateChange(date)} // Sử dụng hàm handleDateChange
                     >
                         <div>{weekdays[date.getDay()]}</div>
                         <div>{date.getDate()} tháng {date.getMonth() + 1}</div>
@@ -83,7 +87,6 @@ function SidebarCalendar({ selectedDate, onDateChange }) {
                 ))}
             </Slider>
         </div>
- 
     );
 }
 
