@@ -18,7 +18,7 @@ const BestsalerTour = () => {
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
 
-  const tourTypeId = "6701a8f2648f106b6c4fc57a"; // Hardcode your desired tour type ID here
+  const tourTypeId = "67067093439daa9f49c3ab4f"; // Hardcode your desired tour type ID here
 
   const fetchTours = async () => {
     setLoading(true);

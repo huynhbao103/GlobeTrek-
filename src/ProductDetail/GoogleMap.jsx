@@ -2,19 +2,35 @@ import React, { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import iconmap from "../assets/iconmap.png";
+import {  useParams } from 'react-router-dom'; // Sử dụng useParams để lấy ID từ URL
+import { fetchTourById } from "../API/apiService";
 
 function GoogleMap() {
+  const { id } = useParams(); 
   const [loading, setLoading] = useState(true);
+  const [contactInfo, setContactInfo] = useState("");
+  const [locationInfo, setLocationInfo] = useState("");
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    const fetchData = async () => {
+      try {
+        const tour = await fetchTourById(id); 
+        setContactInfo(tour.contact); 
+        setLocationInfo(tour.location); 
+        console.log(tour)
+      } catch (error) {
+        console.error("Error fetching tour data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [id]);
 
   return (
-    <div className="w-full pt-4 border-gray-200 border-t-4">
-      <div className="w-[90%] sm:w-[80%] mx-auto">
+    <div className="sm:max-w-7xl max-w-[80%] pt-4 border-gray-200 border-t-4">
+      <div className="w-[100%] sm:w-[80%] mx-auto">
         <h1 className="font-bold text-lg">
           {loading ? <Skeleton width={200} /> : "Thông tin thêm"}
         </h1>
@@ -26,7 +42,7 @@ function GoogleMap() {
               <img src={iconmap} className="h-6 w-6" alt="Map Icon" />
             )}
             <p className="font-medium text-sm sm:text-base">
-              {loading ? <Skeleton width={300} /> : "143 Trần Hưng Đạo, KP 7, TT Dương Đông, H.Phú Quốc, tỉnh Kiên Giang, Việt Nam"}
+              {loading ? <Skeleton width={300} /> : locationInfo}
             </p>
           </div>
 
@@ -64,7 +80,7 @@ function GoogleMap() {
             </svg>
           )}
           <p className="font-medium text-sm sm:text-base">
-            {loading ? <Skeleton width={200} /> : "liên hệ đối tác: +0947***814"}
+            {loading ? <Skeleton width={200} /> : contactInfo}
           </p>
         </div>
       </div>
