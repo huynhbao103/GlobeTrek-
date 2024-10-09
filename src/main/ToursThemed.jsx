@@ -139,7 +139,7 @@ const BestsalerTour = () => {
                         <img src={tour.images[0]} alt={tour.title} className="w-full h-40 object-cover" />
                         <div className="p-4 h-32">
                           <h3 className="sm:text-md text-[#013237] text-sm font-semibold">{tour.title}</h3>
-                          <p className="text-[#4CA771]">VND {tour.price}</p>
+                          <p className="text-[#4CA771]"> {tour.price.toLocaleString()} VND</p>
                         </div>
                       </Link>
                     </div>
