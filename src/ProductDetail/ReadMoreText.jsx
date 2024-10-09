@@ -27,7 +27,7 @@ const TourInfo = () => {
   }, []);
 
   return (
-    <div className="bg-gray-100 flex justify-center items-center m-auto shadow-md w-[80%] p-6">
+    <div className="bg-gray-100 flex justify-center items-center m-auto shadow-md max-w-[80%] sm:max-w-7xl p-6">
       <div className=' flex rounded-3xl justify-center items-center'>
         {loading ? (
           <Skeleton circle={true} height={56} width={56} className="bg-[#165448]" />

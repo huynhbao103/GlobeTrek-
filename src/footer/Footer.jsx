@@ -21,8 +21,8 @@ import IconMarketingPartnership from './IconMarketingPartnership';
 
 const Footer = () => {
   return (
-    <footer className="gradient-background h-full text-gray-400 py-4">
-      <div className="container mx-auto px-8">
+    <footer className="gradient-background h-full  text-gray-400 py-4">
+      <div className="container max-w-7xl mx-auto px-8">
         <div className="flex justify-between items-start my-8">
           <div className="flex flex-col">
             <img src={LogoGlobe} alt="Logo" className="h-[50%] w-[50%] mb-4" />

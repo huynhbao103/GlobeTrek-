@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import iconlocation from '../assets/iconlocation.svg'
+import clock from '../assets/clock.png'
 import { useParams } from 'react-router-dom'; 
 import { fetchTourById } from '../API/apiService'; 
 import '../index.css';
@@ -55,17 +57,21 @@ const TravelTour = () => {
         <h1 className="text-xl text-white font-bold mb-4 md:text-4xl max-md:text-[#013237]">
           {loading ? <Skeleton width={300} /> : tour?.title}
         </h1>
+        
         <p className="text-white max-md:text-[#013237] text-lg mb-2">
-          <span className="font-bold">
-            {loading ? <Skeleton width={200} /> : tour?.location}
+          <span className="font-bold ">
+          <div className="flex flex-row ">
+            <img src={iconlocation} className="pr-2 "/>
+            {loading ? <Skeleton width={200} /> :  tour?.location}
+            </div>
           </span>
-          <span className="text-[#4CA771] ml-2 cursor-pointer">
-          </span>
+          
         </p>
         <div className="flex gap-4 mb-4">
-        
+        <img src={clock} className=" max-w-8 max-h-6 filter grayscale" />
+
           <p className="text-white max-md:text-[#013237] text-sm md:text-lg mb-4">
-            {loading ? <Skeleton width={200} /> : `Thời gian tour | ${tour?.duration}`}
+            {loading ? <Skeleton width={200} /> : `Thời gian tour | ${tour?.duration} days`}
           </p>
         </div>
 
