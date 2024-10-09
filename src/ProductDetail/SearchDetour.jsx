@@ -54,7 +54,7 @@ const SeachDetour = () => {
         {loading ? (
           <Skeleton width={150} height={30} />
         ) : (
-          <p className='font-bold text-lg text-[#4CA771]'>{tour?.price} VND</p>
+          <p className='font-bold text-lg text-[#4CA771]'>{tour?.price.toLocaleString()} VND</p>
         )}
       </div>
       <div className='flex items-center justify-center'>

@@ -18,7 +18,7 @@ function TourCard({ title, link, price }) {
             </div>
             <div className="text-center font-bold">
                 <span className="font-bold text-xl">
-                    {price !== 'N/A' ? `${price} VND` : 'N/A'}
+                    {price.toLocaleString() !== 'N/A' ? `${price.toLocaleString()} VND` : 'N/A'}
                 </span>
                 <div className="text-sm text-gray-600">
                     <FontAwesomeIcon icon={faMoneyBillWave} className="text-yellow-500 mr-1" />
