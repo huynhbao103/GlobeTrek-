@@ -15,11 +15,6 @@ import SavedPassengers from './YourAccount/savedPassengers.jsx'
 import Refunds  from './YourAccount/Refunds.jsx'
 import Savelist  from './header1/Savelist.jsx'
 
-
-
-
-
-
 function App() {
   return (
     <DateProvider>
