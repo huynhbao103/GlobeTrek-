@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import GoogleSignIn from "./GoogleSignIn";
 import LoginFB from "./LoginFB";
 import ReCaptcha from "../ReCaptcha/ReCaptcha";
@@ -20,6 +21,8 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const [recaptchaToken, setRecaptchaToken] = useState("");
     const [submitEnabled, setSubmitEnabled] = useState(false);
     const [inputError, setInputError] = useState("");
+    const [showVerification, setShowVerification] = useState(false);
+
 
     useEffect(() => {
         if (recaptchaToken) {
@@ -42,6 +45,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const closeModal = () => {
         setShowModal(false);
         resetForm();
+        setShowVerification(false);
     };
 
     const resetForm = () => {
@@ -77,7 +81,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     
         const validationResult = validateInput(value);
         if (validationResult === "invalid") {
-            setInputError("Vui lòng nhập địa chỉ email hoặc số điện thoại hợp lệ.");
+            setInputError("Vui lòng nhập địa chỉ email hợp lệ.");
         } else if (!validationResult === "phoneInvalidStart") {
             setInputError("Số điện thoại phải bắt đầu bằng 0.");
         } else if (validationResult === "phoneTooLong") {
@@ -103,7 +107,8 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
             (user) => user.email === emailOrPhone
         );
         setIsRegistered(isUserRegistered);
-        setShowPasswordInput(true);
+        setShowPasswordInput(true)
+        setShowVerification(true);
     };
 
     const handleLogin = (e) => {
@@ -135,8 +140,9 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         setUser({ email: emailOrPhone });
         setIsLoggedIn(true);
         alert("Đăng ký thành công!");
-        window.location.reload();
-        closeModal();
+        setShowVerification(true);
+        // window.location.reload();
+        // closeModal();
     };
 
     const handleLogout = () => {
@@ -230,7 +236,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
                                         : handleRegister
                                 }
                             >
-                                <p className="p-2 text-gray-700">Email/Số điện thoại di động</p>
+                                <p className="p-2 text-gray-700">Email của bạn</p>
                                 <input
                                     type="text"
                                     placeholder="Ví dụ: +84901234567 hoặc user@example.com"
@@ -316,7 +322,34 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
                     </div>
                 </div>
             )}
-
+            {showVerification && (
+                <div className="fixed inset-0 z-50 overflow-y-auto">
+                    <div
+                        className="fixed inset-0 w-full h-full bg-black opacity-40"
+                        onClick={closeModal}
+                    />
+                    <div className="flex items-center justify-center min-h-screen px-4 py-8">
+                        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md z-10 relative transition-transform transform">
+                            <h2 className="text-xl font-bold mb-4">Xác minh tài khoản</h2>
+                            <p className="mb-4">Vui lòng kiểm tra email xác minh tài khoản của bạn.</p>
+                            <div className="flex justify-between">
+                                {[...Array(6)].map((_, i) => (
+                                    <input
+                                        key={i}
+                                        type="text"
+                                        maxLength="1"
+                                        className="w-12 h-12 border-2 text-center text-xl rounded-md focus:border-[#4CA771] outline-none"
+                                    />
+                                ))}
+                            </div>
+                            <button className="w-full bg-[#061a0e] hover:bg-[#4CA771] text-white py-2 mt-4 rounded-md">
+                                Xác minh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
             {showLogoutModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
                     <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
