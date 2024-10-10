@@ -1,11 +1,11 @@
-// TourCard.js
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 function TourCard({ title, link, price }) {
     const points = price !== 'N/A' ? Math.round(price * 0.02) : 0; // Tính điểm thưởng
+    const { id } = useParams(); // Lấy ID từ URL
 
     return (
         <div id="tourCardSection" className="border p-4 mb-4 rounded shadow flex items-center justify-between">
@@ -18,13 +18,13 @@ function TourCard({ title, link, price }) {
             </div>
             <div className="text-center font-bold">
                 <span className="font-bold text-xl">
-                    {price.toLocaleString() !== 'N/A' ? `${price.toLocaleString()} VND` : 'N/A'}
+                    {price !== 'N/A' ? `${price.toLocaleString()} VND` : 'N/A'}
                 </span>
                 <div className="text-sm text-gray-600">
                     <FontAwesomeIcon icon={faMoneyBillWave} className="text-yellow-500 mr-1" />
                     Nhận {points} xu
                 </div>
-                <Link to='/bodyPay' className={`bg-[#4CA771] text-white py-2 px-4 rounded mt-2 block ${price !== 'N/A' ? '' : 'opacity-50 cursor-not-allowed'}`} disabled={price === 'N/A'}>
+                <Link to={`/bodyPay/${id}`} className={`bg-[#4CA771] text-white py-2 px-4 rounded mt-2 block ${price !== 'N/A' ? '' : 'opacity-50 cursor-not-allowed'}`} disabled={price === 'N/A'}>
                     Chọn vé
                 </Link>
             </div>

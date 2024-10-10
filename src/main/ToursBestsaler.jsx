@@ -23,7 +23,7 @@ const BestsalerTour = () => {
   const fetchTours = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8081/Tours/api');
+      const response = await fetch('http://localhost:8081/tours/api');
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
