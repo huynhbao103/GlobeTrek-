@@ -5,6 +5,9 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        'trek-color-1': '#4CA771'
+      },
       backgroundImage: {
         'Login-register': "url('./assets/Login-register.png')",
       },
