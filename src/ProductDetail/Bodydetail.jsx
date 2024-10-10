@@ -6,7 +6,7 @@ import TourInfo from './TourInfo.jsx';
 import Mapview from './Mapview.jsx';
 import SearchDetour from './SearchDetour.jsx';
 import ReadMoreText from './ReadMoreText.jsx';
-import Calendar from './Calendar.jsx';
+import Calendar from './CalendarApp.jsx';
 import Header from '../header1/Header.jsx';
 import Footer from '../footer/Footer.jsx';
 import GoogleMap from './GoogleMap.jsx';

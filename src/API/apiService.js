@@ -1,5 +1,5 @@
 // apiService.js
-const API_URL = 'http://localhost:8081/Tours/api';
+const API_URL = 'http://localhost:8081/tours/api';
 
 export const fetchTours = async (tourTypeId) => {
   try {
@@ -24,7 +24,7 @@ export const fetchTourById = async (id) => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching tour by ID:', error);
-    throw error; // Ném lỗi để có thể xử lý bên ngoài
+    throw error; 
   }
 };
 
@@ -38,6 +38,6 @@ export const fetchTourTypes = async () => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching tour types:', error);
-    throw error; // Ném lỗi để có thể xử lý bên ngoài
+    throw error; 
   }
 };
