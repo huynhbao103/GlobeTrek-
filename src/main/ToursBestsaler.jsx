@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import { fetchTours } from '../API/apiService'; 
+import { fetchTours } from '../API/apiService';
 
 const BestsalerTour = () => {
   const [tours, setTours] = useState([]);
@@ -29,7 +29,7 @@ const BestsalerTour = () => {
       }
       const data = await response.json();
 
-      const filteredTours = data.filter((tour) => 
+      const filteredTours = data.filter((tour) =>
         tour.tourType._id === tourTypeId && tour.isDisabled === true
       );
       setTours(filteredTours);
@@ -102,11 +102,10 @@ const BestsalerTour = () => {
               uniqueDestinations.map((destination, index) => (
                 <button
                   key={index}
-                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${
-                    activeLocation?.name === destination.name
+                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${activeLocation?.name === destination.name
                       ? 'bg-[#4CA771] text-white font-bold'
                       : 'bg-[#FFFF] text-[#4CA771] font-bold'
-                  }`}
+                    }`}
                   onClick={() => setActiveLocation(destination)}
                 >
                   {destination.name}
