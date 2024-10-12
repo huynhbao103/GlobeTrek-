@@ -46,7 +46,8 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         if (showVerification) {
             setShowVerification(false);
         } else {
-            setShowModal(true); 
+            window.location.reload();
+            setShowModal(false); 
             resetForm();
         }
     };
@@ -105,6 +106,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
             }
         } else {
             alert("OTP không hợp lệ!");
+            setIsLoggedIn(false);
         }
         closeModal();
     };
