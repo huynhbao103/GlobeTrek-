@@ -1,18 +1,56 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Để điều hướng trang
 import Skeleton from "react-loading-skeleton";
 import imgtopbody from "../assets/imgtopbody.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "../fontawesome"; // Ensure this file configures FontAwesome correctly
+import "../fontawesome"; // Đảm bảo file này cấu hình đúng FontAwesome
+import { fetchTours } from "../API/apiService"; // Đảm bảo bạn đã kết nối API để lấy danh sách tour
 
 function Topbody() {
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredTours, setFilteredTours] = useState([]);
+  const [tours, setTours] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Simulate data loading
     setTimeout(() => {
       setLoading(false);
-    }, 2000); // Adjust time if needed
+    }, 2000);
+
+    // Lấy dữ liệu tour từ API
+    const fetchData = async () => {
+      try {
+        const data = await fetchTours();
+        setTours(data);
+      } catch (error) {
+        console.error("Error fetching tours:", error);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  // Hàm xử lý khi thay đổi nội dung input
+  const handleSearchChange = (e) => {
+    const term = e.target.value;
+    setSearchTerm(term);
+    if (term !== "") {
+      const results = tours.filter((tour) =>
+        tour.title.toLowerCase().includes(term.toLowerCase())
+      );
+      setFilteredTours(results);
+    } else {
+      setFilteredTours([]);
+    }
+  };
+
+  // Hàm xử lý khi chọn tour
+  const handleSelectTour = (id) => {
+    navigate(`/ProDetail/${id}`);
+  };
 
   return (
     <div className="w-full">
@@ -60,7 +98,6 @@ function Topbody() {
                       className="w-full rounded-sm"
                       color="#202020"
                       height={48}
-           
                     />
                   ) : (
                     <>
@@ -68,6 +105,8 @@ function Topbody() {
                         type="text"
                         className="flex-grow rounded-sm pl-10 pr-4 text-sm py-3 ml-2 border border-[#4CA771] focus:outline-none focus:ring-2 focus:ring-[#4CA771] focus:border-[#4CA771]"
                         placeholder="Bạn có ý tưởng gì cho chuyến đi tiếp theo không?"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
                         disabled={loading}
                       />
                       <button
@@ -79,6 +118,23 @@ function Topbody() {
                     </>
                   )}
                 </div>
+                {/* Hiển thị các tùy chọn tìm kiếm */}
+                {searchTerm && filteredTours.length > 0 && (
+                  <div
+                    className="absolute mt-32 ml-2 bg-white border border-gray-300 rounded-md shadow-lg z-10"
+                    style={{ width: "33%" }} // Đảm bảo chiều rộng khớp với input
+                  >
+                    {filteredTours.map((tour) => (
+                      <div
+                        key={tour._id}
+                        className="cursor-pointer p-2 hover:bg-gray-100"
+                        onClick={() => handleSelectTour(tour._id)}
+                      >
+                        {tour.title}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>

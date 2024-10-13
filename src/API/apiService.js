@@ -28,6 +28,8 @@ export const fetchTourById = async (id) => {
   }
 };
 
+
+
 // Hàm lấy danh sách loại tour (nếu cần)
 export const fetchTourTypes = async () => {
   try {
@@ -39,5 +41,19 @@ export const fetchTourTypes = async () => {
   } catch (error) {
     console.error('Error fetching tour types:', error);
     throw error; 
+  }
+};
+
+// Hàm tìm kiếm tour theo tiêu đề
+export const searchTours = async (query) => {
+  try {
+    const response = await fetch(`${API_URL}/search?query=${query}`);
+    if (!response.ok) {
+      throw new Error('Không thể tìm kiếm tour');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error searching tours:', error);
+    throw error;
   }
 };
