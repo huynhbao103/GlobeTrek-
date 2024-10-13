@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -7,6 +7,7 @@ const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ N
 
 function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
     const sliderRef = useRef(null);
+    const [storedDates, setStoredDates] = useState([]);
 
     const getDatesForCurrentMonth = () => {
         const dates = [];
@@ -32,11 +33,16 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         }
     }, [selectedDate, dates]);
 
+    useEffect(() => {
+        const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+        setStoredDates(loadedDates.map(date => new Date(date))); // Chuyển đổi các chuỗi thành Date objects
+    }, []);
+
     const settings = {
         infinite: false,
         slidesToShow: 7,
         slidesToScroll: 7,
-        swipeToSlide: false,
+        swipeToSlide: true,
         initialSlide: 0,
         responsive: [
             {
@@ -49,8 +55,8 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
             {
                 breakpoint: 768,
                 settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2,
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
                 }
             },
             {
@@ -65,26 +71,39 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
     };
 
     const handleDateChange = (date) => {
-        const adjustedPrice = tourPrices[date.toDateString()] || null; // Lấy giá tương ứng với ngày đã chọn
-        onDateChange(date, adjustedPrice); // Gọi hàm onDateChange để cập nhật ngày và giá
+        const formattedDate = date.toISOString().split('T')[0];
+        const adjustedPrice = tourPrices.special[formattedDate] || tourPrices.regular; 
+        onDateChange(date, adjustedPrice);
+        saveSelectedDateToLocal(date);
+    };
+
+    const saveSelectedDateToLocal = (date) => {
+        const formattedDate = date.toISOString();
+        if (!storedDates.includes(formattedDate)) {
+            const updatedDates = [...storedDates, formattedDate];
+            localStorage.setItem('selectedDates', JSON.stringify(updatedDates));
+            setStoredDates(updatedDates);
+        }
     };
 
     return (
-        <div className="w-[90%]">
+        <div className="w-[90%] mx-auto">
             <Slider {...settings} ref={sliderRef}>
-                {dates.map((date, index) => (
-                    <button
-                        id={date.toDateString()}
-                        key={index}
-                        className={`p-2 m-4 rounded border ${
-                            date.toDateString() === selectedDate.toDateString() ? 'bg-[#4CA771] text-white font-bold' : 'font-bold'
-                        }`}
-                        onClick={() => handleDateChange(date)} // Sử dụng hàm handleDateChange
-                    >
-                        <div>{weekdays[date.getDay()]}</div>
-                        <div>{date.getDate()} tháng {date.getMonth() + 1}</div>
-                    </button>
-                ))}
+                {dates.map((date, index) => {
+                    return (
+                        <div key={index} className="flex justify-center">
+                            <button
+                                id={date.toDateString()}
+                                className={`flex flex-col items-center p-2 m-2 rounded border transition duration-200 ease-in-out 
+                                    ${date.toDateString() === selectedDate.toDateString() ? 'bg-[#4CA771] text-white font-bold' : 'font-bold text-gray-800 hover:bg-gray-200'}`}
+                                onClick={() => handleDateChange(date)}
+                            >
+                                <div>{weekdays[date.getDay()]}</div>
+                                <div>{date.getDate()} tháng {date.getMonth() + 1}</div>
+                            </button>
+                        </div>
+                    );
+                })}
             </Slider>
         </div>
     );
