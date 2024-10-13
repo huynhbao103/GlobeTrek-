@@ -13,3 +13,12 @@ export const isSpecialDay = (date) => {
         vietnameseHolidays.some(holiday => holiday.day === day && holiday.month === month)
     );
 };
+
+
+// Tính tổng giá dựa trên số lượng và giá
+export const calculateTotalPrice = (adultCount, childCount, prices, selectedDate) => {
+    const specialPrice = isSpecialDay(selectedDate);
+    return specialPrice
+        ? (adultCount * prices.specialAdultPrice) + (childCount * prices.specialChildPrice)
+        : (adultCount * prices.adultPrice) + (childCount * prices.childPrice);
+};

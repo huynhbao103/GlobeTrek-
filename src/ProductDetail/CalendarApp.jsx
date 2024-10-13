@@ -4,48 +4,54 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import ModalCalendar from './ModalCalendar';
 import SidebarCalendar from './SidebarCalendar';
 import TourCard from './TourCard';
-import { useDate } from '../Context/DateContext'; // Import useDate hook
-import { fetchTourById } from '../API/apiService'; // Nhập hàm fetchTourById
+import { useDate } from '../Context/DateContext';
+import { fetchTourById } from '../API/apiService';
 
 function Calendar() {
-    const { selectedDate, setSelectedDate } = useDate(); // Lấy ngày đã chọn từ context
+    const { selectedDate, setSelectedDate } = useDate();
     const [showModal, setShowModal] = useState(false);
-    const [loading, setLoading] = useState(true); // Thêm trạng thái loading
-    const [tourPrice, setTourPrice] = useState(null); 
+    const [loading, setLoading] = useState(true);
+    const [tourPrice, setTourPrice] = useState(null);
+    const [specialPrices, setSpecialPrices] = useState({});
 
-    // Lấy tour ID từ URL
-    const selectedTourId = window.location.pathname.split('/').pop(); // Lấy ID từ đường dẫn URL
+    const selectedTourId = window.location.pathname.split('/').pop();
 
-    // Fetch giá tour khi component mount
     useEffect(() => {
         const fetchTourData = async () => {
             try {
-                const tour = await fetchTourById(selectedTourId); // Gọi hàm fetchTourById để lấy dữ liệu tour
-                setTourPrice(tour.price); // Lưu giá của tour vào state
+                const tour = await fetchTourById(selectedTourId);
+                setTourPrice(tour.price);
+                setSpecialPrices(tour.specialPrices || {}); // Giả định tour.specialPrices chứa giá cho các ngày đặc biệt
+                localStorage.setItem('tourPrice', tour.price);
+                localStorage.setItem('specialPrices', JSON.stringify(tour.specialPrices || {}));
             } catch (error) {
                 console.error('Error fetching tour data:', error);
             }
+            setLoading(false);
         };
 
         fetchTourData();
-    }, [selectedTourId]); // Chỉ fetch khi selectedTourId thay đổi
+    }, [selectedTourId]);
 
-    // Simulate loading delay
     useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 1000);
-        return () => clearTimeout(timer);
-    }, []);
+        const storedData = JSON.parse(localStorage.getItem('selectedData')) || {};
+        const latestDate = Object.keys(storedData).pop(); // Lấy ngày cuối cùng
+        if (latestDate) {
+            setSelectedDate(new Date(latestDate));
+            setTourPrice(storedData[latestDate]); // Lấy giá tương ứng
+        }
+    }, [setSelectedDate]);
 
-    // Mở modal
     const openModal = () => setShowModal(true);
-
-    // Đóng modal
     const closeModal = () => setShowModal(false);
 
-    // Xử lý thay đổi ngày từ modal và cập nhật giá tour
     const handleDateChange = (date, adjustedPrice) => {
         setSelectedDate(date);
-        setTourPrice(adjustedPrice !== undefined ? adjustedPrice : tourPrice); // Cập nhật giá theo ngày đã chọn
+        if (adjustedPrice !== undefined) {
+            setTourPrice(adjustedPrice);
+            localStorage.setItem('tourPrice', adjustedPrice);
+        }
+        localStorage.setItem('selectedData', JSON.stringify({ ...JSON.parse(localStorage.getItem('selectedData') || '{}'), [date.toISOString()]: adjustedPrice }));
         closeModal();
     };
 
@@ -63,23 +69,20 @@ function Calendar() {
                     {loading ? (
                         <Skeleton height={64} width={200} borderRadius={8} />
                     ) : (
-                        <SidebarCalendar selectedDate={selectedDate} onDateChange={handleDateChange} />
+                        <SidebarCalendar selectedDate={selectedDate} onDateChange={handleDateChange} tourPrices={{ regular: tourPrice, special: specialPrices }} />
                     )}
                     {showModal && (
-                        <ModalCalendar setShowModal={setShowModal} onDateChange={handleDateChange} />
+                        <ModalCalendar setShowModal={setShowModal} onDateChange={handleDateChange} tourPrices={{ regular: tourPrice, special: specialPrices }} />
                     )}
                 </div>
             </div>
             <div className="mt-4">
                 <TourCard
                     title="Tour Đặc Biệt"
-                    price={tourPrice !== null ? tourPrice : 'N/A'} // Hiển thị giá đã chọn
+                    price={tourPrice !== null ? tourPrice : 'N/A'}
                     link="/tour-details"
                 />
             </div>
-            {showModal && (
-                <ModalCalendar setShowModal={setShowModal} onDateChange={handleDateChange} />
-            )}
         </div>
     );
 }

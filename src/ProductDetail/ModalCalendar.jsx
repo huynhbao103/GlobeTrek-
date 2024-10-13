@@ -1,4 +1,3 @@
-// ModalCalendar.js
 import React, { useState, useEffect, useCallback } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -11,9 +10,8 @@ function ModalCalendar({ setShowModal, onDateChange }) {
     const [date, setDate] = useState(new Date());
     const [tourPrice, setTourPrice] = useState(null);
     const [specialAdultPrice, setSpecialAdultPrice] = useState(null);
-    const [childPrice, setChildPrice] = useState(null);
     const [loading, setLoading] = useState(true);
-
+    
     const minDate = new Date();
     minDate.setDate(minDate.getDate() + 1);
     const selectedTourId = window.location.pathname.split('/').pop();
@@ -24,7 +22,6 @@ function ModalCalendar({ setShowModal, onDateChange }) {
                 const tour = await fetchTourById(selectedTourId);
                 setTourPrice(tour.price);
                 setSpecialAdultPrice(tour.specialAdultPrice);
-                setChildPrice(tour.childPrice);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching tour data:', error);
@@ -35,36 +32,36 @@ function ModalCalendar({ setShowModal, onDateChange }) {
         fetchTourData();
     }, [selectedTourId]);
 
-    // Hàm xử lý khi chọn ngày
     const handleDateChange = useCallback((newDate) => {
         if (newDate >= minDate) {
             setDate(newDate);
             setSelectedDate(newDate);
+            const selectedPrice = getPriceForDate(newDate);
+            onDateChange(newDate, selectedPrice);
+            saveSelectedDateToLocal(newDate); 
             setShowModal(false);
-            const selectedPrice = getPriceForDate(newDate); // Lấy giá từ API
-            onDateChange(newDate, selectedPrice); // Truyền giá về component cha
         }
     }, [setShowModal, minDate, setSelectedDate, onDateChange]);
 
-    // Hàm định dạng giá
     const formatPrice = (price) => {
         if (price < 1000) return price;
         return `${Math.round(price / 1000)}k`;
     };
 
-    // Lấy giá theo ngày (dựa trên ngày đặc biệt hoặc không)
     const getPriceForDate = (date) => {
         if (tourPrice === null) return 'N/A';
-
-        // Kiểm tra xem ngày có phải là ngày đặc biệt không
         if (isSpecialDay(date)) {
-            return formatPrice(specialAdultPrice); // Nếu là ngày đặc biệt, trả về giá đặc biệt
+            return formatPrice(specialAdultPrice);
         }
-
-        return formatPrice(tourPrice); // Nếu không, trả về giá thường
+        return formatPrice(tourPrice);
     };
 
-    // Hiển thị giá trên mỗi ô lịch
+    const saveSelectedDateToLocal = (date) => {
+        const storedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+        storedDates.push(date.toISOString());
+        localStorage.setItem('selectedDates', JSON.stringify(storedDates));
+    };
+
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
             const price = getPriceForDate(date);
