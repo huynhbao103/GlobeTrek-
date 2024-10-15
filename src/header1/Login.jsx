@@ -5,13 +5,16 @@ import { useNavigate } from "react-router-dom";
 import GoogleSignIn from "./GoogleSignIn";
 import LoginFB from "./LoginFB";
 import ReCaptcha from "../ReCaptcha/ReCaptcha";
+import { useDispatch } from "react-redux"; // Redux Hook
+import { signinUser } from "../redux/apiRequest"; // Your async action creator
 
-const registeredUsers = [{ email: "Admin", password: "Admin", role: "admin" }];
+
+const registeredUsers = [{ email: "giakhoi2004@gmail.com", password: "123", role: "admin" }];
 
 export default function Modal({ onRecaptchaToken = () => {} }) {
     const [showModal, setShowModal] = useState(false);
     const [isRegistered, setIsRegistered] = useState(null);
-    const [emailOrPhone, setEmailOrPhone] = useState("");
+    const [email, setEmail] = useState("");
     const [showPasswordInput, setShowPasswordInput] = useState(false);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,7 +25,8 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const [submitEnabled, setSubmitEnabled] = useState(false);
     const [inputError, setInputError] = useState("");
     const [showVerification, setShowVerification] = useState(false);
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (recaptchaToken) {
@@ -54,7 +58,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     
     const resetForm = () => {
         setIsRegistered(null);
-        setEmailOrPhone("");
+        setEmail("");
         setShowPasswordInput(false);
         setPassword("");
         setConfirmPassword("");
@@ -64,19 +68,11 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const validateInput = (input) => {
         const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
         // Kiểm tra số điện thoại: bắt đầu bằng 0 và có 10 chữ số
-        const phonePattern = /^0\d{9}$/;
+        
         
         if (emailPattern.test(input)) {
             return "email";
-        } else if (phonePattern.test(input)) {
-            return "phone";
-        } else if (/^0/.test(input) && input.length > 10) {
-            return "phoneTooLong";
-        } else if (/^0/.test(input)) {
-            return "phoneInvalidStart";
-        } else {
-            return "invalid";
-        }
+        } 
     };
 
     const [otp, setOtp] = useState(Array(6).fill("")); // Mảng chứa giá trị của từng ô
@@ -96,7 +92,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         if (enteredOTP === "000000") {
             alert("Xác minh thành công!");
     
-            const user = registeredUsers.find((user) => user.email === emailOrPhone); // Tìm người dùng
+            const user = registeredUsers.find((user) => user.email === email); // Tìm người dùng
             if (user) {
                 localStorage.setItem("user", JSON.stringify({ email: user.email }));
                 setUser({ email: user.email });
@@ -115,7 +111,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
 
     const handleChange = (e) => {
         const value = e.target.value;
-        setEmailOrPhone(value);
+        setEmail(value);
     
         const validationResult = validateInput(value);
         if (validationResult === "invalid") {
@@ -137,34 +133,62 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         setConfirmPassword(e.target.value);
     };
 
+    // const handleContinue = (e) => {
+    //     e.preventDefault();
+    //     if (inputError) return;
+    
+    //     const isUserRegistered = registeredUsers.some(
+    //         (user) => user.email === email
+    //     );
+    //     setIsRegistered(isUserRegistered);
+    //     setShowPasswordInput(true);
+    //     setShowVerification(false);
+    // };
     const handleContinue = (e) => {
         e.preventDefault();
-        if (inputError) return;
+        if (inputError || !email) return; // Check for errors
     
-        const isUserRegistered = registeredUsers.some(
-            (user) => user.email === emailOrPhone
-        );
+        const isUserRegistered = registeredUsers.some(user => user.email === email);
         setIsRegistered(isUserRegistered);
         setShowPasswordInput(true);
-        setShowVerification(false);
     };
+    // const handleLogin = (e) => {
+    //     e.preventDefault();
+        
+    //     const newuser = {
+    //         email:email,
+    //         password:password,
+    //     }
+    //     signinUser(newuser,dispatch,navigate)
+    //     if (inputError) return;
+    
+    //     const user = registeredUsers.find((user) => user.email === emailOrPhone);
+    //     if (user && user.password === password) {
+    //         localStorage.setItem("user", JSON.stringify({ email: emailOrPhone }));
+    //         setUser({ email: setEmail });
+    //         setIsLoggedIn(true);
+    //         alert("Đăng nhập thành công!");
+    //         closeModal();
+    //         setShowVerification(false);
+    //     } else {
+    //         alert("Email hoặc mật khẩu không hợp lệ!");
+    //     }
+
+    // };
 
     const handleLogin = (e) => {
         e.preventDefault();
-        if (inputError) return;
+        
+        // Ensure to collect user credentials correctly
+        const newUser = {
+            email: email.trim(), // Trim to avoid whitespace issues
+            password: password,
+        };
     
-        const user = registeredUsers.find((user) => user.email === emailOrPhone);
-        if (user && user.password === password) {
-            localStorage.setItem("user", JSON.stringify({ email: emailOrPhone }));
-            setUser({ email: emailOrPhone });
-            setIsLoggedIn(true);
-            alert("Đăng nhập thành công!");
-            closeModal();
-            setShowVerification(false);
-        } else {
-            alert("Email hoặc mật khẩu không hợp lệ!");
-        }
+        // Call the signinUser function
+        signinUser(newUser, dispatch, navigate);
     };
+    
 
     const handleRegister = (e) => {
         e.preventDefault();
@@ -174,9 +198,9 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
             alert("Mật khẩu và xác nhận mật khẩu không khớp!");
             return;
         }
-        registeredUsers.push({ email: emailOrPhone, password });
-        localStorage.setItem("user", JSON.stringify({ email: emailOrPhone }));
-        setUser({ email: emailOrPhone });
+        registeredUsers.push({ email: email, password });
+        localStorage.setItem("user", JSON.stringify({ email: email }));
+        setUser({ email: email });
         setIsLoggedIn(true);
         alert("Mã xác thực đã được gửi đến Email của bạn!");
         setShowVerification(true);
@@ -280,7 +304,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
                                     type="text"
                                     placeholder="Ví dụ: abccba@gmail.com" 
                                     className={`w-full p-2 mb-4 border border-trek-color-1 rounded-md focus:border-blue-500 ${inputError ? "border-red-500" : ""}`}
-                                    value={emailOrPhone}
+                                    value={email}
                                     onChange={handleChange}
                                 />
                                 {inputError && (
@@ -308,7 +332,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
                                     </>
                                 )}
                                 <button
-                                    disabled={!submitEnabled || !emailOrPhone || inputError}
+                                    disabled={!submitEnabled || !email || inputError}
                                     type="submit"
                                     className={`w-full p-2 mb-4 ${
                                         isRegistered === null
