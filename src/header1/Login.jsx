@@ -6,10 +6,10 @@ import GoogleSignIn from "./GoogleSignIn";
 import LoginFB from "./LoginFB";
 import ReCaptcha from "../ReCaptcha/ReCaptcha";
 import { useDispatch } from "react-redux"; // Redux Hook
-import { signinUser } from "../redux/apiRequest"; // Your async action creator
+import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
 
 
-const registeredUsers = [{ email: "giakhoi2004@gmail.com", password: "123", role: "admin" }];
+const registeredUsers = [{ email: "", role: "admin" }];
 
 export default function Modal({ onRecaptchaToken = () => {} }) {
     const [showModal, setShowModal] = useState(false);
@@ -87,26 +87,30 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         }
     };
     
+    // const handleVerifyOTP = () => {
+    //     const enteredOTP = otp.join("");
+    //     if (enteredOTP === "000000") {
+    //         alert("Xác minh thành công!");
+    
+    //         const user = registeredUsers.find((user) => user.email === email); // Tìm người dùng
+    //         if (user) {
+    //             localStorage.setItem("user", JSON.stringify({ email: user.email }));
+    //             setUser({ email: user.email });
+    //             setIsLoggedIn(true);
+    //         } else {
+    //             alert("Không tìm thấy tài khoản!");
+    //         }
+    //     } else {
+    //         alert("OTP không hợp lệ!");
+    //         setIsLoggedIn(false);
+    //     }
+    //     closeModal();
+    // };
+    
     const handleVerifyOTP = () => {
         const enteredOTP = otp.join("");
-        if (enteredOTP === "000000") {
-            alert("Xác minh thành công!");
-    
-            const user = registeredUsers.find((user) => user.email === email); // Tìm người dùng
-            if (user) {
-                localStorage.setItem("user", JSON.stringify({ email: user.email }));
-                setUser({ email: user.email });
-                setIsLoggedIn(true);
-            } else {
-                alert("Không tìm thấy tài khoản!");
-            }
-        } else {
-            alert("OTP không hợp lệ!");
-            setIsLoggedIn(false);
-        }
-        closeModal();
+        verifyAccount(email, enteredOTP, dispatch);
     };
-    
     
 
     const handleChange = (e) => {
@@ -186,10 +190,10 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         };
     
         // Call the signinUser function
-        signinUser(newUser, dispatch, navigate);
+        signinUser(newUser, dispatch, closeModal);
     };
+   
     
-
     const handleRegister = (e) => {
         e.preventDefault();
         if (inputError) return;
@@ -198,12 +202,17 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
             alert("Mật khẩu và xác nhận mật khẩu không khớp!");
             return;
         }
-        registeredUsers.push({ email: email, password });
-        localStorage.setItem("user", JSON.stringify({ email: email }));
-        setUser({ email: email });
-        setIsLoggedIn(true);
-        alert("Mã xác thực đã được gửi đến Email của bạn!");
-        setShowVerification(true);
+        const newUser = {
+            email: email.trim(), // Trim to avoid whitespace issues
+            password: password,
+        };
+        registerUser(newUser,dispatch,setShowVerification)
+        // registeredUsers.push({ email: email, password });
+        // localStorage.setItem("user", JSON.stringify({ email: email }));
+        // setUser({ email: email });
+        // setIsLoggedIn(true);
+        // alert("Mã xác thực đã được gửi đến Email của bạn!");
+        // setShowVerification(true);
         // window.location.reload();
         // closeModal();
     };
