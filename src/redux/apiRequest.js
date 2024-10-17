@@ -42,12 +42,14 @@ export const registerUser = async(user, dispatch, setShowVerification) => {
     }
 };
 
-export const verifyAccount = async (email, otp, dispatch) => {
+export const verifyAccount = async (email, otp, dispatch, setShowVerification) => {
     dispatch(verifyAccountStart());
     try {
         const res = await axios.post("http://localhost:8081/api/auth/verify-account", { email, otp });
         dispatch(verifyAccountSuccess(res.data));
         alert("Account verified successfully!");
+        closeModal();
+        setShowVerification(false);
     } catch (error) {
         console.error("OTP verification failed:", error);
         dispatch(verifyAccountFailed());
