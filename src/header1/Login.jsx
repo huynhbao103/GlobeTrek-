@@ -87,29 +87,10 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         }
     };
     
-    // const handleVerifyOTP = () => {
-    //     const enteredOTP = otp.join("");
-    //     if (enteredOTP === "000000") {
-    //         alert("Xác minh thành công!");
-    
-    //         const user = registeredUsers.find((user) => user.email === email); // Tìm người dùng
-    //         if (user) {
-    //             localStorage.setItem("user", JSON.stringify({ email: user.email }));
-    //             setUser({ email: user.email });
-    //             setIsLoggedIn(true);
-    //         } else {
-    //             alert("Không tìm thấy tài khoản!");
-    //         }
-    //     } else {
-    //         alert("OTP không hợp lệ!");
-    //         setIsLoggedIn(false);
-    //     }
-    //     closeModal();
-    // };
     
     const handleVerifyOTP = () => {
-        const enteredOTP = otp.join("");
-        verifyAccount(email, enteredOTP, dispatch);
+        const enteredOTP = otp.join(""); // Combine OTP input values
+        verifyAccount(email, enteredOTP, dispatch, setShowVerification); // Make sure this is correct
     };
     
 
@@ -137,17 +118,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         setConfirmPassword(e.target.value);
     };
 
-    // const handleContinue = (e) => {
-    //     e.preventDefault();
-    //     if (inputError) return;
     
-    //     const isUserRegistered = registeredUsers.some(
-    //         (user) => user.email === email
-    //     );
-    //     setIsRegistered(isUserRegistered);
-    //     setShowPasswordInput(true);
-    //     setShowVerification(false);
-    // };
     const handleContinue = (e) => {
         e.preventDefault();
         if (inputError || !email) return; // Check for errors
@@ -156,29 +127,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         setIsRegistered(isUserRegistered);
         setShowPasswordInput(true);
     };
-    // const handleLogin = (e) => {
-    //     e.preventDefault();
-        
-    //     const newuser = {
-    //         email:email,
-    //         password:password,
-    //     }
-    //     signinUser(newuser,dispatch,navigate)
-    //     if (inputError) return;
-    
-    //     const user = registeredUsers.find((user) => user.email === emailOrPhone);
-    //     if (user && user.password === password) {
-    //         localStorage.setItem("user", JSON.stringify({ email: emailOrPhone }));
-    //         setUser({ email: setEmail });
-    //         setIsLoggedIn(true);
-    //         alert("Đăng nhập thành công!");
-    //         closeModal();
-    //         setShowVerification(false);
-    //     } else {
-    //         alert("Email hoặc mật khẩu không hợp lệ!");
-    //     }
-
-    // };
+   
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -190,7 +139,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         };
     
         // Call the signinUser function
-        signinUser(newUser, dispatch, closeModal);
+        signinUser(newUser, dispatch, () => setShowModal(false));
     };
    
     
@@ -207,14 +156,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
             password: password,
         };
         registerUser(newUser,dispatch,setShowVerification)
-        // registeredUsers.push({ email: email, password });
-        // localStorage.setItem("user", JSON.stringify({ email: email }));
-        // setUser({ email: email });
-        // setIsLoggedIn(true);
-        // alert("Mã xác thực đã được gửi đến Email của bạn!");
-        // setShowVerification(true);
-        // window.location.reload();
-        // closeModal();
+       
     };
 
     const handleLogout = () => {
