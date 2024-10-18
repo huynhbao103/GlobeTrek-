@@ -6,9 +6,9 @@ import GuestInfoForm from "./GuestInfoForm";
 import Map from "./Map.jsx";
 import Header from "./header";
 import Footer from "../footer/Footer";
-import Price from "./Price"; // Import Price component
-import ConfirmBookingModal from "./ConfirmBookingModal"; // Import ConfirmBookingModal component
-import ProcessingModal from "./ProcessingModal"; // Import ProcessingModal component
+import Price from "./Price"; 
+import ConfirmBookingModal from "./ConfirmBookingModal";
+import ProcessingModal from "./ProcessingModal"; 
 
 const BookingForm = () => {
   const user = JSON.parse(localStorage.getItem("user"));
