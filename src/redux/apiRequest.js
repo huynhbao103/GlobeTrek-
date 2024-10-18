@@ -42,7 +42,7 @@ export const registerUser = async(user, dispatch, setShowVerification) => {
     }
 };
 
-export const verifyAccount = async (email, otp, dispatch, setShowVerification) => {
+export const verifyAccount = async (email, otp, dispatch,closeModal, setShowVerification) => {
     dispatch(verifyAccountStart());
     try {
         const res = await axios.post("http://localhost:8081/api/auth/verify-account", { email, otp });
