@@ -7,7 +7,7 @@ import LoginFB from "./LoginFB";
 import ReCaptcha from "../ReCaptcha/ReCaptcha";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
-
+import { useSelector } from "react-redux";
 
 const registeredUsers = [{ email: "", role: "admin" }];
 
@@ -25,9 +25,9 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const [submitEnabled, setSubmitEnabled] = useState(false);
     const [inputError, setInputError] = useState("");
     const [showVerification, setShowVerification] = useState(false);
+    const userNav = useSelector((state) => state.auth?.login?.currentUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     useEffect(() => {
         if (recaptchaToken) {
             onRecaptchaToken(recaptchaToken);
@@ -39,12 +39,10 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     }, [recaptchaToken]);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-            setIsLoggedIn(true);
+        if(userNav?.email){
+             setIsLoggedIn(true)
         }
-    }, []);
+    }, [userNav?.email]);
 
     const closeModal = () => {
         if (showVerification) {
@@ -177,42 +175,42 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const handleRecaptcha = (token) => {
         setRecaptchaToken(token);
     };
-
+    console.log(isLoggedIn)
     return (
         <>
-            <div className="flex items-center justify-center pr-2">
-                {!isLoggedIn ? (
-                    <button
-                        className="
-                          bg-white text-black
-                          md:px-6 md:py-2
-                          px-4 py-1
-                          rounded shadow hover:bg-slate-100
-                          sm:text-sm font-medium
-                          border border-[#4CA771]
-                          md:text-base text-xs
-                        "
-                        type="button"
-                        onClick={() => setShowModal(true)}
-                    >
-                        <FontAwesomeIcon icon={faUser} style={{ color: "#4CA771" }} /> Đăng
-                        Nhập / Đăng ký
-                    </button>
-                ) : (
-                    <div className="flex px-10 items-center">
-                        <p className="text-black text-sm font-medium mr-4">
-                            {user.email}
-                        </p>
-                        <button
-                            className="text-blue-500 text-sm font-medium"
-                            onClick={handleLogout}
-                        >
-                            Đăng xuất
-                        </button>
-                    </div>
-                )}
-            </div>
-
+          {/* Conditionally display user email or login/register button */}
+          <div className="flex items-center justify-center pr-2">
+            {isLoggedIn ? (
+              <div className="flex px-10 items-center">
+                <p className="text-black text-sm font-medium mr-4">
+                  {userNav?.email || "Guest"}
+                </p>
+                <button
+                  className="text-blue-500 text-sm font-medium"
+                  onClick={handleLogout}
+                >
+                  Đăng xuất
+                </button>
+              </div>
+            ) : (
+              <button
+                className="
+                  bg-white text-black
+                  md:px-6 md:py-2
+                  px-4 py-1
+                  rounded shadow hover:bg-slate-100
+                  sm:text-sm font-medium
+                  border border-[#4CA771]
+                  md:text-base text-xs
+                "
+                type="button"
+                onClick={() => setShowModal(true)}
+              >
+                <FontAwesomeIcon icon={faUser} style={{ color: "#4CA771" }} /> Đăng
+                Nhập / Đăng ký
+              </button>
+            )}
+          </div>
             {showModal && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                     <div
