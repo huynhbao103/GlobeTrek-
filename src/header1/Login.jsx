@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
 import { useSelector } from "react-redux";
 
-const registeredUsers = [{ email: "", role: "admin" }];
+const registeredUsers = [{ email: "giakhoi2004@gmail.com", role: "admin" }];
 
 export default function Modal({ onRecaptchaToken = () => {} }) {
     const [showModal, setShowModal] = useState(false);
@@ -88,7 +88,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     
     const handleVerifyOTP = () => {
         const enteredOTP = otp.join(""); // Combine OTP input values
-        verifyAccount(email, enteredOTP, dispatch, setShowVerification); // Make sure this is correct
+        verifyAccount(email, enteredOTP, dispatch,() => setShowModal(false), setShowVerification); // Make sure this is correct
     };
     
 
