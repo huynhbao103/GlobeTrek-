@@ -47,9 +47,10 @@ export const verifyAccount = async (email, otp, dispatch,closeModal, setShowVeri
     try {
         const res = await axios.post("http://localhost:8081/api/auth/verify-account", { email, otp });
         dispatch(verifyAccountSuccess(res.data));
-        alert("Account verified successfully!");
+        alert("Tài khoản xác nhận thành công vui lòng đăng nhập!");
         closeModal();
         setShowVerification(false);
+
     } catch (error) {
         console.error("OTP verification failed:", error);
         dispatch(verifyAccountFailed());
