@@ -9,12 +9,14 @@ import Footer from "../footer/Footer";
 import Price from "./Price"; 
 import ConfirmBookingModal from "./ConfirmBookingModal";
 import ProcessingModal from "./ProcessingModal"; 
+import { useSelector } from "react-redux";
 
 const BookingForm = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
+  const userNav = useSelector((state) => state.auth?.login?.currentUser);
 
-  if (!user) {
+  if (!userNav) {
     return <p>Chưa có người dùng đăng nhập</p>;
   }
 
@@ -29,7 +31,9 @@ const BookingForm = () => {
 
   useEffect(() => {
     // Load booking data from localStorage
-    const data = JSON.parse(localStorage.getItem('bookingData'));
+    if(userNav?.email){
+      setIsLoggedIn(true)
+    }
     if (data) {
       setBookingData(prevData => ({
         ...prevData,
@@ -38,7 +42,7 @@ const BookingForm = () => {
         prices: prevData.prices // Use default prices or fetched prices if applicable
       }));
     }
-  }, []);
+  }, [userNav?.email]);
 
   const handleContinueClick = () => {
     setIsConfirmModalOpen(true);
