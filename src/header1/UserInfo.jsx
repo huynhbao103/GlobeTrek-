@@ -11,7 +11,10 @@ import icon9 from '../assets/icon9.png';
 const UserInfo = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const storedUser = localStorage.getItem("userNav");
+
+  // Parse the stored user data
+  const user = storedUser ? JSON.parse(storedUser) : null;
 
   if (!user) {
     return <p>Chưa có người dùng đăng nhập</p>;
@@ -26,7 +29,7 @@ const UserInfo = () => {
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("userNav");
     window.location.reload();
   };
 
