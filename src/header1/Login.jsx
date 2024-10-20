@@ -39,10 +39,25 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     }, [recaptchaToken]);
 
     useEffect(() => {
-        if(userNav?.email){
-             setIsLoggedIn(true)
+        if (userNav?.email) {
+            // Save userNav to local storage after login
+            localStorage.setItem("userNav", JSON.stringify(userNav));
+            setIsLoggedIn(true); // Mark the user as logged in
+            setUser(userNav);
         }
     }, [userNav?.email]);
+    
+    useEffect(() => {
+        const storedUserNav = localStorage.getItem("userNav");
+        if (userNav?.email) {
+            // setUser(userNav);
+            // setIsLoggedIn(true);
+            const parsedUserNav = JSON.parse(storedUserNav);
+            setUser(parsedUserNav);
+            setIsLoggedIn(true);
+        }
+    }, [userNav?.email]);
+    
 
     const closeModal = () => {
         if (showVerification) {
@@ -127,19 +142,33 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     };
    
 
+    // const handleLogin = (e) => {
+    //     e.preventDefault();
+        
+    //     // Ensure to collect user credentials correctly
+    //     const newUser = {
+    //         email: email.trim(), // Trim to avoid whitespace issues
+    //         password: password,
+    //     };
+    
+    //     // Call the signinUser function
+    //     signinUser(newUser, dispatch, () => setShowModal(false));
+    // };
     const handleLogin = (e) => {
         e.preventDefault();
         
-        // Ensure to collect user credentials correctly
         const newUser = {
-            email: email.trim(), // Trim to avoid whitespace issues
+            email: email.trim(),
             password: password,
         };
     
         // Call the signinUser function
-        signinUser(newUser, dispatch, () => setShowModal(false));
+        signinUser(newUser, dispatch, () => {
+            setShowModal(false);
+            window.location.reload();
+        });
     };
-   
+    
     
     const handleRegister = (e) => {
         e.preventDefault();
@@ -162,10 +191,12 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     };
 
     const confirmLogout = () => {
-        localStorage.removeItem("user");
+        localStorage.removeItem("userNav");
         setIsLoggedIn(false);
         setUser(null);
         setShowLogoutModal(false);
+        window.location.reload();
+
     };
 
     const cancelLogout = () => {

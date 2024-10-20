@@ -15,23 +15,29 @@ function Laptop() {
   const [selectedSection, setSelectedSection] = useState('Settings'); // Add state for selectedSection
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('userNav'); // Changed to userNav
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
-        setUser(userData);
-        setToken(userData.token); 
+        console.log('Parsed User Data from userNav:', userData);
+        setUser(userData); // Update the user state
+        setToken(userData.token); // Set the token if it exists
       } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
       }
+    } else {
+      console.log('No userNav data found in localStorage');
     }
   }, []);
+  
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('userNav'); // Clear userNav as well
     setUser(null);
     setToken('');
+    console.log('User logged out');
   };
+  
 
   return (
     <div>
@@ -56,7 +62,8 @@ function Laptop() {
               
               <Link to='/Savelist'><a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium'>Đã lưu</a></Link>
               <a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium' onClick={() => setSelectedSection('SetPlace')}>Đặt chỗ của tôi</a>
-              {user ? <UserInfo  /> : <Login />}
+              {user ? <UserInfo user={user} /> : <Login />}
+
               {/* <Register/> */}
             </div>
           </div>
