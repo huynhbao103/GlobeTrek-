@@ -25,7 +25,7 @@ function App() {
           <Route path="/product-body" element={<ProductBody />} />
           <Route path="/ProDetail/:id" element={<BodyProDetail />} />
           <Route path="/bodyPay/:id" element={<BodyPay />} />
-          <Route path='/BookingForm' element={<BookingForm/>}/>
+          <Route path='/BookingForm/:id' element={<BookingForm/>}/>
           <Route path='/Payment' element={<Payment/>}/>
           <Route path='/MainLayout' element={<MainLayout />}/>
          
