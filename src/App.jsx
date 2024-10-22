@@ -22,12 +22,12 @@ function App() {
       <Router>
         {/* <Header /> */}
         <Routes>
-          <Route path="/Body" element={<Body />} />
+          <Route path="/" element={<Body />} />
           <Route path="/product-body" element={<ProductBody />} />
           <Route path="/ProDetail/:id" element={<BodyProDetail />} />
           <Route path="/bodyPay/:id" element={<BodyPay />} />
           <Route path='/BookingForm' element={<BookingForm/>}/>
-          <Route path='/' element={<Payment/>}/>
+          <Route path='/Payment' element={<Payment/>}/>
           {/* <Route path="/wallet-payment" element={WalletPayment} /> */}
           <Route path='/MainLayout' element={<MainLayout />}/>
          
