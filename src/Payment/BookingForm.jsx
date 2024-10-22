@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom"; // Import useParams
 import User from "../assets/User.png";
 import ContactInfoForm from "./ContactInfoForm";
 import GuestInfoForm from "./GuestInfoForm";
@@ -10,41 +10,51 @@ import Price from "./Price";
 import ConfirmBookingModal from "./ConfirmBookingModal";
 import ProcessingModal from "./ProcessingModal"; 
 import { useSelector } from "react-redux";
+import PropTypes from 'prop-types';
 
 const BookingForm = () => {
+  const { id } = useParams(); // Lấy id từ URL
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const userNav = useSelector((state) => state.auth?.login?.currentUser);
 
-  if (!userNav) {
-    return <p>Chưa có người dùng đăng nhập</p>;
-  }
-
   const [bookingData, setBookingData] = useState({
     adultCount: 1,
     childCount: 0,
-    prices: { adultPrice: 3000000, childPrice: 2000000 } // Default values
+    prices: { adultPrice: 0, childPrice: 0 } // Initialize prices to 0
   });
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isProcessingModalOpen, setIsProcessingModalOpen] = useState(false);
 
   useEffect(() => {
-    // Load booking data from localStorage
-    if(userNav?.email){
-      setIsLoggedIn(true)
-    }
+    const data = JSON.parse(localStorage.getItem("bookingData"));
     if (data) {
       setBookingData(prevData => ({
         ...prevData,
-        adultCount: data.adultCount,
-        childCount: data.childCount,
-        prices: prevData.prices // Use default prices or fetched prices if applicable
+        adultCount: data.adultCount || prevData.adultCount,
+        childCount: data.childCount || prevData.childCount,
+        prices: {
+          adultPrice: data.prices?.adultPrice || prevData.prices.adultPrice,
+          childPrice: data.prices?.childPrice || prevData.prices.childPrice,
+        }
+      }));
+    } else {
+      setBookingData(prevData => ({
+        ...prevData,
+        prices: {
+          adultPrice: 300000, // Default price if not found in localStorage
+          childPrice: 150000,
+        }
       }));
     }
-  }, [userNav?.email]);
+  }, []);
 
   const handleContinueClick = () => {
+    if (bookingData.adultCount < 1) {
+      alert("Bạn cần ít nhất 1 người lớn để đặt chỗ.");
+      return;
+    }
     setIsConfirmModalOpen(true);
   };
 
@@ -74,20 +84,18 @@ const BookingForm = () => {
               />
               <div>
                 <h2 className="font-semibold text-xl">
-                  Đăng nhập với tên {user.name}
+                  {user ? `Đăng nhập với tên ${user.name}` : "Chưa đăng nhập"}
                 </h2>
-                <p className="text-sm text-gray-600">{user.email}</p>
+                {user && <p className="text-sm text-gray-600">{user.email}</p>}
               </div>
             </div>
           </div>
 
           <ContactInfoForm />
-
           <GuestInfoForm 
-            setAdultCount={(count) => setBookingData(prevData => ({ ...prevData, adultCount: count }))}
-            setChildCount={(count) => setBookingData(prevData => ({ ...prevData, childCount: count }))}
+            setAdultCount={(count) => setBookingData(prevData => ({ ...prevData, adultCount: count }))} 
+            setChildCount={(count) => setBookingData(prevData => ({ ...prevData, childCount: count }))} 
           />
-
           <Map />
           
           <Price 
@@ -119,6 +127,14 @@ const BookingForm = () => {
       />
     </>
   );
+};
+
+// Prop types definition
+BookingForm.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+  }),
 };
 
 export default BookingForm;
