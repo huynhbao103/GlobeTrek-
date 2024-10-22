@@ -14,6 +14,7 @@ import Transaction  from './YourAccount/Transaction.jsx'
 import SavedPassengers from './YourAccount/savedPassengers.jsx'
 import Refunds  from './YourAccount/Refunds.jsx'
 import Savelist  from './header1/Savelist.jsx'
+// import WalletPayment from './Payment/WalletPayment';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/bodyPay/:id" element={<BodyPay />} />
           <Route path='/BookingForm/:id' element={<BookingForm/>}/>
           <Route path='/Payment' element={<Payment/>}/>
+          {/* <Route path="/wallet-payment" element={WalletPayment} /> */}
           <Route path='/MainLayout' element={<MainLayout />}/>
          
           <Route path="/settings" element={<Settings />} />
