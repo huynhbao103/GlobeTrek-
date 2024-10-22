@@ -8,8 +8,8 @@ import ReCaptcha from "../ReCaptcha/ReCaptcha";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
 import { useSelector } from "react-redux";
-
-const registeredUsers = [{ email: "huynhbao103@gmail.com", role: "user" }];
+import { checkUserEmail } from "../API/apiService"
+// const registeredUsers = [{ email: "giakhoi2004@gmail.com", role: "admin" }];
 
 export default function Modal({ onRecaptchaToken = () => {} }) {
     const [showModal, setShowModal] = useState(false);
@@ -131,29 +131,24 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         setConfirmPassword(e.target.value);
     };
 
-    
-    const handleContinue = (e) => {
+    const handleContinue = async (e) => {
         e.preventDefault();
-        if (inputError || !email) return; // Check for errors
+        if (inputError || !email) return; // Check for input errors and empty email
     
-        const isUserRegistered = registeredUsers.some(user => user.email === email);
-        setIsRegistered(isUserRegistered);
-        setShowPasswordInput(true);
-    };
-   
-
-    // const handleLogin = (e) => {
-    //     e.preventDefault();
-        
-    //     // Ensure to collect user credentials correctly
-    //     const newUser = {
-    //         email: email.trim(), // Trim to avoid whitespace issues
-    //         password: password,
-    //     };
+        try {
+          const result = await checkUserEmail(email); // Use your new function here
+          if (result.exists) {
+            setIsRegistered(true); // Show login form
+          } else {
+            setIsRegistered(false); // Show registration form
+          }
+          setShowPasswordInput(true); // Show the password input field after email check
+        } catch (error) {
+          console.error("Error checking email:", error);
+          setInputError("Đã xảy ra lỗi khi kiểm tra email. Vui lòng thử lại sau.");
+        }
+      };
     
-    //     // Call the signinUser function
-    //     signinUser(newUser, dispatch, () => setShowModal(false));
-    // };
     const handleLogin = (e) => {
         e.preventDefault();
         
