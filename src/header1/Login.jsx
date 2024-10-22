@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
 import { useSelector } from "react-redux";
 
-const registeredUsers = [{ email: "huynhbao103@gmail", password: "Bao0907670054@", role: "user" }];
+const registeredUsers = [{ email: "huynhbao103@gmail.com", role: "user" }];
 
 export default function Modal({ onRecaptchaToken = () => {} }) {
     const [showModal, setShowModal] = useState(false);
