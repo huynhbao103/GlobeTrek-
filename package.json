@@ -18,6 +18,7 @@
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "lodash.debounce": "^4.0.8",
     "npm-force-resolutions": "^0.0.10",
