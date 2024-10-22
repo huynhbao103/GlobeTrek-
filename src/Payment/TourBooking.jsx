@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import backicon from '../assets/backicon.png';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { fetchTourById } from '../API/apiService'; 
 import { isSpecialDay } from '../API/utils'; 
 import { useDate } from '../Context/DateContext';
@@ -10,6 +10,7 @@ import { useDate } from '../Context/DateContext';
 const TourBooking = () => {
     const { id } = useParams();
     const { selectedDate, setSelectedDate } = useDate();
+    const navigate = useNavigate();
     const [adultCount, setAdultCount] = useState(1);
     const [childCount, setChildCount] = useState(0);
     const [prices, setPrices] = useState({});
@@ -19,17 +20,18 @@ const TourBooking = () => {
     const [firstImage, setFirstImage] = useState('');
     const [tour, setTour] = useState({});
 
+    // Load selected date from localStorage
     useEffect(() => {
-        // Lấy ngày từ localStorage
         const savedDate = localStorage.getItem('selectedDate');
         if (savedDate) {
-            const parsedDate = new Date(savedDate);
-            setSelectedDate(parsedDate); // Cập nhật selectedDate
+            setSelectedDate(new Date(savedDate));
         }
     }, [setSelectedDate]);
 
+    // Fetch tour data from API
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const tourData = await fetchTourById(id);
                 setTour(tourData);
@@ -39,7 +41,7 @@ const TourBooking = () => {
                     childPrice: tourData.childPrice,
                     specialChildPrice: tourData.specialChildPrice,
                 });
-                if (tourData.images && tourData.images.length > 0) {
+                if (tourData.images?.length) {
                     setFirstImage(tourData.images[0]);
                 }
             } catch (error) {
@@ -55,12 +57,7 @@ const TourBooking = () => {
         }
     }, [id]);
 
-    const handleDateChange = (date) => {
-        setSelectedDate(date);
-        localStorage.setItem('selectedDate', date.toISOString());
-        updateTotalPrice(date);
-    };
-
+    // Calculate total price based on counts and pricing
     useEffect(() => {
         const isSpecial = isSpecialDay(selectedDate);
         const adultPrice = isSpecial ? prices.specialAdultPrice : prices.adultPrice;
@@ -68,12 +65,20 @@ const TourBooking = () => {
         setTotalPrice((adultCount * adultPrice) + (childCount * childPrice));
     }, [adultCount, childCount, selectedDate, prices]);
 
+    // Handle booking submission
     const handleBooking = () => {
-        const bookingData = { adultCount, childCount, totalPrice }; 
+        const bookingData = { 
+            adultCount, 
+            childCount, 
+            totalPrice,
+            adultPrice: isSpecialDay(selectedDate) ? prices.specialAdultPrice : prices.adultPrice,
+            childPrice: isSpecialDay(selectedDate) ? prices.specialChildPrice : prices.childPrice,
+        };
         localStorage.setItem('bookingData', JSON.stringify(bookingData));
-        window.location.href = '/BookingForm';
+        navigate(`/BookingForm/${id}`);
     };
 
+    // Adjust counts for adults and children
     const adjustCount = (setter, count, increment) => {
         const newCount = count + increment;
         if (newCount >= 0 && (adultCount + childCount + increment) <= 30) {
@@ -86,6 +91,7 @@ const TourBooking = () => {
         }
     };
 
+    // Get day name from date
     const getDayName = (date) => {
         const dayNames = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy'];
         return dayNames[date.getUTCDay()];
@@ -109,7 +115,7 @@ const TourBooking = () => {
                         )}
                         <div className="ml-4">
                             <h2 className="text-xl font-bold mb-2">
-                                {loading ? <Skeleton width={300} /> : <>{tour.title}</>}
+                                {loading ? <Skeleton width={300} /> : tour.title}
                             </h2>
                         </div>
                     </div>
@@ -119,7 +125,7 @@ const TourBooking = () => {
                             <div className="mt-4 bg-green-100 p-4 rounded-lg">
                                 <p className="text-lg">{loading ? <Skeleton width={200} /> : 'Ngày tham quan đã chọn'}</p>
                                 <h3 className="text-xl font-bold">
-                                {loading ? <Skeleton width={250} /> : (selectedDate ? `${getDayName(selectedDate)}, ${selectedDate.toLocaleDateString('vi-VN')}` : 'Chưa chọn ngày')}
+                                    {loading ? <Skeleton width={250} /> : (selectedDate ? `${getDayName(selectedDate)}, ${selectedDate.toLocaleDateString('vi-VN')}` : 'Chưa chọn ngày')}
                                 </h3>
                             </div>
                         </div>
@@ -129,7 +135,7 @@ const TourBooking = () => {
                                 <div>
                                     <h4 className="text-xl font-bold">{loading ? <Skeleton width={150} /> : 'Người lớn'}</h4>
                                     <p className="text-green-500">
-                                        {loading ? <Skeleton width={80} /> : (isSpecialDay(selectedDate) ? prices.specialAdultPrice.toLocaleString('vi-VN') : prices.adultPrice.toLocaleString('vi-VN'))} VND
+                                        {loading ? <Skeleton width={80} /> : (isSpecialDay(selectedDate) ? prices.specialAdultPrice?.toLocaleString('vi-VN') : prices.adultPrice?.toLocaleString('vi-VN'))} VND
                                     </p>
                                 </div>
                                 <div className="flex items-center">
@@ -143,7 +149,7 @@ const TourBooking = () => {
                                 <div>
                                     <h4 className="text-xl font-bold">{loading ? <Skeleton width={150} /> : 'Trẻ em'}</h4>
                                     <p className="text-green-500">
-                                        {loading ? <Skeleton width={80} /> : (isSpecialDay(selectedDate) ? prices.specialChildPrice.toLocaleString('vi-VN') : prices.childPrice.toLocaleString('vi-VN'))} VND
+                                        {loading ? <Skeleton width={80} /> : (isSpecialDay(selectedDate) ? prices.specialChildPrice?.toLocaleString('vi-VN') : prices.childPrice?.toLocaleString('vi-VN'))} VND
                                     </p>
                                 </div>
                                 <div className="flex items-center">
