@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom"; // Import useParams
+import { Link, useNavigate, useParams } from "react-router-dom"; 
 import User from "../assets/User.png";
 import ContactInfoForm from "./ContactInfoForm";
 import GuestInfoForm from "./GuestInfoForm";
@@ -13,15 +13,16 @@ import { useSelector } from "react-redux";
 import PropTypes from 'prop-types';
 
 const BookingForm = () => {
-  const { id } = useParams(); // Lấy id từ URL
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { id } = useParams(); 
+  const user = JSON.parse(localStorage.getItem("userNav"));
   const navigate = useNavigate();
   const userNav = useSelector((state) => state.auth?.login?.currentUser);
 
+  // Khởi tạo state
   const [bookingData, setBookingData] = useState({
     adultCount: 1,
     childCount: 0,
-    prices: { adultPrice: 0, childPrice: 0 } // Initialize prices to 0
+    prices: { adultPrice: 0, childPrice: 0 }
   });
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -39,17 +40,10 @@ const BookingForm = () => {
           childPrice: data.prices?.childPrice || prevData.prices.childPrice,
         }
       }));
-    } else {
-      setBookingData(prevData => ({
-        ...prevData,
-        prices: {
-          adultPrice: 300000, // Default price if not found in localStorage
-          childPrice: 150000,
-        }
-      }));
-    }
+    } 
   }, []);
 
+  // Xử lý khi nhấn "Tiếp tục"
   const handleContinueClick = () => {
     if (bookingData.adultCount < 1) {
       alert("Bạn cần ít nhất 1 người lớn để đặt chỗ.");
@@ -58,6 +52,7 @@ const BookingForm = () => {
     setIsConfirmModalOpen(true);
   };
 
+  // Xử lý khi xác nhận
   const handleConfirm = () => {
     setIsConfirmModalOpen(false);
     setIsProcessingModalOpen(true);
@@ -75,6 +70,8 @@ const BookingForm = () => {
         <div className="max-w-4xl mx-auto p-4">
           <h2 className="text-2xl font-bold mb-4">Đặt chỗ của tôi</h2>
           <h2 className="text-lg mb-6">Điền thông tin và xem lại đặt chỗ.</h2>
+          
+          {/* Thông tin người dùng */}
           <div className="bg-white p-6 rounded-md shadow-md mb-6">
             <div className="flex items-center">
               <img
@@ -91,13 +88,17 @@ const BookingForm = () => {
             </div>
           </div>
 
+        
           <ContactInfoForm />
+          
+         
           <GuestInfoForm 
-            setAdultCount={(count) => setBookingData(prevData => ({ ...prevData, adultCount: count }))} 
-            setChildCount={(count) => setBookingData(prevData => ({ ...prevData, childCount: count }))} 
           />
+
+      
           <Map />
           
+       
           <Price 
             adultCount={bookingData.adultCount} 
             childCount={bookingData.childCount} 
@@ -109,19 +110,22 @@ const BookingForm = () => {
               onClick={handleContinueClick}
               className="bg-[#4CA771] hover:bg-[#00875A] font-bold text-white py-4 px-16 rounded-lg"
             >
-             Xác nhận thanh toán bằng PressPay
+              Xác nhận thanh toán 
             </button>
           </div>
         </div>
       </div>
+      
       <Footer />
       
+      {/* Modal xác nhận */}
       <ConfirmBookingModal
         isOpen={isConfirmModalOpen}
         onRequestClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirm}
       />
       
+      {/* Modal xử lý */}
       <ProcessingModal
         isOpen={isProcessingModalOpen}
       />
@@ -129,7 +133,7 @@ const BookingForm = () => {
   );
 };
 
-// Prop types definition
+// Prop types
 BookingForm.propTypes = {
   user: PropTypes.shape({
     name: PropTypes.string,

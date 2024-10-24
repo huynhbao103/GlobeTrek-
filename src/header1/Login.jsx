@@ -4,6 +4,7 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import GoogleSignIn from "./GoogleSignIn";
 import LoginFB from "./LoginFB";
+import SsoPointerSignIn from "./GoogleSignIn";
 import ReCaptcha from "../ReCaptcha/ReCaptcha";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
@@ -26,6 +27,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
     const [inputError, setInputError] = useState("");
     const [showVerification, setShowVerification] = useState(false);
     const userNav = useSelector((state) => state.auth?.login?.currentUser);
+    
     const dispatch = useDispatch();
     const navigate = useNavigate();
     useEffect(() => {
@@ -335,10 +337,10 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
                                     </p>
                                 )}
                             </form>
-                            {/* <div className="flex flex-col gap-2 mb-6">
-                                <GoogleSignIn recaptchaToken={recaptchaToken} disabled={!submitEnabled} />
-                                <LoginFB />
-                            </div> */}
+                            { <div className="flex flex-col gap-2 mb-6">
+                                <SsoPointerSignIn   />
+                                
+                            </div> }
                             <div className="flex mx-auto mb-6 justify-center items-center">
                                 <ReCaptcha
                                     sitekey="6Le4TBoqAAAAAPQljcyv-mNasoIjpAgJGkR6g534"
