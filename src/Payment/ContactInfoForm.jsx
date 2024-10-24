@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import { customerInfo as saveContactInfo } from '../API/apiService'; // Import hàm từ apiService.js
+import { customerInfo as saveContactInfo } from '../API/apiService'; // Import hàm từ apiService.js
 
 const ContactInfoForm = ({ onSave, orderData }) => {
   const [contactName, setContactName] = useState('');
