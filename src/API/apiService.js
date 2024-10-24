@@ -1,7 +1,9 @@
 // apiService.js
-const API_URL = 'http://localhost:8081/tours/api';
+const TOUR_API_URL = 'http://localhost:8081/tours/api';
 
 const AUTH_API_URL = 'http://localhost:8081/api/auth'
+
+const ORDER_API_URL ='http://localhost:8081/orders/api';
 export const fetchTours = async (tourTypeId) => {
   try {
     const response = await fetch(API_URL);
@@ -75,9 +77,39 @@ export const checkUserEmail = async (email) => {
       throw new Error('Không thể kiểm tra email người dùng');
     }
 
-    return await response.json();  // { exists: true/false }
+    return await response.json(); 
   } catch (error) {
     console.error('Error checking user email:', error);
-    throw error;  // Re-throw error for handling in the calling function
+    throw error;  
+  }
+};
+
+export const customerInfo = async (contactInfo, orderData) => {
+  try {
+    const customerInfoPayload = {
+      customerInfo: {
+        fullName: contactInfo.contactName,
+        phone: contactInfo.contactPhone,
+        email: contactInfo.contactEmail,
+      },
+      ...orderData 
+    };
+
+    const response = await fetch(`${ORDER_API_URL}/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(customerInfoPayload),
+    });
+
+    if (!response.ok) {
+      throw new Error('Không thể lưu thông tin liên hệ');
+    }
+
+    return await response.json(); 
+  } catch (error) {
+    console.error('Error saving contact information:', error);
+    throw error; 
   }
 };
