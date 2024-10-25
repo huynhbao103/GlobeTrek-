@@ -3,26 +3,27 @@ import axios from 'axios';
 import Select from 'react-select';
 
 const GuestInfoForm = ({ onSave }) => {
-  const [adultTitle, setAdultTitle] = useState('');
-  const [adultName, setAdultName] = useState('');
-  const [adultPhone, setAdultPhone] = useState('');
-  const [adultEmail, setAdultEmail] = useState('');
+  const [title, settitle] = useState('');
+  const [fullName, setfullName] = useState('');
+  const [phone, setphone] = useState('');
+  const [email, setemail] = useState('');
   const [specialRequest, setSpecialRequest] = useState('');
   const [error, setError] = useState('');
-  const [isEditing, setIsEditing] = useState(false); // Trạng thái để theo dõi chế độ chỉnh sửa
+  const [isEditing, setIsEditing] = useState(false);
+
+  const API_URL = "http://localhost:8081/orders/api"; // Example definition
 
   useEffect(() => {
-    const savedGuestInfo = JSON.parse(localStorage.getItem('guestInfo'));
+    const savedGuestInfo = JSON.parse(localStorage.getItem('passengerInfo'));
     if (savedGuestInfo) {
-      setAdultTitle(savedGuestInfo.adultTitle || '');
-      setAdultName(savedGuestInfo.adultName || '');
-      setAdultPhone(savedGuestInfo.adultPhone || '');
-      setAdultEmail(savedGuestInfo.adultEmail || '');
+      settitle(savedGuestInfo.title || '');
+      setfullName(savedGuestInfo.fullName || '');
+      setphone(savedGuestInfo.phone || '');
+      setemail(savedGuestInfo.email || '');
       setSpecialRequest(savedGuestInfo.specialRequest || '');
     }
   }, []);
 
-  const API_URL = 'http://localhost:5000'; // URL của backend trên localhost
 
   const validatePhoneNumber = (phone) => {
     return phone.startsWith('09') && phone.length >= 10 && phone.length <= 11;
@@ -34,30 +35,30 @@ const GuestInfoForm = ({ onSave }) => {
   };
 
   const handleSaveGuestInfo = () => {
-    if (!validatePhoneNumber(adultPhone)) {
+    if (!validatePhoneNumber(phone)) {
       setError('Số điện thoại phải bắt đầu bằng 09 và có từ 10 đến 11 ký tự.');
       return;
     }
 
-    if (!validateEmail(adultEmail)) {
+    if (!validateEmail(email)) {
       setError('Email không hợp lệ.');
       return;
     }
 
     setError('');
 
-    const guestInfo = {
-      adultTitle,
-      adultName,
-      adultPhone,
-      adultEmail,
+    const passengerInfo = {
+      title,
+      fullName,
+      phone,
+      email,
       specialRequest
     };
 
-    localStorage.setItem('guestInfo', JSON.stringify(guestInfo));
-    console.log('Guest information saved locally:', guestInfo);
+    localStorage.setItem('passengerInfo', JSON.stringify(passengerInfo));
+    console.log('Guest information saved locally:', passengerInfo);
 
-    axios.post(`${API_URL}/saveGuestInfo`, guestInfo)
+    axios.post(`${API_URL}/saveGuestInfo`, passengerInfo)
       .then(response => {
         console.log('Guest information saved to database:', response.data);
       })
@@ -99,53 +100,53 @@ const GuestInfoForm = ({ onSave }) => {
         <div>
               <p>Thông tin hành khách đi cùng</p>
           <div className="mb-4">
-            <label htmlFor="adultTitle" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Danh xưng
             </label>
             <Select
               options={titleOptions}
-              value={titleOptions.find(option => option.value === adultTitle)}
-              onChange={(selectedOption) => setAdultTitle(selectedOption ? selectedOption.value : '')}
+              value={titleOptions.find(option => option.value === title)}
+              onChange={(selectedOption) => settitle(selectedOption ? selectedOption.value : '')}
               className="mt-1 block w-[50%] border border-gray-300 rounded-md shadow-sm"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="adultName" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
               Họ tên <span className='text-red-500'>*</span>
             </label>
             <input
               type="text"
-              id="adultName"
-              value={adultName}
-              onChange={(e) => setAdultName(e.target.value)}
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setfullName(e.target.value)}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             />
           </div>
           <div className='sm:flex w-full justify-between'>
             <div className="mb-4 w-1/2 pr-2">
-              <label htmlFor="adultPhone" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
                 Điện thoại di động<span className='text-red-500'>*</span>
               </label>
               <input
                 type="text"
-                id="adultPhone"
-                value={adultPhone}
-                onChange={(e) => setAdultPhone(e.target.value)}
+                id="phone"
+                value={phone}
+                onChange={(e) => setphone(e.target.value)}
                 required
                 placeholder="+84"
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               />
             </div>
             <div className="mb-4 w-1/2 pl-2">
-              <label htmlFor="adultEmail" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email <span className='text-red-500'>*</span>
               </label>
               <input
                 type="email"
-                id="adultEmail"
-                value={adultEmail}
-                onChange={(e) => setAdultEmail(e.target.value)}
+                id="email"
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               />
@@ -166,17 +167,17 @@ const GuestInfoForm = ({ onSave }) => {
       ) : (
         <div>
           <div className="mb-4">
-            <p><strong>Danh xưng:</strong> {adultTitle || 'Chưa có thông tin'}</p>
+            <p><strong>Danh xưng:</strong> {title || 'Chưa có thông tin'}</p>
           </div>
           <div className="mb-4">
-            <p><strong>Họ tên:</strong> {adultName || 'Chưa có thông tin'}</p>
+            <p><strong>Họ tên:</strong> {fullName || 'Chưa có thông tin'}</p>
           </div>
           <div className='sm:w-[80%] sm:flex justify-between items-center'>
           <div className="mb-4">
-            <p><strong>Điện thoại di động:</strong> {adultPhone || 'Chưa có thông tin'}</p>
+            <p><strong>Điện thoại di động:</strong> {phone || 'Chưa có thông tin'}</p>
           </div>
           <div className="mb-4">
-            <p><strong>Email:</strong> {adultEmail || 'Chưa có thông tin'}</p>
+            <p><strong>Email:</strong> {email || 'Chưa có thông tin'}</p>
           </div>
           </div>
           <div className="mb-4">

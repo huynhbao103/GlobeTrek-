@@ -13,7 +13,7 @@ import User from "../assets/User.png";
 const SidebarMenu = ({ setSelectedSection }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activeSection, setActiveSection] = useState('Settings');
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("userNav"));
 
   if (!user) {
     return <p>Chưa có người dùng đăng nhập</p>;

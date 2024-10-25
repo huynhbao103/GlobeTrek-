@@ -59,7 +59,7 @@ const BookingForm = () => {
 
     setTimeout(() => {
       setIsProcessingModalOpen(false);
-      navigate('/Payment'); 
+      navigate(`/Payment/${id}`); 
     }, 3000); 
   };
 

@@ -6,7 +6,7 @@ const AUTH_API_URL = 'http://localhost:8081/api/auth'
 const ORDER_API_URL ='http://localhost:8081/orders/api';
 export const fetchTours = async (tourTypeId) => {
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(TOUR_API_URL);
     if (!response.ok) {
       throw new Error('Không thể lấy danh sách tour');
     }
