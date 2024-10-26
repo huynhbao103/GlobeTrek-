@@ -13,7 +13,7 @@ import GoogleMap from './GoogleMap.jsx';
 import PriceTour from './PriceTour.jsx';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { fetchTourById } from '../API/apiService.js'; // Import hàm fetchTourById từ dịch vụ API
+import { fetchTourById } from '../API/apiService.js'; 
 
 function Bodyprodetail() {
   const { id } = useParams(); 
@@ -23,7 +23,7 @@ function Bodyprodetail() {
   useEffect(() => {
     const getTour = async () => {
       try {
-        const tourData = await fetchTourById(id); // Gọi API để lấy thông tin tour
+        const tourData = await fetchTourById(id);
         setTour(tourData);
       } catch (error) {
         console.error('Error fetching tour:', error);
@@ -32,7 +32,7 @@ function Bodyprodetail() {
       }
     };
     getTour();
-  }, [id]); // Thực hiện lại khi ID thay đổi
+  }, [id]); 
 
   return (
     <div>
@@ -41,10 +41,10 @@ function Bodyprodetail() {
       <div className="max-w-[1280px] mx-auto">
         <div className="mt-40">
           {loading ? (
-            <Skeleton count={5} height={200} /> // Hiển thị loading skeleton khi đang tải
+            <Skeleton count={5} height={200} /> 
           ) : (
             <>
-              <Inforimage tour={tour} /> {/* Truyền thông tin tour vào các thành phần */}
+              <Inforimage tour={tour} />
               <div className="flex justify-center items-center max-md:flex-col">
                 <TourInfo tour={tour} />
                 <Mapview tour={tour} />

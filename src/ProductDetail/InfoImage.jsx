@@ -26,7 +26,7 @@ const TravelTour = () => {
         setTour(tourData);
         setImages(tourData.images); 
         setVideos(tourData.videos); 
-        // Kiểm tra xem tour có nằm trong danh sách yêu thích không
+      
         const userId = getUserId();
         if (userId) {
           const favoriteStatus = await checkIfFavorite(userId, tourData._id);
@@ -103,7 +103,74 @@ const TravelTour = () => {
           {loading ? <Skeleton width={200} /> : `Thời gian tour | ${tour?.duration} days`}
         </p>
       </div>
-      {/* Thông tin thêm về các thành phần khác */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div className="relative mb-4">
+            {loading ? (
+              <Skeleton height={256} />
+            ) : (
+              videos.length > 0 && (
+                <div>
+                  <video controls className="w-full h-full object-cover rounded">
+                    <source src={videos[0]} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              )
+            )}
+          </div>
+          <div className="grid grid-cols-1 gap-4">
+          
+            <div className="relative">
+              {loading ? (
+                <Skeleton height={256} />
+              ) : (
+                images.length > 0 && (
+                  <img
+                    src={images[0]} 
+                    alt="Tour Image"
+                    className="w-full h-64 object-cover rounded cursor-pointer"
+                    onClick={() => openModal(0)}
+                  />
+                )
+              )}
+              {loading ? null : (
+                <div
+                  className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg rounded cursor-pointer"
+                  onClick={() => openModal(0)}
+                >
+                  <i className="fas fa-play-circle text-4xl"></i>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              {loading ? (
+                <Skeleton count={2} height={128} />
+              ) : (
+                images.slice(1, 3).map((image, index) => (
+                  <div className="relative" key={index}>
+                    <img
+                      src={image}
+                      alt="Tour Image"
+                      className="w-full h-64 object-cover rounded cursor-pointer"
+                      onClick={() => openModal(index + 1)}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+            
+          
+            {images.length > 3 && (
+              <div
+                className="flex items-center justify-center text-white font-bold text-lg bg-black bg-opacity-50 rounded cursor-pointer"
+                onClick={() => openModal(4)}
+              >
+                Xem Tất Cả Hình Ảnh
+              </div>
+            )}
+          </div>
+        </div>
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
           <button

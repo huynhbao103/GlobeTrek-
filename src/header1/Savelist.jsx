@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Nhập useNavigate để điều hướng
+import { useNavigate } from 'react-router-dom'; 
 import Header from './Header';
 import Footer from '../footer/Footer';
-import { fetchFavoriteTours, removeFavoriteTour } from '../API/apiService'; // Nhập các hàm từ apiService
+import { fetchFavoriteTours, removeFavoriteTour } from '../API/apiService'; 
 
 const getUserId = () => {
   const storedUser = JSON.parse(localStorage.getItem('userNav'));
@@ -13,7 +13,7 @@ const SavedList = () => {
   const [savedItems, setSavedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Khởi tạo useNavigate
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const userId = getUserId();
@@ -40,7 +40,7 @@ const SavedList = () => {
 
   const handleRemoveItem = async (tourId) => {
     const userId = getUserId();
-    setLoading(true);
+  
     try {
       await removeFavoriteTour(userId, tourId);
       setSavedItems(savedItems.filter(item => item.tour._id !== tourId));
@@ -48,13 +48,12 @@ const SavedList = () => {
     } catch (error) {
       console.error("Lỗi xóa tour:", error);
       alert(error.message);
-    } finally {
-      setLoading(false);
+      
     }
   };
 
   const handleViewDetails = (tourId) => {
-    navigate(`/ProDetail/${tourId}`); // Điều hướng đến trang chi tiết tour
+    navigate(`/ProDetail/${tourId}`); 
   };
 
   if (loading) {
@@ -103,7 +102,7 @@ const SavedList = () => {
                   Xóa
                 </button>
                 <button 
-                  onClick={() => handleViewDetails(item.tour._id)} // Gọi hàm handleViewDetails
+                  onClick={() => handleViewDetails(item.tour._id)} 
                   className="mt-2 mx-3 bg-green-500 text-white px-4 py-2 rounded"
                 >
                   Xem chi tiết tour

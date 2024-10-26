@@ -65,3 +65,32 @@
 }
 
 
+/* phân trang */
+.pagination {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.pagination li {
+  margin: 0 5px;
+}
+
+.pagination li a {
+  text-decoration: none;
+  padding: 10px;
+  color: #00875A;
+  border: 1px solid #00875A;
+  border-radius: 5px;
+}
+
+.pagination li a:hover {
+  background-color: #00875A;
+  color: white;
+}
+
+.pagination li.active a {
+  background-color: #00875A;
+  color: white;
+}
