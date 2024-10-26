@@ -70,11 +70,11 @@ const GuestInfoForm = ({ onSave }) => {
       onSave();
     }
 
-    setIsEditing(false); // Sau khi lưu, chuyển sang chế độ xem
+    setIsEditing(false); 
   };
 
   const handleEditGuestInfo = () => {
-    setIsEditing(true); // Chuyển sang chế độ chỉnh sửa
+    setIsEditing(true); 
   };
 
   const titleOptions = [

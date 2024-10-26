@@ -34,7 +34,7 @@ const SidebarMenu = ({ setSelectedSection }) => {
   };
 
   const menuItemClass = (section) =>
-    `px-4 py-2 mt-2 cursor-pointer flex rounded-lg items-center hover:bg-green-100 ${
+    `px-4 py-2 mt-2 cursor-pointer flex rounded-lg items-center hover:bg-green-500 ${
       activeSection === section ? 'bg-green-300' : ''
     }`;
 
@@ -48,7 +48,7 @@ const SidebarMenu = ({ setSelectedSection }) => {
         </div>
       </div>
       <ul className="py-2">
-        <li className="px-4 py-2 rounded-lg cursor-pointer hover:bg-green-100">0 Điểm</li>
+        <li className="px-4 py-2 rounded-lg cursor-pointer hover:bg-green-500">0 Điểm</li>
     
         <hr/>
         <li
@@ -88,9 +88,9 @@ const SidebarMenu = ({ setSelectedSection }) => {
           <img src={icon1} alt="Chỉnh sửa hồ sơ" className="w-4 h-4 mr-2" />
           Tài Khoản
         </li>
-        <li className="px-4 py-2 cursor-pointer flex items-center hover:bg-green-100">
+        <li className="px-4 py-2 cursor-pointer flex items-center hover:bg-green-500">
           <button
-            className="flex items-center py-2 hover:bg-green-100 cursor-pointer"
+            className="flex items-center py-2 hover:bg-green-500 cursor-pointer"
             onClick={() => setShowLogoutModal(true)}
           >
             <img src={icon9} alt="Đăng xuất" className="w-4 h-4 mr-2" />
