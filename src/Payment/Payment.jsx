@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
+import 'antd/dist/reset.css';
+import { message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import { Pointer } from "pointer-wallet";
 
 function Payment() {
   const { id } = useParams(); // id is tourId from URL
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(600);
   const navigate = useNavigate();
-
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
   const user = JSON.parse(localStorage.getItem("userNav")) || {};
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo")) || {};
   const passengerInfo = JSON.parse(localStorage.getItem("passengerInfo")) || {};
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
-  const token = user?.accessToken || user.token;  
-  console.log("Token:", token);
+  const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
+
 
   useEffect(() => {
     if (id) {
@@ -42,8 +45,8 @@ function Payment() {
       }, 1000);
       return () => clearInterval(timer);
     } else {
-      alert('Thời gian thanh toán đã hết, vui lòng thử lại.');
-      navigate('/'); // Redirect to home when time is up
+      message.success('Thời gian thanh toán đã hết, vui lòng thử lại.');
+      navigate('/'); 
     }
   }, [timeRemaining, navigate]);
 
@@ -58,33 +61,31 @@ function Payment() {
 
   const processPayment = async (orderData) => {
     try {
-      const response = await fetch('https://pointer.io.vn/api/v1/payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer pk_presspay_82fad953e33c472656094ab3b6a3d7d3553d3215ea09fda4e7d363caae555811`,
-        },
-        body: JSON.stringify({
-          private_key: "pk_presspay_62849c1e70084b1d3372ad5a8913f918fab3d64324a9de6a7b4adbbfdcf8e70d",
-          amount: orderData.totalPrice,
-          currency: "VND",
-          message: "Tour Payment",
-          userID: user._id || user.userId,
-          OrderID: orderData.orderId,
-          return_url: `http://localhost:5173`,
-        }),
+      const { url } = await pointerPayment.createPayment({
+        amount: orderData.totalPrice,
+        currency: "VND",
+        message: "Payment with Pointer",
+        userID: user._id || user.userId,
+        orderID: orderData.orderId,
+        returnUrl: "http://localhost:5173",
+        orders: orderData.orders?.map(order => ({
+          name: order.name,
+          image: order.image,
+          description: order.description,
+          quantity: order.quantity,
+          price: order.price,
+        })) || [],
       });
 
-      const data = await response.json();
-      if (response.ok && data.data?.url) {
-        alert('Redirecting to payment gateway');
-        window.location.href = data.data.url;
+      if (url) {
+        message.success('Thông báo thành công!');
+        window.location.href = url;
       } else {
-        throw new Error(data.message || 'Lỗi khi tạo thanh toán.');
+        throw new Error('Lỗi khi tạo thanh toán.');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Lỗi khi kết nối đến server. Vui lòng thử lại.');
+      message.success('Lỗi khi kết nối đến server. Vui lòng thử lại.');
     }
   };
 
@@ -94,7 +95,7 @@ function Payment() {
       return;
     }
 
-    if (!user || !bookingData || !passengerInfo || !customerInfo || selectedDates.length === 0 || !bookingData.tourId) {
+    if (!user || !bookingData || !customerInfo || selectedDates.length === 0 || !bookingData.tourId) {
       alert('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
       return;
     }
