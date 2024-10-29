@@ -81,9 +81,9 @@ const BookingForm = () => {
               />
               <div>
                 <h2 className="font-semibold text-xl">
-                  {user ? `Đăng nhập với tên ${user.name}` : "Chưa đăng nhập"}
+                  {user ? `Đăng nhập với  ${user.name || user.email}` : "Chưa đăng nhập"}
                 </h2>
-                {user && <p className="text-sm text-gray-600">{user.email}</p>}
+                {/* {user && <p className="text-sm text-gray-600">{user.email}</p>} */}
               </div>
             </div>
           </div>
