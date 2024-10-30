@@ -7,6 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { Pointer } from "pointer-wallet";
 
+const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
+
 function Payment() {
   const { id } = useParams(); // id is tourId from URL
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
@@ -67,7 +69,7 @@ function Payment() {
         message: "Payment with Pointer",
         userID: user._id || user.userId,
         orderID: orderData.orderId,
-        returnUrl: "http://localhost:5173",
+        returnUrl: `${VITE_REDIRECT_URL}`,
         orders: orderData.orders?.map(order => ({
           name: order.name,
           image: order.image,
@@ -91,12 +93,12 @@ function Payment() {
 
   const handlePaymentSubmit = async () => {
     if (!selectedPaymentMethod) {
-      alert('Vui lòng chọn phương thức thanh toán.');
+      message.error('Vui lòng chọn phương thức thanh toán.');
       return;
     }
 
     if (!user || !bookingData || !customerInfo || selectedDates.length === 0 || !bookingData.tourId) {
-      alert('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
+      message.error('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
       return;
     }
 

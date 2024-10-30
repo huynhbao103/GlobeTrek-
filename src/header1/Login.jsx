@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import GoogleSignIn from "./GoogleSignIn";
-import LoginFB from "./LoginFB";
 import SsoPointerSignIn from "./GoogleSignIn";
 import ReCaptcha from "../ReCaptcha/ReCaptcha";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser,verifyAccount  } from "../redux/apiRequest"; // Your async action creator
 import { useSelector } from "react-redux";
 import { checkUserEmail } from "../API/apiService"
+import { message } from 'antd';
 // const registeredUsers = [{ email: "giakhoi2004@gmail.com", role: "admin" }];
 
 export default function Modal({ onRecaptchaToken = () => {} }) {
@@ -172,7 +171,7 @@ export default function Modal({ onRecaptchaToken = () => {} }) {
         if (inputError) return;
 
         if (password !== confirmPassword) {
-            alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+            message.error("Mật khẩu và xác nhận mật khẩu không khớp!");
             return;
         }
         const newUser = {

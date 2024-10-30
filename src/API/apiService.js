@@ -1,5 +1,4 @@
-const BASE_URL = 'http://localhost:8081';
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const TOUR_API_URL = `${BASE_URL}/tours/api`;
 const AUTH_API_URL = `${BASE_URL}/api/auth`;
 const ORDER_API_URL = `${BASE_URL}/orders/api`;

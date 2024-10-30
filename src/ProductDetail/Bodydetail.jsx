@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // Thêm useParams để lấy ID từ URL
+import { useParams } from 'react-router-dom'; 
 import Inforimage from './InfoImage.jsx';
 import '../index.css';
 import TourInfo from './TourInfo.jsx';

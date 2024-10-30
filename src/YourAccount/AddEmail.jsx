@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 
-Modal.setAppElement("#root"); // Đảm bảo rằng modal có thể hoạt động đúng
+Modal.setAppElement("#root");
 
 function AddEmail() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [error, setError] = useState("");
   const [emails, setEmails] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("userNav"));
 
   const openModal = () => {
     setModalIsOpen(true);

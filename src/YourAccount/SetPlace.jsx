@@ -1,5 +1,6 @@
 import React from 'react';
 import Setplace from '../assets/Setplace.png';
+import { Link } from 'react-router-dom';
 
 const SetPlace = ({ setSelectedSection }) => {
   const handleClick = () => {
@@ -30,10 +31,11 @@ const SetPlace = ({ setSelectedSection }) => {
         </div>
       </div>
       <div>
-        <h3 className="text-xl font-semibold">Lịch sử giao dịch</h3>
+       <h3 className="text-xl font-semibold">Lịch sử giao dịch</h3>
+   
         <div className="bg-white shadow rounded p-4 mt-2 text-center">
           <p>
-            Xem <span className="text-green-500 font-semibold cursor-pointer" onClick={handleClick}>Lịch sử giao dịch</span> của bạn
+            Xem  <Link to='/Transaction'><span className="text-green-500 font-semibold cursor-pointer" onClick={handleClick}>Lịch sử giao dịch</span> </Link>của bạn
           </p>
         </div>
       </div>

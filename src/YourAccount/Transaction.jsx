@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import ReactPaginate from 'react-paginate';
+import { Select, Typography, Card, Pagination, message } from 'antd';
+
+const { Title, Text } = Typography;
 
 const Transaction = () => {
   const [groupedOrders, setGroupedOrders] = useState({});
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5); // Số đơn hàng hiển thị trên mỗi trang
   const [dateFilter, setDateFilter] = useState(''); // Lọc theo thời gian
 
@@ -31,28 +33,23 @@ const Transaction = () => {
 
         const data = await response.json();
         setGroupedOrders(data);
-        filterOrders(data); // Lọc đơn hàng ngay sau khi nhận dữ liệu
+        filterOrders(data); 
       } catch (error) {
         console.error('Error fetching orders:', error);
+        message.error('Không thể tải dữ liệu đơn hàng');
       }
     };
 
     fetchOrders();
   }, []);
 
-  // Hàm lọc đơn hàng theo ngày
   const filterOrders = (orders) => {
     const filtered = Object.entries(orders).reduce((acc, [monthYear, orderList]) => {
       orderList.forEach(order => {
         const orderDate = new Date(order.bookingDate);
         const today = new Date();
         
-        // Kiểm tra theo từng tùy chọn lọc
-        if (dateFilter === '90-days') {
-          if ((today - orderDate) / (1000 * 60 * 60 * 24) <= 90) {
-            acc.push(order);
-          }
-        } else if (dateFilter === '3-months') {
+        if (dateFilter === '90-days' || dateFilter === '3-months') {
           if ((today - orderDate) / (1000 * 60 * 60 * 24) <= 90) {
             acc.push(order);
           }
@@ -61,7 +58,7 @@ const Transaction = () => {
             acc.push(order);
           }
         } else {
-          acc.push(order); // Nếu không có lọc thì thêm tất cả
+          acc.push(order); 
         }
       });
       return acc;
@@ -70,68 +67,72 @@ const Transaction = () => {
     setFilteredOrders(filtered);
   };
 
-  // Xử lý thay đổi filter
-  const handleFilterChange = (event) => {
-    setDateFilter(event.target.value);
+  const handleFilterChange = (value) => {
+    setDateFilter(value);
     filterOrders(groupedOrders);
   };
 
   // Phân trang
   const pageCount = Math.ceil(filteredOrders.length / itemsPerPage);
-  const handlePageClick = (data) => {
-    setCurrentPage(data.selected);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   // Xác định các đơn hàng hiển thị trên trang hiện tại
-  const displayOrders = filteredOrders.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+  const displayOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="p-6 bg-white">
-      <h1 className="text-xl font-bold mb-4">Lịch sử giao dịch của tôi</h1>
-
-      {/* Chọn bộ lọc thời gian */}
-      <div className="mb-4">
-        <label className="mr-2">Lọc theo thời gian:</label>
-        <select onChange={handleFilterChange} value={dateFilter} className="border rounded p-2">
-          <option value="">Tất cả</option>
-          <option value="90-days">90 ngày trước</option>
-          <option value="3-months">3 tháng trước</option>
-          <option value="6-months">6 tháng trước</option>
-        </select>
+    <>   
+     <div className="p-6 bg-white shadow-md rounded-lg">
+      <Title level={2} className="mb-4 text-center">Lịch sử giao dịch của tôi</Title>
+      <div className="mb-4 text-center">
+        <Select 
+          onChange={handleFilterChange} 
+          value={dateFilter} 
+          className="w-60"
+          placeholder="Chọn thời gian"
+        >
+          <Select.Option value="">Tất cả</Select.Option>
+          <Select.Option value="90-days">90 ngày trước</Select.Option>
+          <Select.Option value="3-months">3 tháng trước</Select.Option>
+          <Select.Option value="6-months">6 tháng trước</Select.Option>
+        </Select>
       </div>
 
       {displayOrders.length === 0 ? (
-        <p>Không có đơn hàng nào.</p>
+        <Text className="text-center">Không có đơn hàng nào.</Text>
       ) : (
         <div>
           {displayOrders.map((order) => (
-            <div key={order._id} className="mb-6">
-              <h2 className="text-lg font-semibold">Mã đặt chỗ: {order._id}</h2>
-              <p>{order.tour?.description}</p>
-              <p className="text-lg font-bold">{order.totalValue} VND</p>
+            <Card 
+              key={order._id} 
+              className="mb-4 shadow-md hover:shadow-lg transition duration-300"
+              style={{ borderRadius: '8px' }}
+            >
+              <Title level={4}>Mã đặt chỗ: {order._id}</Title>
+              <Text>{order.tour?.description}</Text>
+              <Text className="text-lg font-bold block mt-2">{order.totalValue.toLocaleString()} VND</Text>
               
               {order.status === 'canceled' && (
-                <p className="text-red-500">Đơn hàng đã bị hủy</p>
+                <Text className="text-red-500">Đơn hàng đã bị hủy</Text>
               )}
-              <hr className='w-full h-full'/>
-            </div>
+            </Card>
           ))}
           
           {/* Phân trang */}
-          <ReactPaginate
-            previousLabel={'Previous'}
-            nextLabel={'Next'}
-            breakLabel={'...'}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={'pagination'}
-            activeClassName={'active'}
+          <Pagination 
+            current={currentPage} 
+            pageSize={itemsPerPage} 
+            total={filteredOrders.length} 
+            onChange={handlePageChange} 
+            showSizeChanger={false} 
+            className="mt-4 text-center"
           />
         </div>
       )}
     </div>
+    </>
+
   );
 };
 

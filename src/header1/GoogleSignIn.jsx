@@ -1,6 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {  message } from 'antd';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 
 const SsoPointerSignIn = () => {
     const [user, setUser] = useState(null);
@@ -17,20 +20,21 @@ const SsoPointerSignIn = () => {
         const handleCallback = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-            console.log(code) // Extract the authorization code from the URL
+            console.log(code) 
             if (code) {
                 try {
-                    const { data } = await axios.get('http://localhost:8081/api/auth/callback', {
-                        params: { code }  // Send the code to your backend to exchange it for user information and token
+                    const { data } = await axios.get(`${BASE_URL}/api/auth/callback`, {
+                        params: { code }  
                     });
                     console.log(data) 
-                    localStorage.setItem('userNav', JSON.stringify(data)); // Store the user data in local storage
-                    setUser(data); // Update the state with user data
+                    localStorage.setItem('userNav', JSON.stringify(data)); 
+                    setUser(data); 
                     setError('');
-                    alert('Đăng nhập thành công!');
+                    message.success('Đăng nhập thành công!');
+                    window.location.reload();
                 } catch (error) {
                     console.error('Đăng nhập thất bại:', error);
-                    setError('Đăng nhập thất bại! Vui lòng thử lại.');
+                    message.error('Đăng nhập thất bại! Vui lòng thử lại.');
                 }
             }
         };
@@ -38,7 +42,7 @@ const SsoPointerSignIn = () => {
         handleCallback();
     }, []); 
     const handleLoginRedirect = () => {
-        const redirectUri = encodeURIComponent('http://localhost:5173/'); // Adjust as needed
+        const redirectUri = encodeURIComponent(`${REDIRECT_URL}`); 
         window.location.href = `https://sso-pointer.vercel.app/authorize?callbackUrl=${redirectUri}`;
     };
 
@@ -55,10 +59,10 @@ const SsoPointerSignIn = () => {
                 <div>
                     {/* Display user information or logout button */}
                     <p>Xin chào, {user.name}</p>
-                    <button onClick={() => {
+                    {/* <button onClick={() => {
                         localStorage.removeItem('user');
                         setUser(null);
-                    }}>Đăng xuất</button>
+                    }}>Đăng xuất</button> */}
                 </div>
             )}
             {error && <p className="text-red-500">{error}</p>}

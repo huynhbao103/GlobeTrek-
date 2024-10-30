@@ -11,7 +11,9 @@ const GuestInfoForm = ({ onSave }) => {
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
-  const API_URL = "http://localhost:8081/orders/api"; // Example definition
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+  const API_URL = `${BASE_URL}/orders/api`; // Example definition
 
   useEffect(() => {
     const savedGuestInfo = JSON.parse(localStorage.getItem('passengerInfo'));
