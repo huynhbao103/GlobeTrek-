@@ -1,10 +1,11 @@
 import React from 'react';
 import User from "../assets/User.png";
+import {  message } from 'antd';
 function ProfileUser() {
   const requestNotificationPermission = () => {
     // Kiểm tra nếu trình duyệt hỗ trợ Notifications API
     if (!("Notification" in window)) {
-      alert("Trình duyệt của bạn không hỗ trợ thông báo.");
+      message.error("Trình duyệt của bạn không hỗ trợ thông báo.");
       return;
     }
 

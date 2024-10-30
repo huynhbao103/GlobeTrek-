@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Header from './Header';
 import Footer from '../footer/Footer';
+import { message } from 'antd';
 import { fetchFavoriteTours, removeFavoriteTour } from '../API/apiService'; 
 
 const getUserId = () => {
@@ -44,10 +45,10 @@ const SavedList = () => {
     try {
       await removeFavoriteTour(userId, tourId);
       setSavedItems(savedItems.filter(item => item.tour._id !== tourId));
-      alert("Tour đã bị xóa khỏi danh sách yêu thích!");
+      message.success("Tour đã bị xóa khỏi danh sách yêu thích!");
     } catch (error) {
-      console.error("Lỗi xóa tour:", error);
-      alert(error.message);
+      
+      message.error(error.message);
       
     }
   };

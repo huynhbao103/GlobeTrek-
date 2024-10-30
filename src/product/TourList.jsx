@@ -1,7 +1,7 @@
 import React from 'react';
 import TourItem from './TourItem';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'; // Import CSS for Skeleton
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const ToursList = ({ tours, view, loading }) => {
   return (

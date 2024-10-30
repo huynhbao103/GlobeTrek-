@@ -11,6 +11,7 @@ import ConfirmBookingModal from "./ConfirmBookingModal";
 import ProcessingModal from "./ProcessingModal"; 
 import { useSelector } from "react-redux";
 import PropTypes from 'prop-types';
+import {  message } from 'antd';
 
 const BookingForm = () => {
   const { id } = useParams(); 
@@ -46,7 +47,7 @@ const BookingForm = () => {
   // Xử lý khi nhấn "Tiếp tục"
   const handleContinueClick = () => {
     if (bookingData.adultCount < 1) {
-      alert("Bạn cần ít nhất 1 người lớn để đặt chỗ.");
+      message.error("Bạn cần ít nhất 1 người lớn để đặt chỗ.");
       return;
     }
     setIsConfirmModalOpen(true);

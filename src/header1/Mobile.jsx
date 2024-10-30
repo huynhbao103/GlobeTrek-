@@ -13,7 +13,7 @@ const Header = () => {
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const storedUser = localStorage.getItem("userNav");
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
@@ -26,7 +26,7 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("userNav");
     setUser(null);
     setToken("");
   };
