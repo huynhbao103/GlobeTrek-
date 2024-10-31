@@ -7,7 +7,7 @@ import BodyPay from './Payment/bodyPay.jsx';
 import BookingForm from './Payment/BookingForm.jsx';
 import { DateProvider } from './Context/DateContext.jsx'; 
 import Payment from './Payment/Payment.jsx';
-import MainLayout  from './YourAccount/MainLayout.jsx'
+
 import Settings  from './YourAccount/Settings.jsx'
 import SetPlace  from './YourAccount/SetPlace.jsx'
 import Transaction  from './YourAccount/Transaction.jsx'
@@ -29,9 +29,9 @@ function App() {
           <Route path='/BookingForm/:id' element={<BookingForm/>}/>
           <Route path='/Payment/:id' element={<Payment/>}/>
           {/* <Route path="/wallet-payment" element={WalletPayment} /> */}
-          <Route path='/MainLayout' element={<MainLayout />}/>
+          
          
-          <Route path="/settings" element={<Settings />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/setplace" element={<SetPlace />} />
         <Route path="/SavedPassengers" element={<SavedPassengers/>} />
         <Route path="/Refunds" element={<Refunds />} />
