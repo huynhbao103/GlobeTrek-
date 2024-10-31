@@ -56,28 +56,36 @@ const UserInfo = () => {
           </div>
           <ul className="py-2">
             <li className="px-4 py-2 cursor-pointer hover:bg-green-100">0 Điểm</li>
-            <Link to='/MainLayout'>
+            <Link to='/settings'>
               <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
                 <img src={icon1} alt="Chỉnh sửa hồ sơ" className="w-4 h-4 mr-2" />
                 Chỉnh sửa hồ sơ
               </li>
             </Link>
-            <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
-              <img src={icon3} alt="Danh sách giao dịch" className="w-4 h-4 mr-2" />
-              Danh sách giao dịch
-            </li>
-            <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
-              <img src={icon4} alt="Đặt chỗ của tôi" className="w-4 h-4 mr-2" />
-              Đặt chỗ của tôi
-            </li>
-            <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
-              <img src={icon5} alt="Hoàn tiền" className="w-4 h-4 mr-2" />
-              Hoàn tiền <span className="mr-2 px-2 bg-yellow-200 rounded-full font-bold">New!</span>
-            </li>
-            <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
-              <img src={icon7} alt="Thông tin hành khách đã lưu" className="w-4 h-4 mr-2" />
-              Thông tin hành khách đã lưu
-            </li>
+            <Link to='/Transaction'>
+              <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
+                <img src={icon3} alt="Danh sách giao dịch" className="w-4 h-4 mr-2" />
+                Danh sách giao dịch
+              </li>
+            </Link>
+            <Link to='/setplace'>
+              <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
+                <img src={icon4} alt="Đặt chỗ của tôi" className="w-4 h-4 mr-2" />
+                Đặt chỗ của tôi
+              </li>
+            </Link>
+            <Link to='/Refunds'>
+              <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
+                <img src={icon5} alt="Hoàn tiền" className="w-4 h-4 mr-2" />
+                Hoàn tiền <span className="mr-2 px-2 bg-yellow-200 rounded-full font-bold">New!</span>
+              </li>
+            </Link>
+            <Link to='/SavedPassengers'>
+              <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
+                <img src={icon7} alt="Thông tin hành khách đã lưu" className="w-4 h-4 mr-2" />
+                Thông tin hành khách đã lưu
+              </li>
+            </Link>
             <li className="px-4 py-2 hover:bg-green-100 cursor-pointer flex items-center">
               <button
                 className="flex items-center py-2 hover:bg-green-100 cursor-pointer"

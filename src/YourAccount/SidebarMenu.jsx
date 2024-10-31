@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, Button, Avatar } from 'antd';
+import { Link } from 'react-router-dom';
 import icon1 from '../assets/icon1.png';
 import icon3 from '../assets/icon3.png';
 import icon4 from '../assets/icon4.png';
@@ -25,14 +26,9 @@ const SidebarMenu = ({ setSelectedSection }) => {
     window.location.reload();
   };
 
-  const handleSectionClick = (section) => {
-    setSelectedSection(section);
-    setActiveSection(section);
-  };
-
   const menuItemClass = (section) =>
     `px-4 py-2 mt-2 cursor-pointer flex items-center rounded-lg transition duration-200 hover:bg-green-500 ${
-      activeSection === section ? 'bg-green-300' : ''
+      activeSection === section ? '' : ''
     }`;
 
   return (
@@ -49,26 +45,36 @@ const SidebarMenu = ({ setSelectedSection }) => {
           0 Điểm
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item type='' key="SetPlace" onClick={() => handleSectionClick('SetPlace')} className={menuItemClass('SetPlace')}>
-          <img src={icon4} alt="Đặt chỗ của tôi" className="inline-block w-5 h-5 mr-2" />
-          Đặt chỗ của tôi
+        <Menu.Item key="SetPlace" className={menuItemClass('SetPlace')}>
+          <Link to="/setplace" onClick={() => setActiveSection('SetPlace')}>
+            <img src={icon4} alt="Đặt chỗ của tôi" className="inline-block w-5 h-5 mr-2" />
+            Đặt chỗ của tôi
+          </Link>
         </Menu.Item>
-        <Menu.Item key="Transaction" onClick={() => handleSectionClick('Transaction')} className={menuItemClass('Transaction')}>
-          <img src={icon3} alt="Danh sách giao dịch" className="inline-block w-5 h-5 mr-2" />
-          Danh sách giao dịch
+        <Menu.Item key="Transaction" className={menuItemClass('Transaction')}>
+          <Link to="/Transaction" onClick={() => setActiveSection('Transaction')}>
+            <img src={icon3} alt="Danh sách giao dịch" className="inline-block w-5 h-5 mr-2" />
+            Danh sách giao dịch
+          </Link>
         </Menu.Item>
-        <Menu.Item key="refunds" onClick={() => handleSectionClick('refunds')} className={menuItemClass('refunds')}>
-          <img src={icon5} alt="Hoàn tiền" className="inline-block w-5 h-5 mr-2" />
-          Hoàn tiền <span className="ml-2 px-2 bg-yellow-200 rounded-full font-bold">New!</span>
+        <Menu.Item key="refunds" className={menuItemClass('refunds')}>
+          <Link to="/Refunds" onClick={() => setActiveSection('refunds')}>
+            <img src={icon5} alt="Hoàn tiền" className="inline-block w-5 h-5 mr-2" />
+            Hoàn tiền <span className="ml-2 px-2 bg-yellow-200 rounded-full font-bold">New!</span>
+          </Link>
         </Menu.Item>
-        <Menu.Item key="SavedPassengers" onClick={() => handleSectionClick('SavedPassengers')} className={menuItemClass('SavedPassengers')}>
-          <img src={icon7} alt="Hành khách đã lưu" className="inline-block w-5 h-5 mr-2" />
-          Hành khách đã lưu
+        <Menu.Item key="SavedPassengers" className={menuItemClass('SavedPassengers')}>
+          <Link to="/SavedPassengers" onClick={() => setActiveSection('SavedPassengers')}>
+            <img src={icon7} alt="Hành khách đã lưu" className="inline-block w-5 h-5 mr-2" />
+            Hành khách đã lưu
+          </Link>
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="Settings" onClick={() => handleSectionClick('Settings')} className={menuItemClass('Settings')}>
-          <img src={icon1} alt="Chỉnh sửa hồ sơ" className="inline-block w-5 h-5 mr-2" />
-          Tài Khoản
+        <Menu.Item key="Settings" className={menuItemClass('Settings')}>
+          <Link to="/settings" onClick={() => setActiveSection('Settings')}>
+            <img src={icon1} alt="Chỉnh sửa hồ sơ" className="inline-block w-5 h-5 mr-2" />
+            Tài Khoản
+          </Link>
         </Menu.Item>
         <Menu.Item key="logout">
           <Button type="link" onClick={() => setShowLogoutModal(true)} className="flex items-center w-full text-left">
@@ -77,7 +83,7 @@ const SidebarMenu = ({ setSelectedSection }) => {
           </Button>
         </Menu.Item>
       </Menu>
-      
+
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={cancelLogout} />

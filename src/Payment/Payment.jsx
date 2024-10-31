@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
-import 'antd/dist/reset.css';
-import { message } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import { Pointer } from "pointer-wallet";
+import { Pointer } from "pointer-wallet"; 
+import { message } from 'antd'; 
 
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 
 function Payment() {
-  const { id } = useParams(); // id is tourId from URL
+  const { id } = useParams(); 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(600);
+  
   const navigate = useNavigate();
+
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
   const user = JSON.parse(localStorage.getItem("userNav")) || {};
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo")) || {};
@@ -21,11 +21,15 @@ function Payment() {
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
   const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
-
+  const token = user?.accessToken || user?.accesstoken; 
+  console.log("token:", token);
 
   useEffect(() => {
     if (id) {
-      const bookingDataWithTourId = { ...bookingData, tourId: id };
+      const bookingDataWithTourId = {
+        ...bookingData,
+        tourId: id,
+      };
       localStorage.setItem("bookingData", JSON.stringify(bookingDataWithTourId));
     }
   }, [id, bookingData]);
@@ -47,7 +51,7 @@ function Payment() {
       }, 1000);
       return () => clearInterval(timer);
     } else {
-      message.success('Thời gian thanh toán đã hết, vui lòng thử lại.');
+      message.error('Thời gian thanh toán đã hết, vui lòng thử lại.');
       navigate('/'); 
     }
   }, [timeRemaining, navigate]);
@@ -80,49 +84,105 @@ function Payment() {
       });
 
       if (url) {
-        message.success('Thông báo thành công!');
-        window.location.href = url;
+        message.success('Đang chuyển hướng đến ví điện tử...');
+        window.location.href = url; 
       } else {
         throw new Error('Lỗi khi tạo thanh toán.');
       }
     } catch (error) {
       console.error('Error:', error);
-      message.success('Lỗi khi kết nối đến server. Vui lòng thử lại.');
+      message.error('Lỗi khi kết nối đến server. Vui lòng thử lại.');
     }
   };
 
   const handlePaymentSubmit = async () => {
     if (!selectedPaymentMethod) {
-      message.error('Vui lòng chọn phương thức thanh toán.');
+      message.warning('Vui lòng chọn phương thức thanh toán.');
       return;
     }
 
-    if (!user || !bookingData || !customerInfo || selectedDates.length === 0 || !bookingData.tourId) {
-      message.error('Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.');
+    if (!user) {
+      message.error('Thông tin người dùng không hợp lệ. Vui lòng đăng nhập lại.');
+      console.log('User:', user);
+      return;
+    }
+    
+    if (!bookingData) {
+      message.error('Dữ liệu đặt chỗ không hợp lệ. Vui lòng kiểm tra lại.');
+      console.log('Booking Data:', bookingData);
+      return;
+    }
+    
+    if (!customerInfo) {
+      message.error('Thông tin khách hàng không hợp lệ. Vui lòng kiểm tra lại.');
+      console.log('Customer Info:', customerInfo);
+      return;
+    }
+    
+    if (selectedDates.length === 0) {
+      message.error('Vui lòng chọn ngày đặt.');
+      console.log('Selected Dates:', selectedDates);
+      return;
+    }
+    
+    if (!bookingData.tourId) {
+      message.error('Mã tour không hợp lệ. Vui lòng kiểm tra lại.');
+      console.log('Booking Tour ID:', bookingData.tourId);
       return;
     }
 
     const orderData = {
-      orderId: `Order_${new Date().getTime()}`,
+      orderId: `Order_${new Date().getTime()}`, 
       userId: user._id || user.userId,
       tour: bookingData.tourId, 
       adultCount: bookingData.adultCount,
       childCount: bookingData.childCount,
       totalPrice: bookingData.totalPrice,
       paymentMethod: selectedPaymentMethod,
-      selectedDates: selectedDates[0],
+      selectedDates: selectedDates[selectedDates.length - 1],
       passengerInfo,
       customerInfo: {
         fullName: customerInfo.fullName,
         phone: customerInfo.phone,
         email: customerInfo.email,
       },
-      adultPrice: bookingData.adultPrice,
-      childPrice: bookingData.childPrice,
-      bookingDate: selectedDates[0],
+      totalValue: bookingData.totalPrice,
+      adultPrice: bookingData.adultPrice, 
+      childPrice: bookingData.childPrice, 
+      bookingDate: selectedDates[0], 
     };
+    
+    console.log(orderData); 
 
-    await processPayment(orderData);
+    
+    try {
+      const response = await fetch('http://localhost:8081/orders/api/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        message.warning('Đang chờ xác nhận thanh toán...');
+        await processPayment(orderData); 
+      } else {
+        const errorData = await response.json();
+        if (response.status === 401) {
+          message.error('Bạn không có quyền thực hiện hành động này. Vui lòng đăng nhập lại.');
+          navigate('/login');
+        } else if (response.status === 403) {
+          message.error('Bạn không có quyền truy cập vào hành động này.'); 
+        } else {
+          message.error(`Có lỗi xảy ra: ${errorData.message || 'Vui lòng thử lại.'}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      message.error('Lỗi khi kết nối đến server. Vui lòng thử lại.');
+    }
   };
 
   return (
@@ -144,15 +204,17 @@ function Payment() {
                 <input
                   type="radio"
                   id="pointer-wallet"
-                  name="pointer-wallet"
+                  name="payment"
                   value="pointer-wallet"
                   onChange={handlePaymentChange}
                   className="mr-2"
                 />
-                <label htmlFor="pointer-wallet" className="font-semibold">Thanh toán với Pointer Wallet</label>
+                <label htmlFor="pointer-wallet" className="font-semibold">Ví điện tử khác</label>
               </div>
+            
+           
             </div>
-          </div>  
+          </div>
 
           <div className="mt-8 p-4 bg-gray-50 rounded-lg shadow-inner">
             <div className="flex justify-between items-center mb-4">
@@ -166,6 +228,7 @@ function Payment() {
             >
               {getPaymentButtonLabel()}
             </button>
+
             <p className="text-sm text-gray-600 mt-2">
               Bằng cách tiếp tục thanh toán, bạn đã đồng ý với{" "}
               <a href="#" className="text-blue-500 underline">Điều khoản và Điều kiện</a>

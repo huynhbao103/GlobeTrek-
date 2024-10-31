@@ -79,7 +79,7 @@ function Laptop() {
         </div>
       </div>
       <div className="pt-20">
-         {/* Render MainContent with selectedSection */}
+      
       </div>
     </div>
   );
