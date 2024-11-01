@@ -25,7 +25,7 @@ function Payment() {
   console.log("token:", token);
 
   useEffect(() => {
-    if (id) {
+    if (id) { 
       const bookingDataWithTourId = {
         ...bookingData,
         tourId: id,
