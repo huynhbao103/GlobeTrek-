@@ -42,6 +42,7 @@ const SsoPointerSignIn = () => {
         handleCallback();
     }, []); 
     const handleLoginRedirect = () => {
+        // const redirectUri = encodeURIComponent(`http://localhost:5173`); 
         const redirectUri = encodeURIComponent(`${REDIRECT_URL}`); 
         window.location.href = `https://sso-pointer.vercel.app/authorize?callbackUrl=${redirectUri}`;
     };
