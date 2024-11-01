@@ -21,11 +21,11 @@ function Payment() {
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
   const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
-  const token = user?.accessToken || user?.accesstoken || user?.token?.accessToken; 
+  const token = user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token; 
   console.log("token:", token);
 
   useEffect(() => {
-    if (id) {
+    if (id) { 
       const bookingDataWithTourId = {
         ...bookingData,
         tourId: id,
