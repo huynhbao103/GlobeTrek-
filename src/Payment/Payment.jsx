@@ -6,6 +6,7 @@ import { Pointer } from "pointer-wallet";
 import { message } from 'antd'; 
 
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
+const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function Payment() {
   const { id } = useParams(); 
@@ -22,7 +23,6 @@ function Payment() {
 
   const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
   const token = user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token; 
-  console.log("token:", token);
 
   useEffect(() => {
     if (id) { 
@@ -73,7 +73,7 @@ function Payment() {
         message: "Payment with Pointer",
         userID: user._id || user.userId,
         orderID: orderData.orderId,
-        returnUrl: `${VITE_REDIRECT_URL}`,
+        returnUrl: `${VITE_BASE_URL}`,
         orders: orderData.orders?.map(order => ({
           name: order.name,
           image: order.image,
@@ -86,6 +86,7 @@ function Payment() {
       if (url) {
         message.success('Đang chuyển hướng đến ví điện tử...');
         window.location.href = url; 
+        
       } else {
         throw new Error('Lỗi khi tạo thanh toán.');
       }
@@ -100,7 +101,7 @@ function Payment() {
       message.warning('Vui lòng chọn phương thức thanh toán.');
       return;
     }
-
+  
     if (!user) {
       message.error('Thông tin người dùng không hợp lệ. Vui lòng đăng nhập lại.');
       console.log('User:', user);
@@ -130,9 +131,8 @@ function Payment() {
       console.log('Booking Tour ID:', bookingData.tourId);
       return;
     }
-
+  
     const orderData = {
-      orderId: `Order_${new Date().getTime()}`, 
       userId: user._id || user.userId,
       tour: bookingData.tourId, 
       adultCount: bookingData.adultCount,
@@ -153,10 +153,9 @@ function Payment() {
     };
     
     console.log(orderData); 
-
-    
+  
     try {
-      const response = await fetch('http://localhost:8081/orders/api/create', {
+      const response = await fetch(`${VITE_BASE_URL}/orders/api/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,17 +163,23 @@ function Payment() {
         },
         body: JSON.stringify(orderData),
       });
-
+  
       if (response.ok) {
-        message.warning('Đang chờ xác nhận thanh toán...');
-        await processPayment(orderData); 
+        const data = await response.json();
+        console.log("Response Data:", data); // Kiểm tra phản hồi
+        
+        const orderId = data.order._id;
+        localStorage.setItem('orderID', orderId);
+  
+        message.success('Đơn hàng đã được tạo thành công!');
+        await processPayment({ ...orderData, orderId }); 
       } else {
         const errorData = await response.json();
         if (response.status === 401) {
           message.error('Bạn không có quyền thực hiện hành động này. Vui lòng đăng nhập lại.');
           navigate('/login');
         } else if (response.status === 403) {
-          message.error('Bạn không có quyền truy cập vào hành động này.'); 
+          message.error('Bạn không có quyền truy cập vào hành động này.');
         } else {
           message.error(`Có lỗi xảy ra: ${errorData.message || 'Vui lòng thử lại.'}`);
         }
@@ -184,6 +189,7 @@ function Payment() {
       message.error('Lỗi khi kết nối đến server. Vui lòng thử lại.');
     }
   };
+  
 
   return (
     <>
@@ -211,8 +217,6 @@ function Payment() {
                 />
                 <label htmlFor="pointer-wallet" className="font-semibold">Ví điện tử khác</label>
               </div>
-            
-           
             </div>
           </div>
 
@@ -222,17 +226,14 @@ function Payment() {
               <p className="text-xl font-bold">{bookingData.totalPrice.toLocaleString()} VND</p>
             </div>
             <button
-              className={`w-full bg-trek-color-1 text-white py-3 font-bold rounded-md hover:text-white hover:bg-trek-color-1 hover:opacity-50 ${!selectedPaymentMethod && 'opacity-50 cursor-not-allowed'}`}
+              className={`w-full bg-trek-color-1 text-white py-3 px-6 rounded-lg hover:bg-trek-color-1-dark transition duration-300 ${
+                selectedPaymentMethod ? '' : 'opacity-50 cursor-not-allowed'
+              }`}
               onClick={handlePaymentSubmit}
               disabled={!selectedPaymentMethod}
             >
               {getPaymentButtonLabel()}
             </button>
-
-            <p className="text-sm text-gray-600 mt-2">
-              Bằng cách tiếp tục thanh toán, bạn đã đồng ý với{" "}
-              <a href="#" className="text-blue-500 underline">Điều khoản và Điều kiện</a>
-            </p>
           </div>
         </div>
       </div>
