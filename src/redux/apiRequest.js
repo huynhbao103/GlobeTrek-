@@ -1,5 +1,7 @@
 import {  message } from 'antd';
 import axios from "axios";
+const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+
 import { loginFailed, 
          loginStart,
          loginSuccess,
@@ -16,7 +18,7 @@ import { loginFailed,
 export const signinUser = async(user, dispatch, closeModal) => {
     dispatch(loginStart());
     try {
-        const res = await axios.post("http://localhost:8081/api/auth/signin", user);
+        const res = await axios.post(`${VITE_BASE_URL}/api/auth/signin`, user);
         dispatch(loginSuccess(res.data));
         console.log(res.data)
         // navigator("/"); // Navigate on success
@@ -32,7 +34,7 @@ export const signinUser = async(user, dispatch, closeModal) => {
 export const registerUser = async(user, dispatch, setShowVerification) => {
     dispatch(registerStart());
     try {
-        await axios.post("http://localhost:8081/api/auth/signup", user);
+        await axios.post(`${VITE_BASE_URL}/api/auth/signup`, user);
         dispatch(registerSuccess());
         setShowVerification(true);
     } catch (error) {
@@ -45,7 +47,7 @@ export const registerUser = async(user, dispatch, setShowVerification) => {
 export const verifyAccount = async (email, otp, dispatch,closeModal, setShowVerification) => {
     dispatch(verifyAccountStart());
     try {
-        const res = await axios.post("http://localhost:8081/api/auth/verify-account", { email, otp });
+        const res = await axios.post(`${VITE_BASE_URL}/api/auth/verify-account`, { email, otp });
         dispatch(verifyAccountSuccess(res.data));
         message.error("Tài khoản xác nhận thành công vui lòng đăng nhập!");
         closeModal();

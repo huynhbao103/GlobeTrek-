@@ -73,7 +73,7 @@ function Payment() {
         message: "Payment with Pointer",
         userID: user._id || user.userId,
         orderID: orderData.orderId,
-        returnUrl: `${VITE_BASE_URL}`,
+        returnUrl: `${VITE_REDIRECT_URL}`,
         orders: orderData.orders?.map(order => ({
           name: order.name,
           image: order.image,
