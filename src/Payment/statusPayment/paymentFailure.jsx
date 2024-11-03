@@ -29,10 +29,10 @@ function PaymentFailure() {
           </Text>
         </Paragraph>
         <Paragraph>
-          <CloseCircleOutlined className="site-result-demo-error-icon" /> Tài khoản của bạn đã bị đóng băng. <a>Khôi phục ngay &gt;</a>
+          <CloseCircleOutlined className="site-result-demo-error-icon" /> Số dư tài khoản không đủ. <a>Thanh toán lại &gt;</a>
         </Paragraph>
         <Paragraph>
-          <CloseCircleOutlined className="site-result-demo-error-icon" /> Tài khoản của bạn chưa đủ điều kiện để giao dịch. <a>Mở khóa &gt;</a>
+          <CloseCircleOutlined className="site-result-demo-error-icon" /> gì gì đó. <a>rồi gì gì đó &gt;</a>
         </Paragraph>
       </div>
     </Result>
