@@ -16,7 +16,7 @@ import { loginFailed,
 export const signinUser = async(user, dispatch, closeModal) => {
     dispatch(loginStart());
     try {
-        const res = await axios.post("http://localhost:8081/api/auth/signin", user);
+        const res = await axios.post("http://localhost:8081/api/auth/signin?client=true", user);
         dispatch(loginSuccess(res.data));
         console.log(res.data)
         // navigator("/"); // Navigate on success
