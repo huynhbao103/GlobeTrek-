@@ -18,6 +18,7 @@ import { loginFailed,
 export const signinUser = async(user, dispatch, closeModal) => {
     dispatch(loginStart());
     try {
+
         const res = await axios.post(`${VITE_BASE_URL}/api/auth/signin`, user);
         dispatch(loginSuccess(res.data));
         console.log(res.data)

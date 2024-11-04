@@ -44,6 +44,7 @@ const SsoPointerSignIn = () => {
     const handleLoginRedirect = () => {
         // const redirectUri = encodeURIComponent(`http://localhost:5173`); 
         const redirectUri = encodeURIComponent(`${REDIRECT_URL}`); 
+
         window.location.href = `https://sso-pointer.vercel.app/authorize?callbackUrl=${redirectUri}`;
     };
 
@@ -60,8 +61,10 @@ const SsoPointerSignIn = () => {
                 <div>
                     {/* Display user information or logout button */}
                     <p>Xin chào, {user.name}</p>
+
                     {/* <button onClick={() => {
                         localStorage.removeItem('user');
+
                         setUser(null);
                     }}>Đăng xuất</button> */}
                 </div>
