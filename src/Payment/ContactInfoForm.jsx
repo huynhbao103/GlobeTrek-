@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { customerInfo as saveContactInfo } from '../API/apiService'; // Import hàm từ apiService.js
 
-const ContactInfoForm = ({ onSave }) => {
-  const [contactName, setContactName] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
-  const [contactEmail, setContactEmail] = useState('');
+const ContactInfoForm = ({ onSave, orderData }) => {
+  const [fullName, setfullName] = useState('');
+  const [phone, setphone] = useState('');
+  const [email, setemail] = useState('');
   const [error, setError] = useState('');
-  const [isEditing, setIsEditing] = useState(false); // Trạng thái để theo dõi chế độ chỉnh sửa
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    const savedContactInfo = JSON.parse(localStorage.getItem('contactInfo'));
-    if (savedContactInfo) {
-      setContactName(savedContactInfo.contactName || '');
-      setContactPhone(savedContactInfo.contactPhone || '');
-      setContactEmail(savedContactInfo.contactEmail || '');
+    const customerInfo = JSON.parse(localStorage.getItem('customerInfo'));
+    if (customerInfo) {
+      setfullName(customerInfo.fullName || '');
+      setphone(customerInfo.phone || '');
+      setemail(customerInfo.email || '');
     }
   }, []);
 
-  const API_URL = 'http://localhost:5000'; // URL của backend trên localhost
-
   const validatePhoneNumber = (phone) => {
-    return phone.startsWith('0') && phone.length == 10 ;
+    return phone.startsWith('0') && phone.length === 10;
   };
 
   const validateEmail = (email) => {
@@ -29,44 +27,37 @@ const ContactInfoForm = ({ onSave }) => {
   };
 
   const handleSaveContactInfo = () => {
-    if (!validatePhoneNumber(contactPhone)) {
+    if (!validatePhoneNumber(phone)) {
       setError('Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số.');
       return;
     }
 
-    if (!validateEmail(contactEmail)) {
+    if (!validateEmail(email)) {
       setError('Email không hợp lệ.');
       return;
     }
 
     setError('');
 
-    const contactInfo = {
-      contactName,
-      contactPhone,
-      contactEmail
+    const customerInfo = {
+      fullName,
+      phone,
+      email,
     };
 
-    localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
-    console.log('Contact information saved locally:', contactInfo);
+    // Lưu thông tin vào local storage
+    localStorage.setItem('customerInfo', JSON.stringify(customerInfo));
 
-    axios.post(`${API_URL}/saveContactInfo`, contactInfo)
-      .then(response => {
-        console.log('Contact information saved to database:', response.data);
-      })
-      .catch(error => {
-        console.error('Error saving contact information to database:', error);
-      });
-
+    // Nếu có hàm onSave thì gọi hàm đó
     if (onSave) {
-      onSave();
+      onSave(customerInfo);
     }
-
-    setIsEditing(false); // Sau khi lưu, chuyển sang chế độ xem
+    
+    setIsEditing(false);
   };
 
   const handleEditContactInfo = () => {
-    setIsEditing(true); // Chuyển sang chế độ chỉnh sửa
+    setIsEditing(true);
   };
 
   return (
@@ -81,47 +72,46 @@ const ContactInfoForm = ({ onSave }) => {
           {isEditing ? 'Lưu thông tin liên hệ' : 'Chỉnh sửa chi tiết'}
         </button>
       </div>
-     
+
       {isEditing ? (
         <div>
-             <p>Thông tin liên hệ (nhận vé/phiếu thanh toán)</p>
+          <p>Thông tin liên hệ (nhận vé/phiếu thanh toán)</p>
           <div className="mb-4">
-            <label htmlFor="contactName" className="block text-sm font-medium text-gray-700">
-              Họ tên <span className='text-red-500'>*</span>
+            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+              Họ tên <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="contactName"
-              value={contactName}
-              onChange={(e) => setContactName(e.target.value)}
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setfullName(e.target.value)}
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
             />
           </div>
-          <div className='sm:flex w-full justify-between'>
+          <div className="sm:flex w-full justify-between">
             <div className="mb-4 w-1/2 pr-2">
-              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700">
-                Điện thoại di động<span className='text-red-500'>*</span>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                Điện thoại di động<span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                id="contactPhone"
-                value={contactPhone}
-                onChange={(e) => setContactPhone(e.target.value)}
+                id="phone"
+                value={phone}
+                onChange={(e) => setphone(e.target.value)}
                 required
-                placeholder="+84"
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               />
             </div>
             <div className="mb-4 w-1/2 pl-2">
-              <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700">
-                Email <span className='text-red-500'>*</span>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
-                id="contactEmail"
-                value={contactEmail}
-                onChange={(e) => setContactEmail(e.target.value)}
+                id="email"
+                value={email}
+                onChange={(e) => setemail(e.target.value)}
                 required
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
               />
@@ -131,15 +121,15 @@ const ContactInfoForm = ({ onSave }) => {
       ) : (
         <div>
           <div className="mb-4">
-            <p><strong>Họ tên:</strong> {contactName || 'Chưa có thông tin'}</p>
+            <p><strong>Họ tên:</strong> {fullName || 'Chưa có thông tin'}</p>
           </div>
-          <div className='sm:w-[80%] sm:flex justify-between items-center'>
-          <div className="mb-4">
-            <p><strong>Điện thoại di động:</strong> {contactPhone || 'Chưa có thông tin'}</p>
-          </div>
-          <div className="mb-4">
-            <p><strong>Email:</strong> {contactEmail || 'Chưa có thông tin'}</p>
-          </div>
+          <div className="sm:w-[80%] sm:flex justify-between items-center">
+            <div className="mb-4">
+              <p><strong>Điện thoại di động:</strong> {phone || 'Chưa có thông tin'}</p>
+            </div>
+            <div className="mb-4">
+              <p><strong>Email:</strong> {email || 'Chưa có thông tin'}</p>
+            </div>
           </div>
         </div>
       )}

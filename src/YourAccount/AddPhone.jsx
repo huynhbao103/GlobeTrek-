@@ -1,7 +1,7 @@
 import React from "react";
 
 function AddEmail() {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("userNav"));
 
   if (!user) {
     return <p>Chưa có người dùng đăng nhập</p>;

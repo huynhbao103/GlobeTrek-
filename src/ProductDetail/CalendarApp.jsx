@@ -21,7 +21,7 @@ function Calendar() {
             try {
                 const tour = await fetchTourById(selectedTourId);
                 setTourPrice(tour.price);
-                setSpecialPrices(tour.specialPrices || {}); // Giả định tour.specialPrices chứa giá cho các ngày đặc biệt
+                setSpecialPrices(tour.specialPrices || {}); 
                 localStorage.setItem('tourPrice', tour.price);
                 localStorage.setItem('specialPrices', JSON.stringify(tour.specialPrices || {}));
             } catch (error) {

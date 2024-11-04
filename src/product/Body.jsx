@@ -4,7 +4,7 @@ import ToursList from './TourList';
 import '../index.css';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
-import { fetchTours } from '../API/apiService'; // Import hàm fetchTours từ apiService
+import { fetchTours } from '../API/apiService'; 
 
 const App = () => {
   const [tours, setTours] = useState([]);
@@ -13,18 +13,17 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Lấy dữ liệu từ API
+    
     const loadTours = async () => {
-      setLoading(true); // Bắt đầu loading
+      setLoading(true); 
       try {
-        const response = await fetchTours(); // Gọi hàm fetchTours từ apiService
-        // Lọc những tour có isDissnable = false
-        const filteredTours = response.filter(tour => tour.isDisabled); // Sử dụng ! để lấy tour không bị vô hiệu hóa
-        setTours(filteredTours); // Cập nhật danh sách tours
+        const response = await fetchTours(); 
+        const filteredTours = response.filter(tour => tour.isDisabled);
+        setTours(filteredTours); 
       } catch (error) {
         console.error('Failed to fetch tours:', error);
       } finally {
-        setLoading(false); // Kết thúc loading
+        setLoading(false); 
       }
     };
 

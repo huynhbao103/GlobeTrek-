@@ -1,10 +1,12 @@
 import React from 'react';
 import User from "../assets/User.png";
+import {  message } from 'antd';
+const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 function ProfileUser() {
   const requestNotificationPermission = () => {
     // Kiểm tra nếu trình duyệt hỗ trợ Notifications API
     if (!("Notification" in window)) {
-      alert("Trình duyệt của bạn không hỗ trợ thông báo.");
+      message.error("Trình duyệt của bạn không hỗ trợ thông báo.");
       return;
     }
 
@@ -27,7 +29,7 @@ function ProfileUser() {
     });
 
     notification.onclick = () => {
-      window.open("http://localhost:5173"); // Thay thế bằng URL của trang web của bạn
+      window.open(`${VITE_REDIRECT_URL}`);
     };
   };
 

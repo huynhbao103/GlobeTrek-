@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
+import { Menu, Button, Avatar } from 'antd';
+import { Link } from 'react-router-dom';
 import icon1 from '../assets/icon1.png';
-import icon2 from '../assets/icon2.png';
 import icon3 from '../assets/icon3.png';
 import icon4 from '../assets/icon4.png';
 import icon5 from '../assets/icon5.png';
-import icon6 from '../assets/icon6.png';
 import icon7 from '../assets/icon7.png';
-import icon8 from '../assets/icon8.png';
 import icon9 from '../assets/icon9.png';
-import User from "../assets/User.png";
 
 const SidebarMenu = ({ setSelectedSection }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activeSection, setActiveSection] = useState('Settings');
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("userNav"));
 
   if (!user) {
-    return <p>Chưa có người dùng đăng nhập</p>;
+    return <p className="text-center">Chưa có người dùng đăng nhập</p>;
   }
 
   const cancelLogout = () => {
@@ -24,80 +22,68 @@ const SidebarMenu = ({ setSelectedSection }) => {
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("usernav");
     window.location.reload();
   };
 
-  const handleSectionClick = (section) => {
-    setSelectedSection(section);
-    setActiveSection(section);
-  };
-
   const menuItemClass = (section) =>
-    `px-4 py-2 mt-2 cursor-pointer flex rounded-lg items-center hover:bg-green-100 ${
-      activeSection === section ? 'bg-green-300' : ''
+    `px-4 py-2 mt-2 cursor-pointer flex items-center rounded-lg transition duration-200 hover:bg-green-500 ${
+      activeSection === section ? '' : ''
     }`;
 
   return (
     <div className="mt-2 w-auto p-4 bg-white border border-gray-200 rounded-lg shadow-lg">
-      <div className='flex items-center'>
-        <img className="w-6 h-6 bg-[#00875A] rounded-full" src={User} alt="User" />
-        <div className="p-4">
-          <p className="font-semibold">{user.name}</p>
+      <div className='flex items-center mb-4'>
+        <Avatar src={user.avatar || '../assets/User.png'} size={64} />
+        <div className="ml-4">
+          <p className="font-semibold text-lg">{user.name}</p>
           <p className="text-sm text-gray-600">{user.email}</p>
         </div>
       </div>
-      <ul className="py-2">
-        <li className="px-4 py-2 rounded-lg cursor-pointer hover:bg-green-100">0 Điểm</li>
-    
-        <hr/>
-        <li
-          className={menuItemClass('SetPlace')}
-          onClick={() => handleSectionClick('SetPlace')}
-        >
-          <img src={icon4} alt="Đặt chỗ của tôi" className="w-4 h-4 mr-2" />
-          Đặt chỗ của tôi
-        </li>
-        <li
-          className={menuItemClass('Transaction')}
-          onClick={() => handleSectionClick('Transaction')}
-        >
-          <img src={icon3} alt="Danh sách giao dịch" className="w-4 h-4 mr-2" />
-          Danh sách giao dịch
-        </li>
-        <li
-          className={menuItemClass('refunds')}
-          onClick={() => handleSectionClick('refunds')}
-        >
-          <img src={icon5} alt="Hoàn tiền" className="w-4 h-4 mr-2" />
-          Refunds <span className="mr-2 px-2 bg-yellow-200 rounded-full font-bold">New!</span>
-        </li>
-        <li
-          className={menuItemClass('SavedPassengers')}
-          onClick={() => handleSectionClick('SavedPassengers')}
-        > 
-          <img src={icon7} alt="Hành khách đã lưu" className="w-4 h-4 mr-2" />
-          Hành khách đã lưu
-        </li>
-        {/* Add other sections */}
-        <hr className='my-4'/>
-        <li
-          className={menuItemClass('Settings')}
-          onClick={() => handleSectionClick('Settings')}
-        >
-          <img src={icon1} alt="Chỉnh sửa hồ sơ" className="w-4 h-4 mr-2" />
-          Tài Khoản
-        </li>
-        <li className="px-4 py-2 cursor-pointer flex items-center hover:bg-green-100">
-          <button
-            className="flex items-center py-2 hover:bg-green-100 cursor-pointer"
-            onClick={() => setShowLogoutModal(true)}
-          >
-            <img src={icon9} alt="Đăng xuất" className="w-4 h-4 mr-2" />
+      <Menu mode="inline" className="py-2" theme="light">
+        <Menu.Item key="points" className="flex items-center">
+          0 Điểm
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="SetPlace" className={menuItemClass('SetPlace')}>
+          <Link to="/setplace" onClick={() => setActiveSection('SetPlace')}>
+            <img src={icon4} alt="Đặt chỗ của tôi" className="inline-block w-5 h-5 mr-2" />
+            Đặt chỗ của tôi
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="Transaction" className={menuItemClass('Transaction')}>
+          <Link to="/Transaction" onClick={() => setActiveSection('Transaction')}>
+            <img src={icon3} alt="Danh sách giao dịch" className="inline-block w-5 h-5 mr-2" />
+            Danh sách giao dịch
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="refunds" className={menuItemClass('refunds')}>
+          <Link to="/Refunds" onClick={() => setActiveSection('refunds')}>
+            <img src={icon5} alt="Hoàn tiền" className="inline-block w-5 h-5 mr-2" />
+            Hoàn tiền <span className="ml-2 px-2 bg-yellow-200 rounded-full font-bold">New!</span>
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="SavedPassengers" className={menuItemClass('SavedPassengers')}>
+          <Link to="/SavedPassengers" onClick={() => setActiveSection('SavedPassengers')}>
+            <img src={icon7} alt="Hành khách đã lưu" className="inline-block w-5 h-5 mr-2" />
+            Hành khách đã lưu
+          </Link>
+        </Menu.Item>
+        <Menu.Divider />
+        <Menu.Item key="Settings" className={menuItemClass('Settings')}>
+          <Link to="/settings" onClick={() => setActiveSection('Settings')}>
+            <img src={icon1} alt="Chỉnh sửa hồ sơ" className="inline-block w-5 h-5 mr-2" />
+            Tài Khoản
+          </Link>
+        </Menu.Item>
+        <Menu.Item key="logout">
+          <Button type="link" onClick={() => setShowLogoutModal(true)} className="flex items-center w-full text-left">
+            <img src={icon9} alt="Đăng xuất" className="inline-block w-5 h-5 mr-2" />
             Đăng xuất
-          </button>
-        </li>
-      </ul>
+          </Button>
+        </Menu.Item>
+      </Menu>
+
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 w-full h-full bg-black opacity-40" onClick={cancelLogout} />

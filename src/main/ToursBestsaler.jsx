@@ -1,3 +1,4 @@
+// BestsalerTour.js
 import React, { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -6,32 +7,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
-
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import { fetchTours } from '../API/apiService';
 
 const BestsalerTour = () => {
   const [tours, setTours] = useState([]);
-  const [uniqueDestinations, setUniqueDestinations] = useState([]); // State for unique destinations
+  const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
 
-  const tourTypeId = "67067093439daa9f49c3ab4f"; // Hardcode your desired tour type ID here
+  const tourTypeId = "67067093439daa9f49c3ab4f";
 
-  const fetchTours = async () => {
+  const getToursData = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8081/tours/api');
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      const data = await response.json();
-
-      const filteredTours = data.filter((tour) =>
-        tour.tourType._id === tourTypeId && tour.isDisabled === true
-      );
+      const filteredTours = await fetchTours(tourTypeId);
       setTours(filteredTours);
 
       const destinations = filteredTours.reduce((acc, tour) => {
@@ -86,8 +78,8 @@ const BestsalerTour = () => {
   };
 
   useEffect(() => {
-    fetchTours();
-  }, []); // Fetch tours when the component mounts
+    getToursData();
+  }, []);
 
   return (
     <div className="w-full flex justify-center pb-10">
@@ -159,12 +151,7 @@ const BestsalerTour = () => {
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
-          <Link
-            to="product-body"
-            className="mx-auto flex text-lg font-bold text-[#4CA771] w-full justify-center items-center"
-          >
-            Xem thêm
-          </Link>
+        
         </div>
       </div>
     </div>

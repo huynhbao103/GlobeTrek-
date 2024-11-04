@@ -1,19 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'; // Import CSS for Skeleton
+import 'react-loading-skeleton/dist/skeleton.css'; 
 
 const TourItem = ({ tour, loading }) => {
-  // Kiểm tra xem tour có hợp lệ không
+ 
   if (!tour) {
-    return null; // Hoặc có thể trả về một thông báo khác
+    return null; 
   }
 
-  // Lấy ảnh đầu tiên từ mảng images
-  const firstImage = tour.images && tour.images.length > 0 ? tour.images[0] : ''; // Cung cấp giá trị mặc định
+  const firstImage = tour.images && tour.images.length > 0 ? tour.images[0] : ''; 
 
   return (
-    <Link to={`/ProDetail/${tour._id}`}> {/* Cập nhật đường dẫn với ID tour */}
+    <Link to={`/ProDetail/${tour._id}`}> 
       <div className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
         {loading ? (
           <>

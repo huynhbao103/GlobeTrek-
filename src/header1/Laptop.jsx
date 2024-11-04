@@ -12,16 +12,16 @@ import { Link } from "react-router-dom";
 function Laptop() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState('');
-  const [selectedSection, setSelectedSection] = useState('Settings'); // Add state for selectedSection
+  const [selectedSection, setSelectedSection] = useState('Settings'); 
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('userNav'); // Changed to userNav
+    const storedUser = localStorage.getItem('userNav'); 
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
         console.log('Parsed User Data from userNav:', userData);
-        setUser(userData); // Update the user state
-        setToken(userData.token); // Set the token if it exists
+        setUser(userData); 
+        setToken(userData.token); 
       } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
       }
@@ -32,7 +32,7 @@ function Laptop() {
   
 
   const handleLogout = () => {
-    localStorage.removeItem('userNav'); // Clear userNav as well
+    localStorage.removeItem('userNav'); 
     setUser(null);
     setToken('');
     console.log('User logged out');
@@ -79,7 +79,7 @@ function Laptop() {
         </div>
       </div>
       <div className="pt-20">
-         {/* Render MainContent with selectedSection */}
+      
       </div>
     </div>
   );
