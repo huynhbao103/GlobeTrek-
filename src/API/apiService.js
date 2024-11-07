@@ -1,26 +1,29 @@
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const TOUR_API_URL = `${BASE_URL}/tours/api`;
+const TOUR_API_URL = `${BASE_URL}`;
 const AUTH_API_URL = `${BASE_URL}/api/auth`;
 const ORDER_API_URL = `${BASE_URL}/orders/api`;
 export const FAVORITE_API_URL = `${BASE_URL}/favorite-tours`;
 
 export const fetchTours = async (tourTypeId) => {
   try {
-    const response = await fetch(TOUR_API_URL);
+    const response = await fetch(`${TOUR_API_URL}/tours/api`); // Đảm bảo API URL lấy các tour được phê duyệt
     if (!response.ok) {
       throw new Error('Không thể lấy danh sách tour');
     }
     const data = await response.json();
+
+    // Lọc theo tourTypeId nếu có
     return tourTypeId ? data.filter(tour => tour.tourType._id === tourTypeId) : data;
   } catch (error) {
-    console.error('Error fetching tours:', error);
+    console.error('Lỗi khi lấy danh sách tour:', error);
     throw error;
   }
 };
 
+
 export const fetchTourById = async (id) => {
   try {
-    const response = await fetch(`${TOUR_API_URL}/${id}`);
+    const response = await fetch(`${TOUR_API_URL}/tours/api/${id}`);
     if (!response.ok) {
       throw new Error('Không thể lấy thông tin tour');
     }
@@ -33,7 +36,7 @@ export const fetchTourById = async (id) => {
 
 export const fetchTourTypes = async () => {
   try {
-    const response = await fetch(`${TOUR_API_URL}/tour-types`);
+    const response = await fetch(`${TOUR_API_URL}/tourtypes/api`);
     if (!response.ok) {
       throw new Error('Không thể lấy danh sách loại tour');
     }

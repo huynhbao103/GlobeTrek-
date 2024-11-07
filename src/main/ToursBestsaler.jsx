@@ -1,4 +1,3 @@
-// BestsalerTour.js
 import React, { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -18,14 +17,16 @@ const BestsalerTour = () => {
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);
 
-  const tourTypeId = "67067093439daa9f49c3ab4f";
+  const tourTypeId = "6724442a1f084a315e2eb0b3";
 
   const getToursData = async () => {
     setLoading(true);
     try {
+      // Lấy danh sách các tour dựa trên `tourTypeId` đã truyền
       const filteredTours = await fetchTours(tourTypeId);
       setTours(filteredTours);
 
+      // Xử lý điểm đến duy nhất
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
           acc.push(tour.destination);
@@ -34,6 +35,7 @@ const BestsalerTour = () => {
       }, []);
       setUniqueDestinations(destinations);
 
+      // Thiết lập điểm đến đầu tiên làm điểm đến mặc định
       setActiveLocation(destinations.length > 0 ? destinations[0] : null);
     } catch (error) {
       console.error('Error fetching tours:', error);

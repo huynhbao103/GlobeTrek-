@@ -4,7 +4,7 @@ import ToursList from './TourList';
 import '../index.css';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
-import { fetchTours } from '../API/apiService'; 
+import { fetchTours } from '../API/apiService';
 
 const App = () => {
   const [tours, setTours] = useState([]);
@@ -13,12 +13,11 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    
     const loadTours = async () => {
       setLoading(true); 
       try {
         const response = await fetchTours(); 
-        const filteredTours = response.filter(tour => tour.isDisabled);
+        const filteredTours = response.filter(tour => tour.isApproved && !tour.isDisabled);
         setTours(filteredTours); 
       } catch (error) {
         console.error('Failed to fetch tours:', error);
