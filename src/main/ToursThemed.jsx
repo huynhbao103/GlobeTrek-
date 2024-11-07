@@ -1,4 +1,3 @@
-// BestsalerTour.js
 import React, { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -16,16 +15,19 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tourTypeId, setTourTypeId] = useState("672ce5e90bcd6b65981569ad");
   const sliderRef = useRef(null);
-
-  const tourTypeId = "67067093439daa9f49c3ab4f";
 
   const getToursData = async () => {
     setLoading(true);
     try {
-      const filteredTours = await fetchTours(tourTypeId);
+      const fetchedTours = await fetchTours();
+      // Lọc tours ngay khi lấy dữ liệu
+      const filteredTours = fetchedTours.filter(
+        (tour) => tour.tourType === tourTypeId // Lọc theo tourType đã chọn
+      );
       setTours(filteredTours);
-
+      // Lấy danh sách các điểm đến duy nhất
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
           acc.push(tour.destination);
@@ -33,7 +35,6 @@ const BestsalerTour = () => {
         return acc;
       }, []);
       setUniqueDestinations(destinations);
-
       setActiveLocation(destinations.length > 0 ? destinations[0] : null);
     } catch (error) {
       console.error('Error fetching tours:', error);
@@ -79,7 +80,10 @@ const BestsalerTour = () => {
 
   useEffect(() => {
     getToursData();
-  }, []);
+  }, [tourTypeId]); 
+  const filteredToursByLocation = tours.filter(
+    (tour) => tour.destination?.name === activeLocation?.name
+  );
 
   return (
     <div className="w-full flex justify-center pb-10">
@@ -94,10 +98,11 @@ const BestsalerTour = () => {
               uniqueDestinations.map((destination, index) => (
                 <button
                   key={index}
-                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${activeLocation?.name === destination.name
+                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${
+                    activeLocation?.name === destination.name
                       ? 'bg-[#4CA771] text-white font-bold'
                       : 'bg-[#FFFF] text-[#4CA771] font-bold'
-                    }`}
+                  }`}
                   onClick={() => setActiveLocation(destination)}
                 >
                   {destination.name}
@@ -122,22 +127,34 @@ const BestsalerTour = () => {
                       </div>
                     </div>
                   ))
+              ) : filteredToursByLocation.length === 0 ? (
+                <div className="text-center w-full">Không có tour nào phù hợp.</div>
               ) : (
-                tours
-                  .filter((tour) => tour.destination.name === activeLocation?.name)
-                  .map((tour, index) => (
-                    <div key={index} className="pr-2">
-                      <Link to={`/ProDetail/${tour._id}`} className="block bg-white rounded-lg overflow-hidden h-72 hover:border-[#4CA771] cursor-pointer">
-                        <img src={tour.images[0]} alt={tour.title} className="w-full h-40 object-cover" />
-                        <div className="p-4 h-32">
-                          <h3 className="sm:text-md text-[#013237] text-sm font-semibold">{tour.title}</h3>
-                          <p className="text-[#4CA771]"> {tour.price.toLocaleString()} VND</p>
-                        </div>
-                      </Link>
-                    </div>
-                  ))
+                filteredToursByLocation.map((tour, index) => (
+                  <div key={index} className="pr-2">
+                    <Link
+                      to={`/ProDetail/${tour._id}`}
+                      className="block bg-white rounded-lg overflow-hidden h-72 hover:border-[#4CA771] cursor-pointer"
+                    >
+                      <img
+                        src={tour.images[0]}
+                        alt={tour.title}
+                        className="w-full h-40 object-cover"
+                      />
+                      <div className="p-4 h-32">
+                        <h3 className="sm:text-md text-[#013237] text-sm font-semibold">
+                          {tour.title}
+                        </h3>
+                        <p className="text-[#4CA771]">
+                          {tour.price.toLocaleString()} VND
+                        </p>
+                      </div>
+                    </Link>
+                  </div>
+                ))
               )}
             </Slider>
+
             <button
               className="absolute top-1/2 transform -translate-y-1/2 left-0 z-10 bg-white bg-opacity-50 p-2 rounded-full cursor-pointer"
               onClick={prevSlide}
