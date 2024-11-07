@@ -15,21 +15,23 @@ import { loginFailed,
          verifyAccountSuccess,
          verifyAccountFailed } from "./authSlice";
 
-export const signinUser = async(user, dispatch, closeModal) => {
+export const signinUser = async (user, dispatch, closeModal) => {
     dispatch(loginStart());
     try {
-        await axios.post(`${VITE_BASE_URL}/api/auth/signin?client=true`, user);
-        dispatch(loginSuccess(res.data));
-        console.log(res.data)
-        // navigator("/"); // Navigate on success
-        closeModal();
+        const response = await axios.post(`${VITE_BASE_URL}/api/auth/signin?client=true`, user);
+
+       
+
+        dispatch(loginSuccess(response.data)); // If no message, login is successful
+        console.log(response.data);
+        closeModal(); // Close modal on successful login
     } catch (error) {
         console.error("Login failed:", error); // Log error for debugging
         dispatch(loginFailed());
-        message.error("Login failed! Please check your credentials."); // User feedback
+        message.error("Login failed!"); // Show generic error
     }
 };
-
+        
 
 export const registerUser = async(user, dispatch, setShowVerification) => {
     dispatch(registerStart());
