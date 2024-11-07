@@ -1,18 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css'; 
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const TourItem = ({ tour, loading }) => {
- 
   if (!tour) {
-    return null; 
+    return null;
   }
 
   const firstImage = tour.images && tour.images.length > 0 ? tour.images[0] : ''; 
 
   return (
-    <Link to={`/ProDetail/${tour._id}`}> 
+    <Link to={`/ProDetail/${tour._id}`}>
       <div className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
         {loading ? (
           <>
