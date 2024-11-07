@@ -25,13 +25,14 @@ function App() {
       <Router>
         <Routes>
 
-          <Route path="/" element={<MainStatus status={status} orderId="659565467" />} />
-          <Route path="/Body" element={<Body />} />
+          <Route path="/" element={<Body />} />
           <Route path="/product-body" element={<ProductBody />} />
           <Route path="/ProDetail/:id" element={<BodyProDetail />} />
           <Route path="/bodyPay/:id" element={<BodyPay />} />
           <Route path="/BookingForm/:id" element={<BookingForm />} />
           <Route path="/Payment/:id" element={<Payment />} />
+          <Route path="/Statusorder" element={<MainStatus />} />
+
 
           <Route path="/settings" element={<Settings />} />
           <Route path="/setplace" element={<SetPlace />} />

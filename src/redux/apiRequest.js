@@ -18,7 +18,7 @@ import { loginFailed,
 export const signinUser = async(user, dispatch, closeModal) => {
     dispatch(loginStart());
     try {
-        const res = await axios.post(`${VITE_BASE_URL/api/auth/signin?client=true`, user); 
+        await axios.post(`${VITE_BASE_URL}/api/auth/signin?client=true`, user);
         dispatch(loginSuccess(res.data));
         console.log(res.data)
         // navigator("/"); // Navigate on success
@@ -34,7 +34,7 @@ export const signinUser = async(user, dispatch, closeModal) => {
 export const registerUser = async(user, dispatch, setShowVerification) => {
     dispatch(registerStart());
     try {
-        await axios.post(`${VITE_BASE_URL}/api/auth/signup/signin?client=true`, user);
+        await axios.post(`${VITE_BASE_URL}/api/auth/signup?client=true`, user);
         dispatch(registerSuccess());
         setShowVerification(true);
     } catch (error) {
