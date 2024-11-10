@@ -15,18 +15,20 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, setTourTypeId] = useState("672ce5e90bcd6b65981569ad");
+  const [tourTypeId, setTourTypeId] = useState("6724442a1f084a315e2eb0b3"); // Example: set your tourTypeId here
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
     setLoading(true);
     try {
       const fetchedTours = await fetchTours();
-      // Lọc tours ngay khi lấy dữ liệu
+  
+      // Lọc tours theo tourType đã chọn và kiểm tra trạng thái của tour
       const filteredTours = fetchedTours.filter(
-        (tour) => tour.tourType === tourTypeId // Lọc theo tourType đã chọn
+        (tour) => tour.tourType === tourTypeId && !tour.isDisabled // Chỉ lấy tour không bị tắt
       );
       setTours(filteredTours);
+  
       // Lấy danh sách các điểm đến duy nhất
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
@@ -42,7 +44,7 @@ const BestsalerTour = () => {
       setLoading(false);
     }
   };
-
+  
   const settings = {
     dots: false,
     infinite: false,
@@ -80,7 +82,9 @@ const BestsalerTour = () => {
 
   useEffect(() => {
     getToursData();
-  }, [tourTypeId]); 
+  }, [tourTypeId]); // Lọc lại khi thay đổi tourTypeId
+
+  // Lọc theo địa điểm được chọn
   const filteredToursByLocation = tours.filter(
     (tour) => tour.destination?.name === activeLocation?.name
   );
