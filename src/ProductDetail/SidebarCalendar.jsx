@@ -35,7 +35,7 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
 
     useEffect(() => {
         const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
-        setStoredDates(loadedDates.map(date => new Date(date))); // Chuyển đổi các chuỗi thành Date objects
+        setStoredDates(loadedDates.map(date => new Date(date))); 
     }, []);
 
     const settings = {
