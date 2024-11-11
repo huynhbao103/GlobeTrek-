@@ -108,37 +108,45 @@ const Transaction = () => {
           </div>
 
           {displayOrders.length === 0 ? (
-            <Text className="text-center">Không có đơn hàng nào.</Text>
-          ) : (
-            <div>
-              {displayOrders.map((order) => (
-                <Card 
-                  key={order._id} 
-                  className="mb-4 shadow-md hover:shadow-lg transition duration-300"
-                  style={{ borderRadius: '8px' }}
-                >
-                  <Title level={4}>Mã đặt chỗ: {order._id}</Title>
-                  <Text>{order.tour?.description}</Text>
-                  <Text className="text-lg font-bold block mt-2">
-                    {order.totalValue.toLocaleString()} VND
-                  </Text>
-                  
-                  {order.status === 'canceled' && (
-                    <Text className="text-red-500">Đơn hàng đã bị hủy</Text>
-                  )}
-                </Card>
-              ))}
-              
-              <Pagination 
-                current={currentPage} 
-                pageSize={itemsPerPage} 
-                total={filteredOrders.length} 
-                onChange={handlePageChange} 
-                showSizeChanger={false} 
-                className="mt-4 text-center"
-              />
-            </div>
-          )}
+              <Text className="text-center">Không có đơn hàng nào.</Text>
+            ) : (
+              <div>
+                {displayOrders.map((order) => (
+                  <Card 
+                    key={order._id} 
+                    className="mb-4 shadow-md hover:shadow-lg transition duration-300"
+                    style={{ borderRadius: '8px' }}
+                  >
+                    <Title level={4}>Mã đặt chỗ: {order._id}</Title>
+                    <Text>Ngày đặt: {new Date(order.bookingDate).toLocaleDateString()}</Text>
+                    <Text className="block mt-2">Mô tả Tour: {order.tour?.description}</Text>
+                    <Text className="text-lg font-bold block mt-2">
+                      Tổng giá trị: {order.totalValue.toLocaleString()} VND
+                    </Text>
+                    <Text className="block mt-2">
+                   Trạng thái:  
+                       {
+                       order.status === 'pending' ? ' Đang chờ'
+                       : order.status === 'processing' ? ' Đang xử lý'
+                       : order.status === 'paid' ? ' Đã thanh toán'
+                       : order.status === 'canceled' ? ' Đã hủy'
+                       : 'Không xác định'
+                       }
+                    </Text>
+
+                  </Card>
+                ))}
+                
+                <Pagination 
+                  current={currentPage} 
+                  pageSize={itemsPerPage} 
+                  total={filteredOrders.length} 
+                  onChange={handlePageChange} 
+                  showSizeChanger={false} 
+                  className="mt-4 text-center"
+                />
+              </div>
+            )}
         </div>
       </div>
     </div>

@@ -47,9 +47,7 @@ const SavedList = () => {
       setSavedItems(savedItems.filter(item => item.tour._id !== tourId));
       message.success("Tour đã bị xóa khỏi danh sách yêu thích!");
     } catch (error) {
-      
       message.error(error.message);
-      
     }
   };
 
@@ -71,9 +69,9 @@ const SavedList = () => {
       <div className="container mx-auto mt-40 p-4">
         <h1 className="text-2xl font-bold mb-4">Danh sách đã lưu</h1>
         <p className="mb-4">Nơi lưu giữ những sản phẩm yêu thích của bạn!</p>
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {savedItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-center p-10 border border-gray-300 rounded-lg">
+            <div className="flex flex-col items-center justify-center text-center p-10 border border-gray-300 rounded-lg col-span-3">
               <h2 className="text-xl font-semibold mb-4">Chưa có sản phẩm nào trong danh sách đã lưu.</h2>
               <p className="text-gray-600 mb-4">Hãy khám phá các tour yêu thích và lưu chúng lại!</p>
               <button 
@@ -96,18 +94,20 @@ const SavedList = () => {
                 <p className="text-sm text-gray-600">{item.tour.rating}</p>
                 <p className="text-sm text-gray-600">{item.tour.location}</p>
                 <p className="font-bold">{item.tour.price.toLocaleString()} VND</p>
-                <button 
-                  onClick={() => handleRemoveItem(item.tour._id)} 
-                  className="mt-2 bg-red-500 text-white px-4 py-2 rounded"
-                >
-                  Xóa
-                </button>
-                <button 
-                  onClick={() => handleViewDetails(item.tour._id)} 
-                  className="mt-2 mx-3 bg-green-500 text-white px-4 py-2 rounded"
-                >
-                  Xem chi tiết tour
-                </button>
+                <div className="flex justify-between mt-2">
+                  <button 
+                    onClick={() => handleRemoveItem(item.tour._id)} 
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                  >
+                    Xóa
+                  </button>
+                  <button 
+                    onClick={() => handleViewDetails(item.tour._id)} 
+                    className="bg-green-500 text-white px-4 py-2 rounded"
+                  >
+                    Xem chi tiết tour
+                  </button>
+                </div>
               </div>
             ))
           )}
