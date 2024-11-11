@@ -11,7 +11,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const SetPlace = ({ setSelectedSection }) => {
   const [todayOrders, setTodayOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(2);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -93,10 +93,6 @@ const SetPlace = ({ setSelectedSection }) => {
     const bookingDateObj = new Date(bookingDate); // Ngày đặt từ đơn hàng
     bookingDateObj.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để chỉ so sánh ngày
   
-    // Log để kiểm tra giá trị ngày hiện tại và ngày đặt
-    console.log("Ngày hiện tại:", currentDate);
-    console.log("Ngày đặt (bookingDateObj):", bookingDateObj);
-  
     const timeDifference = bookingDateObj - currentDate;
     const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000; // 2 ngày tính bằng millisecond
   
@@ -138,6 +134,9 @@ const SetPlace = ({ setSelectedSection }) => {
                           <Title level={4} className="text-gray-800">Mã đặt chỗ: {order._id}</Title>
                           <Text>Ngày đặt: {bookingDate.toLocaleDateString()}</Text>
                           <Text className="text-gray-600 block mt-2">Mô tả Tour: {order.tour?.description}</Text>
+                          <Text className="block mt-2">
+                            Số lượng vé: {order.adultCount + order.childCount || 0}
+                          </Text>
                           <Text className="text-lg font-bold block mt-2 text-green-600">
                             Tổng giá trị: {order.totalValue.toLocaleString()} VND
                           </Text>
@@ -148,18 +147,21 @@ const SetPlace = ({ setSelectedSection }) => {
                             Trạng thái: {order.status === 'canceled' ? 'Đã hủy' : order.status === 'pending' ? 'Đang chờ' : order.status === 'processing' ? 'Đang xử lý' : 'Đã thanh toán'}
                           </Text>
 
-                          {order.status === 'paid' && canCancelTour(order.bookingDate) ? (
-  <Button type="primary" danger size="middle" className="max-w-xs mt-4" block>
-    Hủy Tour & Hoàn Tiền
-  </Button>
-) : order.status === 'paid' ? (
-  <Text className="text-red-500 font-semibold mt-4">Không thể hủy tour vì ngày đi đã cách 2 ngày trước</Text>
-) : (
-  <Button type="default" danger size="middle" className="max-w-xs mt-4" block>
-    Hủy Đơn Hàng
-  </Button>
-)}
-
+                          {order.status === 'canceled' ? (
+                            <Link to={`/ProDetail/${order.tour?._id}`}>
+                              <Button type="primary" size="middle" className="max-w-xs mt-4" block>
+                                Mua tiếp tục
+                              </Button>
+                            </Link>
+                          ) : order.status === 'paid' && canCancelTour(order.bookingDate) ? (
+                            <Button type="primary" danger size="middle" className="max-w-xs mt-4" block>
+                              Hủy Tour & Hoàn Tiền
+                            </Button>
+                          ) : (
+                            <Button type="default" danger size="middle" className="max-w-xs mt-4" block>
+                              Hủy Đơn Hàng
+                            </Button>
+                          )}
                         </Card>
                       );
                     })}

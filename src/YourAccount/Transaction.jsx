@@ -50,9 +50,9 @@ const Transaction = () => {
   const filterOrders = (orders) => {
     const filtered = Object.entries(orders).reduce((acc, [monthYear, orderList]) => {
       orderList.forEach(order => {
-        const orderDate = new Date(order.bookingDate);
+        const orderDate = new Date(order.bookingDate);  // Hoặc sử dụng order.createdAt nếu có trường này
         const today = new Date();
-
+  
         if (dateFilter === '90-days' || dateFilter === '3-months') {
           if ((today - orderDate) / (1000 * 60 * 60 * 24) <= 90) {
             acc.push(order);
@@ -67,8 +67,11 @@ const Transaction = () => {
       });
       return acc;
     }, []);
-
-    setFilteredOrders(filtered);
+  
+    // Sắp xếp đơn hàng theo ngày tạo từ mới nhất đến cũ nhất (sử dụng createdAt hoặc bookingDate)
+    const sortedOrders = filtered.sort((a, b) => new Date(b.createdAt || b.bookingDate) - new Date(a.createdAt || a.bookingDate));
+  
+    setFilteredOrders(sortedOrders);
   };
 
   const handleFilterChange = (value) => {
@@ -83,31 +86,41 @@ const Transaction = () => {
 
   const displayOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending': return 'orange';
+      case 'processing': return 'blue';
+      case 'paid': return 'green';
+      case 'canceled': return 'red';
+      default: return 'grey';
+    }
+  };
+
   return (
     <>
-    <Header/>
-    <div className="w-full mt-36 h-auto">
-      <div className="flex max-w-[1280px] justify-center mx-auto flex-row items-start pb-10">
-        <SidebarMenu />
-        
-        <div className="w-full max-w-5xl ml-5 mx-auto rounded-lg bg-white p-6 shadow-lg">
-          <Title level={2} className="mb-4 text-center">Lịch sử giao dịch của tôi</Title>
+      <Header />
+      <div className="w-full mt-36 h-auto">
+        <div className="flex max-w-[1280px] justify-center mx-auto flex-row items-start pb-10">
+          <SidebarMenu />
           
-          <div className="mb-4 text-center">
-            <Select 
-              onChange={handleFilterChange} 
-              value={dateFilter} 
-              className="w-60"
-              placeholder="Chọn thời gian"
-            >
-              <Select.Option value="">Tất cả</Select.Option>
-              <Select.Option value="90-days">90 ngày trước</Select.Option>
-              <Select.Option value="3-months">3 tháng trước</Select.Option>
-              <Select.Option value="6-months">6 tháng trước</Select.Option>
-            </Select>
-          </div>
+          <div className="w-full max-w-5xl ml-5 mx-auto rounded-lg bg-white p-6 shadow-lg">
+            <Title level={2} className="mb-4 text-center">Lịch sử giao dịch của tôi</Title>
+            
+            <div className="mb-4 text-center">
+              <Select 
+                onChange={handleFilterChange} 
+                value={dateFilter} 
+                className="w-60"
+                placeholder="Chọn thời gian"
+              >
+                <Select.Option value="">Tất cả</Select.Option>
+                <Select.Option value="90-days">90 ngày trước</Select.Option>
+                <Select.Option value="3-months">3 tháng trước</Select.Option>
+                <Select.Option value="6-months">6 tháng trước</Select.Option>
+              </Select>
+            </div>
 
-          {displayOrders.length === 0 ? (
+            {displayOrders.length === 0 ? (
               <Text className="text-center">Không có đơn hàng nào.</Text>
             ) : (
               <div>
@@ -120,20 +133,24 @@ const Transaction = () => {
                     <Title level={4}>Mã đặt chỗ: {order._id}</Title>
                     <Text>Ngày đặt: {new Date(order.bookingDate).toLocaleDateString()}</Text>
                     <Text className="block mt-2">Mô tả Tour: {order.tour?.description}</Text>
+                    <Text className="block mt-2">
+                      Số lượng vé: {order.adultCount + order.childCount || 0}
+                    </Text>
                     <Text className="text-lg font-bold block mt-2">
                       Tổng giá trị: {order.totalValue.toLocaleString()} VND
                     </Text>
                     <Text className="block mt-2">
-                   Trạng thái:  
-                       {
-                       order.status === 'pending' ? ' Đang chờ'
-                       : order.status === 'processing' ? ' Đang xử lý'
-                       : order.status === 'paid' ? ' Đã thanh toán'
-                       : order.status === 'canceled' ? ' Đã hủy'
-                       : 'Không xác định'
-                       }
+                      Trạng thái:  
+                      <span 
+                        style={{ color: getStatusColor(order.status), fontWeight: 'bold' }}
+                      >
+                        {order.status === 'pending' ? ' Đang chờ'
+                          : order.status === 'processing' ? ' Đang xử lý'
+                          : order.status === 'paid' ? ' Đã thanh toán'
+                          : order.status === 'canceled' ? ' Đã hủy'
+                          : 'Không xác định'}
+                      </span>
                     </Text>
-
                   </Card>
                 ))}
                 
@@ -147,10 +164,10 @@ const Transaction = () => {
                 />
               </div>
             )}
+          </div>
         </div>
       </div>
-    </div>
-    <Footer/>
+      <Footer />
     </>
   );
 };
