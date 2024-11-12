@@ -19,9 +19,6 @@ export const signinUser = async (user, dispatch, closeModal) => {
     dispatch(loginStart());
     try {
         const response = await axios.post(`${VITE_BASE_URL}/api/auth/signin?client=true`, user);
-
-       
-
         dispatch(loginSuccess(response.data)); // If no message, login is successful
         console.log(response.data);
         closeModal(); // Close modal on successful login
