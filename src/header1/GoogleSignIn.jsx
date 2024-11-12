@@ -41,11 +41,12 @@ const SsoPointerSignIn = () => {
         
         handleCallback();
     }, []); 
+
     const handleLoginRedirect = () => {
         // const redirectUri = encodeURIComponent(`http://localhost:5173`); 
         const redirectUri = encodeURIComponent(`${REDIRECT_URL}`); 
 
-        window.location.href = `https://sso-pointer.vercel.app/authorize?callbackUrl=${redirectUri}`;
+        window.location.href = `https://sso-pointer.vercel.app/authorize?clientId=673373e9623ce2ca17c9afe9` ;
     };
 
     return (
@@ -54,7 +55,7 @@ const SsoPointerSignIn = () => {
                 <button
                     onClick={handleLoginRedirect}
                     className="flex w-full items-center justify-center px-4 py-2 bg-white cursor-pointer rounded-md border font-bold"
-                >
+                >S
                     Đăng nhập bằng SSO Pointer
                 </button>
             ) : (
