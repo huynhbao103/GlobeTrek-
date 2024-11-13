@@ -4,7 +4,7 @@ import Footer from '../footer/Footer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Pointer } from "pointer-wallet"; 
 import { message } from 'antd'; 
-
+import LoadingLogin from '../../src/LoadingLogin'; 
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -76,7 +76,7 @@ function Payment() {
         returnUrl: `${VITE_REDIRECT_URL}`,
         orders: orderData.orders?.map(order => ({
           name: order.name,
-          image: order.image,
+          image: order.images,
           description: order.description,
           quantity: order.quantity,
           price: order.price,
@@ -177,9 +177,10 @@ function Payment() {
         const errorData = await response.json();
         if (response.status === 401) {
           message.error('Bạn không có quyền thực hiện hành động này. Vui lòng đăng nhập lại.');
-          navigate('/login');
+          navigate('/LoadingLogin');
         } else if (response.status === 403) {
           message.error('Bạn không có quyền truy cập vào hành động này.');
+          navigate('/LoadingLogin');
         } else {
           message.error(`Có lỗi xảy ra: ${errorData.message || 'Vui lòng thử lại.'}`);
         }

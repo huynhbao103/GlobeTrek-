@@ -49,28 +49,36 @@ const BestsalerTour = () => {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: 5,
-    slidesToScroll: 5,
+    slidesToShow: Math.min(tours.length, 5),
+    slidesToScroll: Math.min(tours.length, 5),
+    variableWidth: true, // Cho phép các phần tử có độ rộng thay đổi tùy thuộc vào số lượng
+    centerMode: true, // Căn giữa các phần tử
+    centerPadding: "0", // Giảm bớt khoảng cách thừa
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: Math.min(tours.length, 2),
           slidesToScroll: 1,
           infinite: false,
           dots: false,
+          variableWidth: true,
+          centerMode: true,
         },
       },
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: Math.min(tours.length, 1),
           slidesToScroll: 1,
           initialSlide: 1,
+          variableWidth: true,
+          centerMode: true,
         },
       },
     ],
   };
+  
 
   const nextSlide = () => {
     sliderRef.current.slickNext();

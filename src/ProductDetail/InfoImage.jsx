@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import { fetchTourById, toggleFavoriteTour, checkIfFavorite } from '../API/apiService'; 
 import { PushpinOutlined } from '@ant-design/icons';
 import '../index.css';
+import { message } from "antd";
 
 const TravelTour = () => {
   const { id } = useParams(); 
@@ -65,12 +66,18 @@ const TravelTour = () => {
       const userId = getUserId();
       const result = await toggleFavoriteTour(userId, tour._id, !isFavorite);
       setIsFavorite(result.isFavorite);
+      if (result.isFavorite) {
+        message.success("Thêm tour yêu thích thành công");
+      } else {
+        message.success("Xóa tour khỏi yêu thích thành công");
+      }
     } catch (error) {
       console.error("Error toggling favorite:", error);
     } finally {
       setFavoriteLoading(false); 
     }
   };
+  
 
   const getUserId = () => {
     const storedUser = JSON.parse(localStorage.getItem('userNav'));

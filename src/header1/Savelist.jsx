@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Header from './Header';
 import Footer from '../footer/Footer';
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { fetchFavoriteTours, removeFavoriteTour } from '../API/apiService'; 
+import LoadingLogin from '../../src/LoadingLogin'; 
 
 const getUserId = () => {
   const storedUser = JSON.parse(localStorage.getItem('userNav'));
@@ -14,13 +15,15 @@ const SavedList = () => {
   const [savedItems, setSavedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false); 
   const navigate = useNavigate(); 
 
   useEffect(() => {
     const userId = getUserId();
     if (!userId) {
-      setError("Người dùng chưa đăng nhập");
-      setLoading(false);
+     
+    
+      setIsModalVisible(true); 
       return;
     }
 
@@ -55,8 +58,14 @@ const SavedList = () => {
     navigate(`/ProDetail/${tourId}`); 
   };
 
+  const handleLoginModalClose = () => {
+    setIsModalVisible(false); // Đóng modal nếu người dùng đóng
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>
+      <LoadingLogin/>
+    </div>;
   }
 
   if (error) {
@@ -71,19 +80,19 @@ const SavedList = () => {
         <p className="mb-4">Nơi lưu giữ những sản phẩm yêu thích của bạn!</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {savedItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center text-center p-10 border border-gray-300 rounded-lg col-span-3">
+            <div className="flex flex-col items-center justify-center text-center p-10  border-gray-300 rounded-lg col-span-3">
               <h2 className="text-xl font-semibold mb-4">Chưa có sản phẩm nào trong danh sách đã lưu.</h2>
               <p className="text-gray-600 mb-4">Hãy khám phá các tour yêu thích và lưu chúng lại!</p>
               <button 
                 onClick={() => window.location.href = '/product-body'} 
-                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+                className="mt-2 bg-green-700 text-white px-4 py-2 "
               >
                 Xem Tour
               </button>
             </div>
           ) : (
             savedItems.map(item => (
-              <div key={item.tour._id} className="p-4 border rounded-lg shadow">
+              <div key={item.tour._id} className="p-4  rounded-lg ">
                 <img 
                   src={item.tour.images[0]} 
                   alt={item.tour.title} 
