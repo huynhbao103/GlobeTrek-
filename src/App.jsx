@@ -16,6 +16,7 @@ import Transaction from './YourAccount/Transaction.jsx';
 import SavedPassengers from './YourAccount/savedPassengers.jsx';
 import Refunds from './YourAccount/Refunds.jsx';
 import Savelist from './header1/Savelist.jsx';
+import LoadingLogin from './LoadingLogin'; 
 
 function App() {
   //status giả
@@ -32,6 +33,7 @@ function App() {
           <Route path="/BookingForm/:id" element={<BookingForm />} />
           <Route path="/Payment/:id" element={<Payment />} />
           <Route path="/Statusorder" element={<MainStatus />} />
+          <Route path="/LoadingLogin" element={<LoadingLogin />} />
 
 
           <Route path="/settings" element={<Settings />} />

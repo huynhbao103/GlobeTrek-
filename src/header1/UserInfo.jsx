@@ -7,6 +7,7 @@ import icon4 from '../assets/icon4.png';
 import icon5 from '../assets/icon5.png';
 import icon7 from '../assets/icon7.png';
 import icon9 from '../assets/icon9.png';
+import LoadingLogin from '../../src/LoadingLogin'; 
 
 const UserInfo = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -17,7 +18,7 @@ const UserInfo = () => {
   const user = storedUser ? JSON.parse(storedUser) : null;
 
   if (!user) {
-    return <p>Chưa có người dùng đăng nhập</p>;
+    return <p> <LoadingLogin/></p>;
   }
 
   const toggleDropdown = () => {

@@ -61,7 +61,7 @@ function Laptop() {
               <a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium'>Hợp tác với chúng tôi</a>
               
               <Link to='/Savelist'><a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium'>Đã lưu</a></Link>
-              <a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium' onClick={() => setSelectedSection('SetPlace')}>Đặt chỗ của tôi</a>
+              <Link to='/setplace' className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium' onClick={() => setSelectedSection('SetPlace')}>Đặt chỗ của tôi</Link>
               {user ? <UserInfo user={user} /> : <Login />}
 
               {/* <Register/> */}
