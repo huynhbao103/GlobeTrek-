@@ -8,6 +8,7 @@ import { registerUser, signinUser, verifyAccount } from "../redux/apiRequest";
 import { useSelector } from "react-redux";
 import { checkUserEmail } from "../API/apiService";
 import { message } from 'antd';
+import { Input, Row, Col } from "antd";
 
 export default function Modal() {
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +23,7 @@ export default function Modal() {
   const [inputError, setInputError] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const userNav = useSelector((state) => state.auth?.login?.currentUser);
+  const [otp, setOtp] = useState(Array(6).fill("")); 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -69,23 +71,33 @@ export default function Modal() {
     }
   };
 
-  const [otp, setOtp] = useState(Array(6).fill(""));
-
   const handleOtpChange = (index, value) => {
     const newOtp = [...otp];
-    newOtp[index] = value.slice(-1);
+    newOtp[index] = value.slice(-1); 
     setOtp(newOtp);
-
     if (value && index < 5) {
       document.getElementById(`otp-input-${index + 1}`).focus();
     }
   };
-
+  // Hàm xử lý khi xóa ký tự
+  const handleKeyDown = (index, event) => {
+    // Nếu người dùng nhấn Backspace và ô hiện tại trống, chuyển focus đến ô trước đó
+    if (event.key === "Backspace" && !otp[index] && index > 0) {
+      document.getElementById(`otp-input-${index - 1}`).focus();
+    }
+  };
+  // const handleVerifyOTP = () => {
+  //   const enteredOTP = otp.join("");
+  //   verifyAccount(email, enteredOTP, dispatch, () => setShowModal(false), setShowVerification);
+  // };
   const handleVerifyOTP = () => {
     const enteredOTP = otp.join("");
-    verifyAccount(email, enteredOTP, dispatch, () => setShowModal(false), setShowVerification);
+    if (enteredOTP.length === 6) {
+      verifyAccount(email, enteredOTP,dispatch, () => setShowModal(false), setShowVerification);
+    } else {
+      message.error("Vui lòng nhập đầy đủ OTP.");
+    }
   };
-
   const handleChange = (e) => {
     const value = e.target.value;
     setEmail(value);
@@ -357,19 +369,22 @@ export default function Modal() {
               </button>
               <h2 className="text-2xl text-trek-color-1 font-bold mb-3">Xác minh mã OTP</h2>
               <p>Vui lòng nhập mã OTP đã được gửi đến email của bạn</p>
-              <div className="flex justify-center space-x-2 mt-4">
-                {otp.map((value, index) => (
-                  <input
-                    key={index}
-                    id={`otp-input-${index}`}
-                    type="text"
-                    value={value}
-                    onChange={(e) => handleOtpChange(index, e.target.value)}
-                    maxLength="1"
-                    className="w-10 h-10 text-center border border-gray-300 rounded-md focus:border-trek-color-1 focus:outline-none"
-                  />
-                ))}
-              </div>
+              <Row gutter={[8, 8]} justify="center">
+          {otp.map((digit, index) => (
+            <Col key={index}>
+              <Input
+              className="mt-5"
+                id={`otp-input-${index}`}
+                type="text"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleOtpChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)} // Xử lý sự kiện xóa
+                style={{ width: "50px", height: "50px", textAlign: "center" }}
+              />
+            </Col>
+          ))}
+        </Row>
               <button
                 onClick={handleVerifyOTP}
                 className="w-full py-2 mt-4 text-white font-semibold rounded-lg bg-trek-color-1 hover:bg-trek-color-2"
@@ -382,4 +397,4 @@ export default function Modal() {
       )}
     </>
   );
-}   
+}

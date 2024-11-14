@@ -3,7 +3,7 @@ import Header from '../header1/Header';
 import Footer from '../footer/Footer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Pointer } from "pointer-wallet";
-import { message } from 'antd';
+import { message, Button } from 'antd'; // import Button from Ant Design
 import LoadingLogin from '../../src/LoadingLogin';
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -12,6 +12,7 @@ function Payment() {
   const { id } = useParams();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(600);
+  const [loading, setLoading] = useState(false); // Trạng thái loading cho button
 
   const navigate = useNavigate();
 
@@ -86,7 +87,6 @@ function Payment() {
       if (url) {
         message.success('Đang chuyển hướng đến ví điện tử...');
         window.location.href = url;
-
       } else {
         throw new Error('Lỗi khi tạo thanh toán.');
       }
@@ -155,6 +155,8 @@ function Payment() {
     console.log(orderData);
 
     try {
+      setLoading(true); 
+
       const response = await fetch(`${VITE_BASE_URL}/orders/api/create`, {
         method: 'POST',
         headers: {
@@ -188,9 +190,10 @@ function Payment() {
     } catch (error) {
       console.error('Error:', error);
       message.error('Lỗi khi kết nối đến server. Vui lòng thử lại.');
+    } finally {
+      setLoading(true); 
     }
   };
-
 
   return (
     <>
@@ -216,7 +219,7 @@ function Payment() {
                   onChange={handlePaymentChange}
                   className="mr-2"
                 />
-                <label htmlFor="pointer-wallet" className="font-semibold">Ví điện tử khác</label>
+                <label htmlFor="pointer-wallet" className="font-semibold">Ví Press Pay </label>
               </div>
             </div>
           </div>
@@ -226,14 +229,17 @@ function Payment() {
               <h3 className="text-lg font-semibold">Tổng giá tiền</h3>
               <p className="text-xl font-bold">{bookingData.totalPrice.toLocaleString()} VND</p>
             </div>
-            <button
-              className={`w-full bg-trek-color-1 text-white py-3 px-6 rounded-lg hover:bg-trek-color-1-dark transition duration-300 ${selectedPaymentMethod ? '' : 'opacity-50 cursor-not-allowed'
-                }`}
+
+            <Button
+             className={`w-full bg-trek-color-1 text-white py-3 px-6 rounded-lg hover:bg-trek-color-1-dark transition duration-300 ${selectedPaymentMethod ? '' : 'opacity-50 cursor-not-allowed'
+             }`}
+              type="#95de64"
+              
+              loading={loading} // Button sẽ hiển thị loading khi đang xử lý thanh toán
               onClick={handlePaymentSubmit}
-              disabled={!selectedPaymentMethod}
             >
               {getPaymentButtonLabel()}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
