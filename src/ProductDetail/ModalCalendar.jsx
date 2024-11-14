@@ -11,7 +11,7 @@ function ModalCalendar({ setShowModal, onDateChange }) {
     const [tourPrice, setTourPrice] = useState(null);
     const [specialAdultPrice, setSpecialAdultPrice] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+
     const minDate = new Date();
     minDate.setDate(minDate.getDate() + 1);
     const selectedTourId = window.location.pathname.split('/').pop();
@@ -38,7 +38,7 @@ function ModalCalendar({ setShowModal, onDateChange }) {
             setSelectedDate(newDate);
             const selectedPrice = getPriceForDate(newDate);
             onDateChange(newDate, selectedPrice);
-            saveSelectedDateToLocal(newDate); 
+            saveSelectedDateToLocal(newDate);
             setShowModal(false);
         }
     }, [setShowModal, minDate, setSelectedDate, onDateChange]);

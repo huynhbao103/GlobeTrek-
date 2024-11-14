@@ -22,13 +22,13 @@ const BestsalerTour = () => {
     setLoading(true);
     try {
       const fetchedTours = await fetchTours();
-  
+
       // Lọc tours theo tourType đã chọn và kiểm tra trạng thái của tour
       const filteredTours = fetchedTours.filter(
         (tour) => tour.tourType === tourTypeId && !tour.isDisabled // Chỉ lấy tour không bị tắt
       );
       setTours(filteredTours);
-  
+
       // Lấy danh sách các điểm đến duy nhất
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
@@ -44,7 +44,7 @@ const BestsalerTour = () => {
       setLoading(false);
     }
   };
-  
+
   const settings = {
     dots: false,
     infinite: false,
@@ -78,7 +78,7 @@ const BestsalerTour = () => {
       },
     ],
   };
-  
+
   const nextSlide = () => {
     sliderRef.current.slickNext();
   };
@@ -109,11 +109,10 @@ const BestsalerTour = () => {
               uniqueDestinations.map((destination, index) => (
                 <button
                   key={index}
-                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${
-                    activeLocation?.name === destination.name
+                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${activeLocation?.name === destination.name
                       ? 'bg-[#4CA771] text-white font-bold'
                       : 'bg-[#FFFF] text-[#4CA771] font-bold'
-                  }`}
+                    }`}
                   onClick={() => setActiveLocation(destination)}
                 >
                   {destination.name}

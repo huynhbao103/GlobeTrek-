@@ -10,7 +10,7 @@ function Header({ currentStep }) {
       <div className=' w-[20%] '>
         <Link to='/'>
           <img className='h-28 w-40 py-2 px-2 ml-auto' src={logo1} alt="Logo" />
-          </Link>
+        </Link>
       </div>
     </div>
   );

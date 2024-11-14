@@ -72,11 +72,11 @@ const GuestInfoForm = ({ onSave }) => {
       onSave();
     }
 
-    setIsEditing(false); 
+    setIsEditing(false);
   };
 
   const handleEditGuestInfo = () => {
-    setIsEditing(true); 
+    setIsEditing(true);
   };
 
   const titleOptions = [
@@ -97,10 +97,10 @@ const GuestInfoForm = ({ onSave }) => {
           {isEditing ? 'Lưu thông tin khách' : 'Chỉnh sửa chi tiết'}
         </button>
       </div>
-    
+
       {isEditing ? (
         <div>
-              <p>Thông tin hành khách đi cùng</p>
+          <p>Thông tin hành khách đi cùng</p>
           <div className="mb-4">
             <label htmlFor="title" className="block text-sm font-medium text-gray-700">
               Danh xưng
@@ -175,12 +175,12 @@ const GuestInfoForm = ({ onSave }) => {
             <p><strong>Họ tên:</strong> {fullName || 'Chưa có thông tin'}</p>
           </div>
           <div className='sm:w-[80%] sm:flex justify-between items-center'>
-          <div className="mb-4">
-            <p><strong>Điện thoại di động:</strong> {phone || 'Chưa có thông tin'}</p>
-          </div>
-          <div className="mb-4">
-            <p><strong>Email:</strong> {email || 'Chưa có thông tin'}</p>
-          </div>
+            <div className="mb-4">
+              <p><strong>Điện thoại di động:</strong> {phone || 'Chưa có thông tin'}</p>
+            </div>
+            <div className="mb-4">
+              <p><strong>Email:</strong> {email || 'Chưa có thông tin'}</p>
+            </div>
           </div>
           <div className="mb-4">
             <p><strong>Yêu cầu đặc biệt:</strong> {specialRequest || 'Chưa có thông tin'}</p>

@@ -10,24 +10,24 @@ function AddEmail() {
   return (
     <div>
       <div className="bg-white round-md p-8 mt-4">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-        <h3 className="text-lg font-semibold mt-6 mb-2">Só di động</h3>
-        
-        <p className="text-gray-500 text-sm">Chỉ có thể sử dụng tối đa 3 só di động</p>
-        </div>
-        <button className=" text-white py-2 px-4 rounded-md bg-[#4CA771] hover:bg-[#00875A] mb-4">+ Thêm số di động</button>  
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h3 className="text-lg font-semibold mt-6 mb-2">Só di động</h3>
+
+            <p className="text-gray-500 text-sm">Chỉ có thể sử dụng tối đa 3 só di động</p>
+          </div>
+          <button className=" text-white py-2 px-4 rounded-md bg-[#4CA771] hover:bg-[#00875A] mb-4">+ Thêm số di động</button>
         </div>
         <hr className="mb-4" />
         <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center justify-normal">
-          <p>Số điện thoại</p>
-          <span className="text-[#4CA771] ml-4 ">
+          <div className="flex items-center justify-normal">
+            <p>Số điện thoại</p>
+            <span className="text-[#4CA771] ml-4 ">
               Nơi nhận thông báo
             </span>
-            </div>
+          </div>
           <div>
-          
+
             <span className="text-red-500 cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

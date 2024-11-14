@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom';
 import Inforimage from './InfoImage.jsx';
 import '../index.css';
 import TourInfo from './TourInfo.jsx';
@@ -13,10 +13,10 @@ import GoogleMap from './GoogleMap.jsx';
 import PriceTour from './PriceTour.jsx';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { fetchTourById } from '../API/apiService.js'; 
+import { fetchTourById } from '../API/apiService.js';
 
 function Bodyprodetail() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [tour, setTour] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +32,7 @@ function Bodyprodetail() {
       }
     };
     getTour();
-  }, [id]); 
+  }, [id]);
 
   return (
     <div>
@@ -41,7 +41,7 @@ function Bodyprodetail() {
       <div className="max-w-[1280px] mx-auto">
         <div className="mt-40">
           {loading ? (
-            <Skeleton count={5} height={200} /> 
+            <Skeleton count={5} height={200} />
           ) : (
             <>
               <Inforimage tour={tour} />

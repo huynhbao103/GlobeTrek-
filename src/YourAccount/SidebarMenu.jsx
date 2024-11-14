@@ -27,8 +27,7 @@ const SidebarMenu = ({ setSelectedSection }) => {
   };
 
   const menuItemClass = (section) =>
-    `px-4 py-2 mt-2 cursor-pointer flex items-center rounded-lg transition duration-200 hover:bg-green-500 ${
-      activeSection === section ? '' : ''
+    `px-4 py-2 mt-2 cursor-pointer flex items-center rounded-lg transition duration-200 hover:bg-green-500 ${activeSection === section ? '' : ''
     }`;
 
   return (

@@ -50,7 +50,12 @@ function TourInfo() {
               {loading ? <Skeleton width={100} /> : "Ngày khả dụng"}
             </span>
             <span>
-              {loading ? <Skeleton width={200} /> : tourInfo.createdAt}
+              {loading ? (
+                <Skeleton width={200} />
+              ) : (
+                new Date(tourInfo.createdAt).toLocaleDateString("vi-VN")
+              )}
+
             </span>
           </div>
           <div className="flex max-w-screen-md justify-between">
@@ -58,7 +63,7 @@ function TourInfo() {
               {loading ? <Skeleton width={100} /> : "Thời gian"}
             </span>
             <span>
-              {loading ? <Skeleton width={200} /> : tourInfo.duration } Days
+              {loading ? <Skeleton width={200} /> : tourInfo.duration} Days
             </span>
           </div>
           <div className="flex max-w-screen-md justify-between">

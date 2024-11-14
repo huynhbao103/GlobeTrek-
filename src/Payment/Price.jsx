@@ -27,11 +27,11 @@ const Price = ({ adultCount, childCount, prices }) => {
     <div className='mt-4'>
       <h3 className="text-xl font-bold mb-2">Tóm tắt</h3>
       <div className="bg-white p-4 rounded-lg">
-        <div 
+        <div
           className="font-bold text-2xl mt-4 flex shadow-sm justify-between cursor-pointer"
           onClick={toggleDetails}
         >
-          Giá bạn trả: 
+          Giá bạn trả:
           <div className="flex items-center">
             <span className="text-[#4CA771]">{totalPrice.toLocaleString()} VND</span>
             {showDetails ? <FaChevronUp className="ml-2" /> : <FaChevronDown className="ml-2" />}

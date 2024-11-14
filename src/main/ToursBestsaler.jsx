@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, setTourTypeId] = useState("6724442a1f084a315e2eb0b3"); 
+  const [tourTypeId, setTourTypeId] = useState("6724442a1f084a315e2eb0b3");
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -23,10 +23,10 @@ const BestsalerTour = () => {
     try {
       const fetchedTours = await fetchTours();
       const filteredTours = fetchedTours.filter(
-        (tour) => tour.tourType === tourTypeId && !tour.isDisabled 
+        (tour) => tour.tourType === tourTypeId && !tour.isDisabled
       );
       setTours(filteredTours);
-  
+
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
           acc.push(tour.destination);
@@ -41,7 +41,7 @@ const BestsalerTour = () => {
       setLoading(false);
     }
   };
-  
+
   const settings = {
     dots: false,
     infinite: false,
@@ -75,7 +75,7 @@ const BestsalerTour = () => {
       },
     ],
   };
-  
+
   const nextSlide = () => {
     sliderRef.current.slickNext();
   };
@@ -106,11 +106,10 @@ const BestsalerTour = () => {
               uniqueDestinations.map((destination, index) => (
                 <button
                   key={index}
-                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${
-                    activeLocation?.name === destination.name
+                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${activeLocation?.name === destination.name
                       ? 'bg-[#4CA771] text-white font-bold'
                       : 'bg-[#FFFF] text-[#4CA771] font-bold'
-                  }`}
+                    }`}
                   onClick={() => setActiveLocation(destination)}
                 >
                   {destination.name}

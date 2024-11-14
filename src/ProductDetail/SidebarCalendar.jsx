@@ -35,7 +35,7 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
 
     useEffect(() => {
         const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
-        setStoredDates(loadedDates.map(date => new Date(date))); 
+        setStoredDates(loadedDates.map(date => new Date(date)));
     }, []);
 
     const settings = {
@@ -72,7 +72,7 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
 
     const handleDateChange = (date) => {
         const formattedDate = date.toISOString().split('T')[0];
-        const adjustedPrice = tourPrices.special[formattedDate] || tourPrices.regular; 
+        const adjustedPrice = tourPrices.special[formattedDate] || tourPrices.regular;
         onDateChange(date, adjustedPrice);
         saveSelectedDateToLocal(date);
     };

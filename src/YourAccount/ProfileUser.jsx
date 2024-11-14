@@ -1,6 +1,6 @@
 import React from 'react';
 import User from "../assets/User.png";
-import {  message } from 'antd';
+import { message } from 'antd';
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 function ProfileUser() {
   const requestNotificationPermission = () => {
@@ -25,7 +25,7 @@ function ProfileUser() {
   const showNotification = () => {
     const notification = new Notification("Thông báo từ trang web", {
       body: "Đây là nội dung thông báo.",
-      icon: {User} // Thay thế bằng đường dẫn tới icon nếu có
+      icon: { User } // Thay thế bằng đường dẫn tới icon nếu có
     });
 
     notification.onclick = () => {

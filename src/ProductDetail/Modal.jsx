@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Modal({ closeModal, children }) {
- 
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -15,7 +15,7 @@ function Modal({ closeModal, children }) {
         </div>
         {children}
       </div>
-    </div>  
+    </div>
   );
 }
 

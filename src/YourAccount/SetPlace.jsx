@@ -79,26 +79,26 @@ const SetPlace = ({ setSelectedSection }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending': return 'orange';
-      case 'processing': return 'blue'; 
-      case 'paid': return 'green'; 
-      case 'canceled': return 'red'; 
-      default: return 'gray'; 
+      case 'processing': return 'blue';
+      case 'paid': return 'green';
+      case 'canceled': return 'red';
+      default: return 'gray';
     }
   };
 
   const canCancelTour = (bookingDate) => {
     const currentDate = new Date(); // Ngày hiện tại
     currentDate.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để chỉ so sánh ngày
-  
+
     const bookingDateObj = new Date(bookingDate); // Ngày đặt từ đơn hàng
     bookingDateObj.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để chỉ so sánh ngày
-  
+
     const timeDifference = bookingDateObj - currentDate;
     const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000; // 2 ngày tính bằng millisecond
-  
+
     return timeDifference > twoDaysInMillis; // Kiểm tra có còn đủ 2 ngày để hủy không
   };
-  
+
   return (
     <>
       <Header />
@@ -126,8 +126,8 @@ const SetPlace = ({ setSelectedSection }) => {
                     {displayOrders.map((order) => {
                       const bookingDate = new Date(order.bookingDate); // Lấy ngày đặt cho mỗi đơn hàng
                       return (
-                        <Card 
-                          key={order._id} 
+                        <Card
+                          key={order._id}
                           className="mb-4 shadow-md hover:shadow-lg transition duration-300"
                           style={{ borderRadius: '12px', backgroundColor: '#f9fafb' }}
                         >
@@ -140,7 +140,7 @@ const SetPlace = ({ setSelectedSection }) => {
                           <Text className="text-lg font-bold block mt-2 text-green-600">
                             Tổng giá trị: {order.totalValue.toLocaleString()} VND
                           </Text>
-                          <Text 
+                          <Text
                             className="text-lg font-bold block mt-2"
                             style={{ color: getStatusColor(order.status) }}
                           >
@@ -166,12 +166,12 @@ const SetPlace = ({ setSelectedSection }) => {
                       );
                     })}
 
-                    <Pagination 
-                      current={currentPage} 
-                      pageSize={itemsPerPage} 
-                      total={todayOrders.length} 
-                      onChange={handlePageChange} 
-                      showSizeChanger={false} 
+                    <Pagination
+                      current={currentPage}
+                      pageSize={itemsPerPage}
+                      total={todayOrders.length}
+                      onChange={handlePageChange}
+                      showSizeChanger={false}
                       className="mt-4 text-center"
                     />
                   </div>

@@ -37,14 +37,14 @@ const Header = () => {
       <div className=" w-[80%] mx-auto flex items-center justify-between ">
         {/* Login/Register */}
 
-        <Link to ='/'>
-        <div className="flex">
-          <img src={Traveloka} alt="Logo" className=" w-[100px]" />
-        </div>
+        <Link to='/'>
+          <div className="flex">
+            <img src={Traveloka} alt="Logo" className=" w-[100px]" />
+          </div>
         </Link>
         <div className="text-center">{user ? <UserInfo /> : <Login />}</div>
 
-      
+
       </div>
     </header>
   );

@@ -52,7 +52,7 @@ const ContactInfoForm = ({ onSave, orderData }) => {
     if (onSave) {
       onSave(customerInfo);
     }
-    
+
     setIsEditing(false);
   };
 

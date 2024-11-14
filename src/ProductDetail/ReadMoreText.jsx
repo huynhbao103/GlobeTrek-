@@ -97,11 +97,10 @@ const TourInfo = () => {
                 <button
                   key={index}
                   onClick={() => handleDayClick(index)}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                    index === selectedDayIndex
+                  className={`px-3 py-1 rounded-full text-sm transition-colors ${index === selectedDayIndex
                       ? 'bg-[#35845F] text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-[#35845F] hover:text-white'
-                  }`}
+                    }`}
                 >
                   Ngày {index + 1}
                 </button>
