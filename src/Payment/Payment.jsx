@@ -149,7 +149,7 @@ function Payment() {
       totalValue: bookingData.totalPrice,
       adultPrice: bookingData.adultPrice,
       childPrice: bookingData.childPrice,
-      bookingDate: selectedDates[0],
+      bookingDate: selectedDates[selectedDates.length - 1],
     };
 
     console.log(orderData);
