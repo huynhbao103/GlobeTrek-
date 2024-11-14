@@ -5,7 +5,6 @@ import '../fontawesome'; // Ensure this file configures FontAwesome correctly
 
 function Location() {
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     // Simulate data loading
     setTimeout(() => {

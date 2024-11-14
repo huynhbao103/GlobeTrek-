@@ -14,15 +14,15 @@ const App = () => {
 
   useEffect(() => {
     const loadTours = async () => {
-      setLoading(true); 
+      setLoading(true);
       try {
-        const response = await fetchTours(); 
+        const response = await fetchTours();
         const filteredTours = response.filter(tour => tour.isApproved && !tour.isDisabled);
-        setTours(filteredTours); 
+        setTours(filteredTours);
       } catch (error) {
         console.error('Failed to fetch tours:', error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     };
 

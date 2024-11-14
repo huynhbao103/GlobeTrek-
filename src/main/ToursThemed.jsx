@@ -22,12 +22,10 @@ const BestsalerTour = () => {
     setLoading(true);
     try {
       const fetchedTours = await fetchTours();
-      // Lọc tours ngay khi lấy dữ liệu
       const filteredTours = fetchedTours.filter(
-        (tour) => tour.tourType === tourTypeId // Lọc theo tourType đã chọn
+        (tour) => tour.tourType === tourTypeId
       );
       setTours(filteredTours);
-      // Lấy danh sách các điểm đến duy nhất
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
           acc.push(tour.destination);
@@ -42,7 +40,6 @@ const BestsalerTour = () => {
       setLoading(false);
     }
   };
-
   const settings = {
     dots: false,
     infinite: false,
@@ -76,23 +73,18 @@ const BestsalerTour = () => {
       },
     ],
   };
-  
-
   const nextSlide = () => {
     sliderRef.current.slickNext();
   };
-
   const prevSlide = () => {
     sliderRef.current.slickPrev();
   };
-
   useEffect(() => {
     getToursData();
-  }, [tourTypeId]); 
+  }, [tourTypeId]);
   const filteredToursByLocation = tours.filter(
     (tour) => tour.destination?.name === activeLocation?.name
   );
-
   return (
     <div className="w-full flex justify-center pb-10">
       <div className="max-w-[1280px] w-[68%]">
@@ -106,11 +98,10 @@ const BestsalerTour = () => {
               uniqueDestinations.map((destination, index) => (
                 <button
                   key={index}
-                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${
-                    activeLocation?.name === destination.name
+                  className={`px-4 py-2 flex-shrink-0 rounded-md cursor-pointer ${activeLocation?.name === destination.name
                       ? 'bg-[#4CA771] text-white font-bold'
                       : 'bg-[#FFFF] text-[#4CA771] font-bold'
-                  }`}
+                    }`}
                   onClick={() => setActiveLocation(destination)}
                 >
                   {destination.name}
@@ -118,7 +109,6 @@ const BestsalerTour = () => {
               ))
             )}
           </div>
-
           <div className="relative">
             <Slider ref={sliderRef} {...settings}>
               {loading ? (
@@ -162,7 +152,6 @@ const BestsalerTour = () => {
                 ))
               )}
             </Slider>
-
             <button
               className="absolute top-1/2 transform -translate-y-1/2 left-0 z-10 bg-white bg-opacity-50 p-2 rounded-full cursor-pointer"
               onClick={prevSlide}
@@ -187,5 +176,4 @@ const BestsalerTour = () => {
     </div>
   );
 };
-
 export default BestsalerTour;

@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Pointer } from "pointer-wallet"; 
-import { message } from 'antd'; 
-import LoadingLogin from '../../src/LoadingLogin'; 
+import { Pointer } from "pointer-wallet";
+import { message } from 'antd';
+import LoadingLogin from '../../src/LoadingLogin';
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function Payment() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(600);
-  
+
   const navigate = useNavigate();
 
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
@@ -22,10 +22,10 @@ function Payment() {
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
   const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
-  const token = user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token; 
+  const token = user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token;
 
   useEffect(() => {
-    if (id) { 
+    if (id) {
       const bookingDataWithTourId = {
         ...bookingData,
         tourId: id,
@@ -52,7 +52,7 @@ function Payment() {
       return () => clearInterval(timer);
     } else {
       message.error('Thời gian thanh toán đã hết, vui lòng thử lại.');
-      navigate('/'); 
+      navigate('/');
     }
   }, [timeRemaining, navigate]);
 
@@ -85,8 +85,8 @@ function Payment() {
 
       if (url) {
         message.success('Đang chuyển hướng đến ví điện tử...');
-        window.location.href = url; 
-        
+        window.location.href = url;
+
       } else {
         throw new Error('Lỗi khi tạo thanh toán.');
       }
@@ -101,40 +101,40 @@ function Payment() {
       message.warning('Vui lòng chọn phương thức thanh toán.');
       return;
     }
-  
+
     if (!user) {
       message.error('Thông tin người dùng không hợp lệ. Vui lòng đăng nhập lại.');
       console.log('User:', user);
       return;
     }
-    
+
     if (!bookingData) {
       message.error('Dữ liệu đặt chỗ không hợp lệ. Vui lòng kiểm tra lại.');
       console.log('Booking Data:', bookingData);
       return;
     }
-    
+
     if (!customerInfo) {
       message.error('Thông tin khách hàng không hợp lệ. Vui lòng kiểm tra lại.');
       console.log('Customer Info:', customerInfo);
       return;
     }
-    
+
     if (selectedDates.length === 0) {
       message.error('Vui lòng chọn ngày đặt.');
       console.log('Selected Dates:', selectedDates);
       return;
     }
-    
+
     if (!bookingData.tourId) {
       message.error('Mã tour không hợp lệ. Vui lòng kiểm tra lại.');
       console.log('Booking Tour ID:', bookingData.tourId);
       return;
     }
-  
+
     const orderData = {
       userId: user._id || user.userId,
-      tour: bookingData.tourId, 
+      tour: bookingData.tourId,
       adultCount: bookingData.adultCount,
       childCount: bookingData.childCount,
       totalPrice: bookingData.totalPrice,
@@ -147,13 +147,13 @@ function Payment() {
         email: customerInfo.email,
       },
       totalValue: bookingData.totalPrice,
-      adultPrice: bookingData.adultPrice, 
-      childPrice: bookingData.childPrice, 
-      bookingDate: selectedDates[0], 
+      adultPrice: bookingData.adultPrice,
+      childPrice: bookingData.childPrice,
+      bookingDate: selectedDates[0],
     };
-    
-    console.log(orderData); 
-  
+
+    console.log(orderData);
+
     try {
       const response = await fetch(`${VITE_BASE_URL}/orders/api/create`, {
         method: 'POST',
@@ -163,16 +163,16 @@ function Payment() {
         },
         body: JSON.stringify(orderData),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log("Response Data:", data); // Kiểm tra phản hồi
-        
+
         const orderId = data.order._id;
         localStorage.setItem('orderID', orderId);
-  
+
         message.success('Đơn hàng đã được tạo thành công!');
-        await processPayment({ ...orderData, orderId }); 
+        await processPayment({ ...orderData, orderId });
       } else {
         const errorData = await response.json();
         if (response.status === 401) {
@@ -190,7 +190,7 @@ function Payment() {
       message.error('Lỗi khi kết nối đến server. Vui lòng thử lại.');
     }
   };
-  
+
 
   return (
     <>
@@ -227,9 +227,8 @@ function Payment() {
               <p className="text-xl font-bold">{bookingData.totalPrice.toLocaleString()} VND</p>
             </div>
             <button
-              className={`w-full bg-trek-color-1 text-white py-3 px-6 rounded-lg hover:bg-trek-color-1-dark transition duration-300 ${
-                selectedPaymentMethod ? '' : 'opacity-50 cursor-not-allowed'
-              }`}
+              className={`w-full bg-trek-color-1 text-white py-3 px-6 rounded-lg hover:bg-trek-color-1-dark transition duration-300 ${selectedPaymentMethod ? '' : 'opacity-50 cursor-not-allowed'
+                }`}
               onClick={handlePaymentSubmit}
               disabled={!selectedPaymentMethod}
             >

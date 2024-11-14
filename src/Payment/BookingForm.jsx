@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom"; 
+import { Link, useNavigate, useParams } from "react-router-dom";
 import User from "../assets/User.png";
 import ContactInfoForm from "./ContactInfoForm";
 import GuestInfoForm from "./GuestInfoForm";
 import Map from "./Map.jsx";
 import Header from "./header";
 import Footer from "../footer/Footer";
-import Price from "./Price"; 
+import Price from "./Price";
 import ConfirmBookingModal from "./ConfirmBookingModal";
-import ProcessingModal from "./ProcessingModal"; 
+import ProcessingModal from "./ProcessingModal";
 import { useSelector } from "react-redux";
 import PropTypes from 'prop-types';
-import {  message } from 'antd';
+import { message } from 'antd';
 
 const BookingForm = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const user = JSON.parse(localStorage.getItem("userNav"));
   const navigate = useNavigate();
   const userNav = useSelector((state) => state.auth?.login?.currentUser);
@@ -41,7 +41,7 @@ const BookingForm = () => {
           childPrice: data.prices?.childPrice || prevData.prices.childPrice,
         }
       }));
-    } 
+    }
   }, []);
 
   // Xử lý khi nhấn "Tiếp tục"
@@ -60,8 +60,8 @@ const BookingForm = () => {
 
     setTimeout(() => {
       setIsProcessingModalOpen(false);
-      navigate(`/Payment/${id}`); 
-    }, 3000); 
+      navigate(`/Payment/${id}`);
+    }, 3000);
   };
 
   return (
@@ -71,7 +71,7 @@ const BookingForm = () => {
         <div className="max-w-4xl mx-auto p-4">
           <h2 className="text-2xl font-bold mb-4">Đặt chỗ của tôi</h2>
           <h2 className="text-lg mb-6">Điền thông tin và xem lại đặt chỗ.</h2>
-          
+
           {/* Thông tin người dùng */}
           <div className="bg-white p-6 rounded-md shadow-md mb-6">
             <div className="flex items-center">
@@ -89,20 +89,20 @@ const BookingForm = () => {
             </div>
           </div>
 
-        
+
           <ContactInfoForm />
-          
-         
-          <GuestInfoForm 
+
+
+          <GuestInfoForm
           />
 
-      
+
           <Map />
-          
-       
-          <Price 
-            adultCount={bookingData.adultCount} 
-            childCount={bookingData.childCount} 
+
+
+          <Price
+            adultCount={bookingData.adultCount}
+            childCount={bookingData.childCount}
             prices={bookingData.prices}
           />
 
@@ -111,21 +111,21 @@ const BookingForm = () => {
               onClick={handleContinueClick}
               className="bg-[#4CA771] hover:bg-[#00875A] font-bold text-white py-4 px-16 rounded-lg"
             >
-              Xác nhận thanh toán 
+              Xác nhận thanh toán
             </button>
           </div>
         </div>
       </div>
-      
+
       <Footer />
-      
+
       {/* Modal xác nhận */}
       <ConfirmBookingModal
         isOpen={isConfirmModalOpen}
         onRequestClose={() => setIsConfirmModalOpen(false)}
         onConfirm={handleConfirm}
       />
-      
+
       {/* Modal xử lý */}
       <ProcessingModal
         isOpen={isProcessingModalOpen}

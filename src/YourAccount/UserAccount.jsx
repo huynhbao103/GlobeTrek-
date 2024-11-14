@@ -6,7 +6,7 @@ import AddPhone from './AddPhone';
 function UserAccount() {
   return (
     <div >
-        <ProfileUser /><AddEmail /><AddPhone />
+      <ProfileUser /><AddEmail /><AddPhone />
     </div>
   )
 }

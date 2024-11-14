@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import Traveloka from '../assets/Logo1.png'; 
-import Laugues from './Laugues'; 
+import Traveloka from '../assets/Logo1.png';
+import Laugues from './Laugues';
 import Suppor from './Suppor';
 import Login from './Login';
 import More from './More';
 import UserInfo from './UserInfo';
-import Savelist from './Savelist'; 
+import Savelist from './Savelist';
 import { Link } from "react-router-dom";
 
 function Laptop() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState('');
-  const [selectedSection, setSelectedSection] = useState('Settings'); 
+  const [selectedSection, setSelectedSection] = useState('Settings');
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('userNav'); 
+    const storedUser = localStorage.getItem('userNav');
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
         console.log('Parsed User Data from userNav:', userData);
-        setUser(userData); 
-        setToken(userData.token); 
+        setUser(userData);
+        setToken(userData.token);
       } catch (error) {
         console.error('Error parsing user data from localStorage:', error);
       }
@@ -29,15 +29,15 @@ function Laptop() {
       console.log('No userNav data found in localStorage');
     }
   }, []);
-  
+
 
   const handleLogout = () => {
-    localStorage.removeItem('userNav'); 
+    localStorage.removeItem('userNav');
     setUser(null);
     setToken('');
     console.log('User logged out');
   };
-  
+
 
   return (
     <div>
@@ -59,7 +59,7 @@ function Laptop() {
               </div>
               <Suppor />
               <a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium'>Hợp tác với chúng tôi</a>
-              
+
               <Link to='/Savelist'><a className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium'>Đã lưu</a></Link>
               <Link to='/setplace' className='cursor-pointer hover:bg-slate-100 rounded-md py-2 px-2 text-sm font-medium' onClick={() => setSelectedSection('SetPlace')}>Đặt chỗ của tôi</Link>
               {user ? <UserInfo user={user} /> : <Login />}
@@ -79,7 +79,7 @@ function Laptop() {
         </div>
       </div>
       <div className="pt-20">
-      
+
       </div>
     </div>
   );

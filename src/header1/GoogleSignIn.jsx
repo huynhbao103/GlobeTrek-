@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {  message } from 'antd';
+import { message } from 'antd';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 
@@ -20,15 +20,15 @@ const SsoPointerSignIn = () => {
         const handleCallback = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const code = urlParams.get('code');
-            console.log(code) 
+            console.log(code)
             if (code) {
                 try {
                     const { data } = await axios.get(`${BASE_URL}/api/auth/callback`, {
-                        params: { code }  
+                        params: { code }
                     });
-                    console.log(data) 
-                    localStorage.setItem('userNav', JSON.stringify(data)); 
-                    setUser(data); 
+                    console.log(data)
+                    localStorage.setItem('userNav', JSON.stringify(data));
+                    setUser(data);
                     setError('');
                     message.success('Đăng nhập thành công!');
                     window.location.reload();
@@ -38,15 +38,15 @@ const SsoPointerSignIn = () => {
                 }
             }
         };
-        
+
         handleCallback();
-    }, []); 
+    }, []);
 
     const handleLoginRedirect = () => {
         // const redirectUri = encodeURIComponent(`http://localhost:5173`); 
-        const redirectUri = encodeURIComponent(`${REDIRECT_URL}`); 
+        const redirectUri = encodeURIComponent(`${REDIRECT_URL}`);
 
-        window.location.href = `https://sso-pointer.vercel.app/authorize?clientId=673373e9623ce2ca17c9afe9` ;
+        window.location.href = `https://sso-pointer.vercel.app/authorize?clientId=673373e9623ce2ca17c9afe9`;
     };
 
     return (

@@ -10,8 +10,8 @@ const NotLoggedIn = () => {
     <>
       <Header />
       <div className='max-w-screen-full  items-center justify-center flex '>
-        <div 
-          className="items-center min-h-screen mt-20 bg-cover object-contain bg-center" 
+        <div
+          className="items-center min-h-screen mt-20 bg-cover object-contain bg-center"
           style={{ backgroundImage: `url(${LoadingLogin})` }}
         >
           <div className="text-center p-6 mt-32 bg-opacity-80 rounded-lg max-w-md">

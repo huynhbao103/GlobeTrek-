@@ -1,19 +1,21 @@
-import {  message } from 'antd';
+import { message } from 'antd';
 import axios from "axios";
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
-import { loginFailed, 
-         loginStart,
-         loginSuccess,
-         registerStart,
-         registerFailed,
-         registerSuccess,
-         otpSent, 
-         otpFailed, 
-         otpVerified,
-         verifyAccountStart,
-         verifyAccountSuccess,
-         verifyAccountFailed } from "./authSlice";
+import {
+    loginFailed,
+    loginStart,
+    loginSuccess,
+    registerStart,
+    registerFailed,
+    registerSuccess,
+    otpSent,
+    otpFailed,
+    otpVerified,
+    verifyAccountStart,
+    verifyAccountSuccess,
+    verifyAccountFailed
+} from "./authSlice";
 
 export const signinUser = async (user, dispatch, closeModal) => {
     dispatch(loginStart());
@@ -28,9 +30,7 @@ export const signinUser = async (user, dispatch, closeModal) => {
         message.error("Login failed!"); // Show generic error
     }
 };
-        
-
-export const registerUser = async(user, dispatch, setShowVerification) => {
+export const registerUser = async (user, dispatch, setShowVerification) => {
     dispatch(registerStart());
     try {
         await axios.post(`${VITE_BASE_URL}/api/auth/signup?client=true`, user);
@@ -42,8 +42,7 @@ export const registerUser = async(user, dispatch, setShowVerification) => {
         message.error("Login failed! Please check your credentials."); // User feedback
     }
 };
-
-export const verifyAccount = async (email, otp, dispatch,closeModal, setShowVerification) => {
+export const verifyAccount = async (email, otp, dispatch, closeModal, setShowVerification) => {
     dispatch(verifyAccountStart());
     try {
         const res = await axios.post(`${VITE_BASE_URL}/api/auth/verify-account`, { email, otp });

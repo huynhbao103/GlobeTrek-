@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Element } from 'react-scroll';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import {  useParams } from 'react-router-dom'; // Sử dụng useParams để lấy ID từ URL
+import { useParams } from 'react-router-dom'; // Sử dụng useParams để lấy ID từ URL
 import { Link } from 'react-scroll'; // Import Link từ react-scroll
 import { fetchTourById } from '../API/apiService';
 
@@ -62,7 +62,7 @@ const SeachDetour = () => {
           <Skeleton width={100} height={40} borderRadius={4} />
         ) : (
           <Link
-            to="tourCardSection" 
+            to="tourCardSection"
             smooth={true}
             duration={500}
             offset={-340}

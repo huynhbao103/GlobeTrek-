@@ -21,7 +21,7 @@ function Calendar() {
             try {
                 const tour = await fetchTourById(selectedTourId);
                 setTourPrice(tour.price);
-                setSpecialPrices(tour.specialPrices || {}); 
+                setSpecialPrices(tour.specialPrices || {});
                 localStorage.setItem('tourPrice', tour.price);
                 localStorage.setItem('specialPrices', JSON.stringify(tour.specialPrices || {}));
             } catch (error) {

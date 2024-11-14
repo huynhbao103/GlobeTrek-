@@ -122,7 +122,7 @@ function Topbody() {
                 {searchTerm && filteredTours.length > 0 && (
                   <div
                     className="absolute mt-64 ml-2 bg-white border border-gray-300 rounded-md shadow-lg z-10"
-                    style={{ width: "33%" }} 
+                    style={{ width: "33%" }}
                   >
                     {filteredTours.map((tour) => (
                       <div

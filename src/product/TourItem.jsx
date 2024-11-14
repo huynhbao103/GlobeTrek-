@@ -8,7 +8,7 @@ const TourItem = ({ tour, loading }) => {
     return null;
   }
 
-  const firstImage = tour.images && tour.images.length > 0 ? tour.images[0] : ''; 
+  const firstImage = tour.images && tour.images.length > 0 ? tour.images[0] : '';
 
   return (
     <Link to={`/ProDetail/${tour._id}`}>

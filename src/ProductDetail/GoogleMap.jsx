@@ -29,7 +29,7 @@ function GoogleMap() {
   }, [id]);
 
   return (
-    <div className="max-w-screen-xl xl:mx-auto pt-4 border-gray-200 border-t-4">  
+    <div className="max-w-screen-xl xl:mx-auto pt-4 border-gray-200 border-t-4">
       <div className="flex flex-col justify-center sm:w-full ">
         <h1 className="font-bold text-lg text-center">
           {loading ? <Skeleton width={200} /> : "Thông tin thêm"}

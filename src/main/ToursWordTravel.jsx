@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, setTourTypeId] = useState("6724442a1f084a315e2eb0b3"); // Example: set your tourTypeId here
+  const [tourTypeId, setTourTypeId] = useState("6724442a1f084a315e2eb0b3"); 
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -44,16 +44,15 @@ const BestsalerTour = () => {
       setLoading(false);
     }
   };
-  
   const settings = {
     dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: Math.min(tours.length, 5),
     slidesToScroll: Math.min(tours.length, 5),
-    variableWidth: true, // Cho phép các phần tử có độ rộng thay đổi tùy thuộc vào số lượng
-    centerMode: true, // Căn giữa các phần tử
-    centerPadding: "0", // Giảm bớt khoảng cách thừa
+    variableWidth: true, 
+    centerMode: true, 
+    centerPadding: "0", 
     responsive: [
       {
         breakpoint: 1024,

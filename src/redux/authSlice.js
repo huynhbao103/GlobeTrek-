@@ -27,7 +27,7 @@ const autheSlice = createSlice({
         },
         loginSuccess: (state, action) => {
             state.login.isFetching = false;
-            state.login.currentUser=action.payload
+            state.login.currentUser = action.payload
             state.login.error = false;
         },
         loginFailed: (state) => {
@@ -47,14 +47,14 @@ const autheSlice = createSlice({
             state.login.error = true;
             state.register.success = false;
         },
-        otpSent: (state) => { 
-            state.register.otpSent = true; 
+        otpSent: (state) => {
+            state.register.otpSent = true;
         },
-        otpFailed: (state) => { 
-            state.register.error = true; 
+        otpFailed: (state) => {
+            state.register.error = true;
         },
-        otpVerified: (state) => { 
-            state.register.otpVerified = true; 
+        otpVerified: (state) => {
+            state.register.otpVerified = true;
         },
         verifyAccountStart: (state) => {
             state.verify.isFetching = true;
@@ -72,16 +72,16 @@ const autheSlice = createSlice({
     },
 });
 
-export const { loginStart, 
-               loginFailed, 
-               loginSuccess,
-               registerStart,
-               registerSuccess,
-               registerFailed,
-               otpSent, 
-               otpFailed, 
-               otpVerified,
-               verifyAccountStart,
-               verifyAccountSuccess,
-               verifyAccountFailed } = autheSlice.actions;
+export const { loginStart,
+    loginFailed,
+    loginSuccess,
+    registerStart,
+    registerSuccess,
+    registerFailed,
+    otpSent,
+    otpFailed,
+    otpVerified,
+    verifyAccountStart,
+    verifyAccountSuccess,
+    verifyAccountFailed } = autheSlice.actions;
 export default autheSlice.reducer;

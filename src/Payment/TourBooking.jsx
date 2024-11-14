@@ -3,8 +3,8 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import backicon from '../assets/backicon.png';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { fetchTourById } from '../API/apiService'; 
-import { isSpecialDay } from '../API/utils'; 
+import { fetchTourById } from '../API/apiService';
+import { isSpecialDay } from '../API/utils';
 import { useDate } from '../Context/DateContext';
 
 const TourBooking = () => {
@@ -67,9 +67,9 @@ const TourBooking = () => {
 
     // Handle booking submission
     const handleBooking = () => {
-        const bookingData = { 
-            adultCount, 
-            childCount, 
+        const bookingData = {
+            adultCount,
+            childCount,
             totalPrice,
             adultPrice: isSpecialDay(selectedDate) ? prices.specialAdultPrice : prices.adultPrice,
             childPrice: isSpecialDay(selectedDate) ? prices.specialChildPrice : prices.childPrice,

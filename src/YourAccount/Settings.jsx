@@ -26,10 +26,10 @@ const Settings = () => {
 
   return (
     <>
-   <Header/>
+      <Header />
       <div className='w-full mt-36 h-auto'>
         <div className="flex max-w-[1280px] justify-center mx-auto flex-row items-start pb-10">
-          <SidebarMenu/>
+          <SidebarMenu />
           <div className="w-full max-w-5xl ml-5 mx-auto rounded-lg">
             <h1 className="sm:text-2xl text-sm font-bold mb-4">Cài đặt</h1>
             <div className="flex mb-4">
@@ -58,7 +58,7 @@ const Settings = () => {
           </div>
         </div>
       </div>
-    <Footer/>
+      <Footer />
     </>
   );
 };

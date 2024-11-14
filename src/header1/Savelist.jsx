@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from '../footer/Footer';
 import { message, Modal } from 'antd';
-import { fetchFavoriteTours, removeFavoriteTour } from '../API/apiService'; 
-import LoadingLogin from '../../src/LoadingLogin'; 
+import { fetchFavoriteTours, removeFavoriteTour } from '../API/apiService';
+import LoadingLogin from '../../src/LoadingLogin';
 
 const getUserId = () => {
   const storedUser = JSON.parse(localStorage.getItem('userNav'));
@@ -15,15 +15,15 @@ const SavedList = () => {
   const [savedItems, setSavedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isModalVisible, setIsModalVisible] = useState(false); 
-  const navigate = useNavigate(); 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userId = getUserId();
     if (!userId) {
-     
-    
-      setIsModalVisible(true); 
+
+
+      setIsModalVisible(true);
       return;
     }
 
@@ -44,7 +44,7 @@ const SavedList = () => {
 
   const handleRemoveItem = async (tourId) => {
     const userId = getUserId();
-  
+
     try {
       await removeFavoriteTour(userId, tourId);
       setSavedItems(savedItems.filter(item => item.tour._id !== tourId));
@@ -55,7 +55,7 @@ const SavedList = () => {
   };
 
   const handleViewDetails = (tourId) => {
-    navigate(`/ProDetail/${tourId}`); 
+    navigate(`/ProDetail/${tourId}`);
   };
 
   const handleLoginModalClose = () => {
@@ -64,7 +64,7 @@ const SavedList = () => {
 
   if (loading) {
     return <div>
-      <LoadingLogin/>
+      <LoadingLogin />
     </div>;
   }
 
@@ -83,8 +83,8 @@ const SavedList = () => {
             <div className="flex flex-col items-center justify-center text-center p-10  border-gray-300 rounded-lg col-span-3">
               <h2 className="text-xl font-semibold mb-4">Chưa có sản phẩm nào trong danh sách đã lưu.</h2>
               <p className="text-gray-600 mb-4">Hãy khám phá các tour yêu thích và lưu chúng lại!</p>
-              <button 
-                onClick={() => window.location.href = '/product-body'} 
+              <button
+                onClick={() => window.location.href = '/product-body'}
                 className="mt-2 bg-green-700 text-white px-4 py-2 "
               >
                 Xem Tour
@@ -93,25 +93,25 @@ const SavedList = () => {
           ) : (
             savedItems.map(item => (
               <div key={item.tour._id} className="p-4  rounded-lg ">
-                <img 
-                  src={item.tour.images[0]} 
-                  alt={item.tour.title} 
-                  className="w-full h-40 object-cover rounded-md mb-2" 
-                  loading="lazy" 
+                <img
+                  src={item.tour.images[0]}
+                  alt={item.tour.title}
+                  className="w-full h-40 object-cover rounded-md mb-2"
+                  loading="lazy"
                 />
                 <h2 className="font-semibold">{item.tour.title}</h2>
                 <p className="text-sm text-gray-600">{item.tour.rating}</p>
                 <p className="text-sm text-gray-600">{item.tour.location}</p>
                 <p className="font-bold">{item.tour.price.toLocaleString()} VND</p>
                 <div className="flex justify-between mt-2">
-                  <button 
-                    onClick={() => handleRemoveItem(item.tour._id)} 
+                  <button
+                    onClick={() => handleRemoveItem(item.tour._id)}
                     className="bg-red-500 text-white px-4 py-2 rounded"
                   >
                     Xóa
                   </button>
-                  <button 
-                    onClick={() => handleViewDetails(item.tour._id)} 
+                  <button
+                    onClick={() => handleViewDetails(item.tour._id)}
                     className="bg-green-500 text-white px-4 py-2 rounded"
                   >
                     Xem chi tiết tour

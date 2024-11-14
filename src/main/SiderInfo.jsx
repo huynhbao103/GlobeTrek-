@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import QC1 from '../assets/QC1.png';
 import QC2 from '../assets/QC2.png';
-
 const locations = [
   {
     tours: [
@@ -16,7 +15,6 @@ const locations = [
     ]
   }
 ];
-
 function ToursWordTravel() {
   const [loading, setLoading] = useState(true);
   const sliderRef = useRef(null);

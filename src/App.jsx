@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Body from './main/Body.jsx';
 import ProductBody from './product/Body.jsx';
@@ -8,7 +8,7 @@ import BookingForm from './Payment/BookingForm.jsx';
 import { DateProvider } from './Context/DateContext.jsx';
 
 import Payment from './Payment/Payment.jsx';
-import MainStatus from './Payment/statusPayment/mainstatus.jsx'; 
+import MainStatus from './Payment/statusPayment/mainstatus.jsx';
 
 import Settings from './YourAccount/Settings.jsx';
 import SetPlace from './YourAccount/SetPlace.jsx';
@@ -16,7 +16,7 @@ import Transaction from './YourAccount/Transaction.jsx';
 import SavedPassengers from './YourAccount/savedPassengers.jsx';
 import Refunds from './YourAccount/Refunds.jsx';
 import Savelist from './header1/Savelist.jsx';
-import LoadingLogin from './LoadingLogin'; 
+import LoadingLogin from './LoadingLogin';
 
 function App() {
   //status giả
@@ -34,7 +34,6 @@ function App() {
           <Route path="/Payment/:id" element={<Payment />} />
           <Route path="/Statusorder" element={<MainStatus />} />
           <Route path="/LoadingLogin" element={<LoadingLogin />} />
-
 
           <Route path="/settings" element={<Settings />} />
           <Route path="/setplace" element={<SetPlace />} />
