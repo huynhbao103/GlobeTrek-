@@ -12,13 +12,24 @@ export const fetchTours = async (tourTypeId) => {
     }
     const data = await response.json();
 
-    // Lọc theo tourTypeId nếu có
-    return tourTypeId ? data.filter(tour => tour.tourType._id === tourTypeId) : data;
+    // Lọc theo tourTypeId nếu có và xử lý availabilities
+    const tours = tourTypeId
+      ? data.filter(tour => tour.tourType._id === tourTypeId)
+      : data;
+
+    return tours.map(tour => ({
+      ...tour,
+      availabilities: (tour.availabilities || []).map(item => ({
+        date: new Date(item.date).toLocaleDateString(),
+        availableSeats: item.availableSeats
+      }))
+    }));
   } catch (error) {
     console.error('Lỗi khi lấy danh sách tour:', error);
     throw error;
   }
 };
+
 
 
 export const fetchTourById = async (id) => {
@@ -27,12 +38,24 @@ export const fetchTourById = async (id) => {
     if (!response.ok) {
       throw new Error('Không thể lấy thông tin tour');
     }
-    return await response.json();
+
+    const data = await response.json();
+
+    // Kiểm tra và lấy availability từ dữ liệu trả về
+    const availabilities = data.availabilities || [];
+    return {
+      ...data,
+      availabilities: availabilities.map(item => ({
+        date: new Date(item.date).toLocaleDateString(), // Định dạng lại ngày
+        availableSeats: item.availableSeats
+      }))
+    };
   } catch (error) {
     console.error('Error fetching tour by ID:', error);
     throw error;
   }
 };
+
 
 export const fetchTourTypes = async () => {
   try {

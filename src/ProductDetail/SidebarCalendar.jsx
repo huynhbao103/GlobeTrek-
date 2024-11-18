@@ -2,46 +2,75 @@ import React, { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
-const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+import { fetchTourById } from '../API/apiService.js';
 
 function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
     const sliderRef = useRef(null);
+    const [availabilities, setAvailabilities] = useState([]);
     const [storedDates, setStoredDates] = useState([]);
+    const [loading, setLoading] = useState(true); 
 
-    const getDatesForCurrentMonth = () => {
-        const dates = [];
-        const startOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
-        const endOfMonth = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
-        const today = new Date();
-
-        // Đặt ngày bắt đầu từ ngày mai
-        const startDate = today.getDate() < endOfMonth.getDate() ? today.setDate(today.getDate() + 1) : startOfMonth;
-
-        for (let date = new Date(startDate); date <= endOfMonth; date.setDate(date.getDate() + 1)) {
-            dates.push(new Date(date));
-        }
-        return dates;
-    };
-
-    const dates = getDatesForCurrentMonth();
-
-    useEffect(() => {
-        const selectedDateIndex = dates.findIndex(date => date.toDateString() === selectedDate.toDateString());
-        if (selectedDateIndex !== -1 && sliderRef.current) {
-            sliderRef.current.slickGoTo(selectedDateIndex);
-        }
-    }, [selectedDate, dates]);
-
+    // Lấy dữ liệu ngày đã chọn từ localStorage
     useEffect(() => {
         const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
         setStoredDates(loadedDates.map(date => new Date(date)));
     }, []);
 
+    const selectedTourId = window.location.pathname.split('/').pop();
+
+    // Lấy thông tin tour từ API
+    useEffect(() => {
+        const fetchTourData = async () => {
+            try {
+                const tour = await fetchTourById(selectedTourId);
+                setAvailabilities(tour.availabilities); 
+            } catch (error) {
+                console.error('Error fetching tour data:', error);
+            }
+            setLoading(false);
+        };
+
+        fetchTourData();
+    }, [selectedTourId]);
+
+    const getAvailabilityForDate = (date) => {
+        const formattedDate = date.toISOString().split('T')[0];
+        console.log("Formatted Date: ", formattedDate); // In ra ngày được chọn
+        const availability = availabilities.find(item => {
+            const availabilityDate = new Date(item.date).toISOString().split('T')[0];
+            console.log("Availability Date: ", availabilityDate); // In ra ngày trong availabilities
+            return availabilityDate === formattedDate;
+        });
+    
+        return availability ? availability.availableSeats : 0;
+    };
+
+    // Xử lý khi người dùng chọn một ngày
+    const handleDateChange = (date) => {
+        const formattedDate = date.toISOString().split('T')[0];
+        const adjustedPrice = tourPrices.special[formattedDate] || tourPrices.regular;
+        onDateChange(date, adjustedPrice);
+        saveSelectedDateToLocal(date);
+    };
+
+    // Lưu ngày đã chọn vào localStorage
+    const saveSelectedDateToLocal = (date) => {
+        const formattedDate = date.toISOString();
+        if (!storedDates.includes(formattedDate)) {
+            const updatedDates = [...storedDates, formattedDate];
+            localStorage.setItem('selectedDates', JSON.stringify(updatedDates));
+            setStoredDates(updatedDates);
+        }
+    };
+
+    // Lọc ra các ngày có tour và có ghế còn lại
+    const availableDates = availabilities.map(item => new Date(item.date));
+    const slideCount = availableDates.length; // Slide count based on available dates
+
     const settings = {
         infinite: false,
-        slidesToShow: 7,
-        slidesToScroll: 7,
+        slidesToShow: slideCount < 6 ? slideCount : 6,
+        slidesToScroll: 2,
         swipeToSlide: true,
         initialSlide: 0,
         responsive: [
@@ -70,41 +99,42 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         ]
     };
 
-    const handleDateChange = (date) => {
-        const formattedDate = date.toISOString().split('T')[0];
-        const adjustedPrice = tourPrices.special[formattedDate] || tourPrices.regular;
-        onDateChange(date, adjustedPrice);
-        saveSelectedDateToLocal(date);
-    };
-
-    const saveSelectedDateToLocal = (date) => {
-        const formattedDate = date.toISOString();
-        if (!storedDates.includes(formattedDate)) {
-            const updatedDates = [...storedDates, formattedDate];
-            localStorage.setItem('selectedDates', JSON.stringify(updatedDates));
-            setStoredDates(updatedDates);
+    useEffect(() => {
+        const sortedAvailableDates = [...availableDates].sort((a, b) => a - b);
+        const selectedDateIndex = sortedAvailableDates.findIndex(date => date.toDateString() === selectedDate.toDateString());
+        if (selectedDateIndex !== -1 && sliderRef.current) {
+            sliderRef.current.slickGoTo(selectedDateIndex);
         }
-    };
+    }, [selectedDate, availableDates]);
 
     return (
-        <div className="w-[90%] mx-auto">
-            <Slider {...settings} ref={sliderRef}>
-                {dates.map((date, index) => {
-                    return (
-                        <div key={index} className="flex justify-center">
-                            <button
-                                id={date.toDateString()}
-                                className={`flex flex-col items-center p-2 m-2 rounded border transition duration-200 ease-in-out 
-                                    ${date.toDateString() === selectedDate.toDateString() ? 'bg-[#4CA771] text-white font-bold' : 'font-bold text-gray-800 hover:bg-gray-200'}`}
-                                onClick={() => handleDateChange(date)}
-                            >
-                                <div>{weekdays[date.getDay()]}</div>
-                                <div>{date.getDate()} tháng {date.getMonth() + 1}</div>
-                            </button>
-                        </div>
-                    );
-                })}
-            </Slider>
+        <div className="w-[100%] mx-auto">
+            {loading ? (
+                <div>Loading...</div>
+            ) : (
+                <Slider {...settings} ref={sliderRef}>
+                    {availableDates.map((date, index) => {
+                        const availableSeats = getAvailabilityForDate(date);
+                        const isSelected = date.toDateString() === selectedDate.toDateString();
+                        const buttonClasses = `
+                            flex flex-col items-center p-2 m-2 rounded border transition duration-200 ease-in-out 
+                            ${isSelected ? 'bg-[#4CA771] text-white font-bold' : 'font-bold text-gray-800 hover:bg-gray-200'}
+                        `;
+                        return (
+                            <div key={index} className="flex justify-center">
+                                <button
+                                    id={date.toDateString()}
+                                    className={buttonClasses}
+                                    onClick={() => handleDateChange(date)}
+                                >
+                                    <div>{date.getDate()} tháng {date.getMonth() + 1}</div>
+                                    <div>{availableSeats} ghế còn lại</div>
+                                </button>
+                            </div>
+                        );
+                    })}
+                </Slider>
+            )}
         </div>
     );
 }

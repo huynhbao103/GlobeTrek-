@@ -4,6 +4,9 @@ import { Card, Typography, Pagination, Button, message } from 'antd';
 import SidebarMenu from './SidebarMenu';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
+import { Pointer } from "pointer-wallet";
+const secretKey = import.meta.env.VITE_POINTER_SECRET_KEY;
+const pointerPayment = new Pointer(secretKey); 
 
 const { Title, Text } = Typography;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -45,18 +48,16 @@ const SetPlace = ({ setSelectedSection }) => {
     const filterRecentOrders = (orders) => {
       const today = new Date();
       const twoDaysAgo = new Date(today);
-      twoDaysAgo.setDate(today.getDate() - 2); // Lấy ngày 2 ngày trước
+      twoDaysAgo.setDate(today.getDate() - 2);
 
       const todayISOString = today.toISOString().split('T')[0];
       const twoDaysAgoISOString = twoDaysAgo.toISOString().split('T')[0];
 
-      // Lọc các đơn hàng được tạo trong 1-2 ngày gần nhất
       const filteredOrders = Object.values(orders).flat().filter(order => {
-        const createdAtDate = new Date(order.createdAt).toISOString().split('T')[0]; // Ngày tạo đơn hàng
+        const createdAtDate = new Date(order.createdAt).toISOString().split('T')[0];
         return createdAtDate === todayISOString || createdAtDate === twoDaysAgoISOString;
       });
 
-      // Sắp xếp các đơn hàng theo ngày tạo (mới nhất lên đầu)
       filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       setTodayOrders(filteredOrders);
@@ -75,7 +76,6 @@ const SetPlace = ({ setSelectedSection }) => {
 
   const displayOrders = todayOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  // Xử lý màu sắc dựa trên trạng thái
   const getStatusColor = (status) => {
     switch (status) {
       case 'pending': return 'orange';
@@ -86,19 +86,21 @@ const SetPlace = ({ setSelectedSection }) => {
     }
   };
 
-  const canCancelTour = (bookingDate) => {
-    const currentDate = new Date(); // Ngày hiện tại
-    currentDate.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để chỉ so sánh ngày
 
-    const bookingDateObj = new Date(bookingDate); // Ngày đặt từ đơn hàng
-    bookingDateObj.setHours(0, 0, 0, 0); // Đặt giờ về 00:00:00 để chỉ so sánh ngày
-
-    const timeDifference = bookingDateObj - currentDate;
-    const twoDaysInMillis = 2 * 24 * 60 * 60 * 1000; // 2 ngày tính bằng millisecond
-
-    return timeDifference > twoDaysInMillis; // Kiểm tra có còn đủ 2 ngày để hủy không
+  const canCancelTour = (status) => {
+    return status !== 'canceled' && status !== 'paid';
   };
-
+  const cancelOrder = async (orderId) => {
+    try {
+      const response = await pointerPayment.cancelOrder(orderId);
+      console.log('Order canceled successfully:', response);
+      message.success('Hủy đơn hàng thành công');
+      setTodayOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
+    } catch (error) {
+      console.error('Error canceling order:', error.message);
+      message.error('Không thể hủy đơn hàng');
+    }
+  };
   return (
     <>
       <Header />
@@ -123,48 +125,42 @@ const SetPlace = ({ setSelectedSection }) => {
                   <Text className="text-center text-gray-500">Không có đơn hàng nào.</Text>
                 ) : (
                   <div>
-                    {displayOrders.map((order) => {
-                      const bookingDate = new Date(order.bookingDate); // Lấy ngày đặt cho mỗi đơn hàng
-                      return (
-                        <Card
-                          key={order._id}
-                          className="mb-4 shadow-md hover:shadow-lg transition duration-300"
-                          style={{ borderRadius: '12px', backgroundColor: '#f9fafb' }}
+                    {displayOrders.map((order) => (
+                      <Card
+                        key={order._id}
+                        className="mb-4 shadow-md hover:shadow-lg transition duration-300"
+                        style={{ borderRadius: '12px', backgroundColor: '#f9fafb' }}
+                      >
+                        <Title level={4} className="text-gray-800">Mã đặt chỗ: {order._id}</Title>
+                        <Text>Ngày đặt: {new Date(order.bookingDate).toLocaleDateString()}</Text>
+                        <Text className="text-gray-600 block mt-2">Mô tả Tour: {order.tour?.description}</Text>
+                        <Text className="block mt-2">
+                          Số lượng vé: {order.adultCount + order.childCount || 0}
+                        </Text>
+                        <Text className="text-lg font-bold block mt-2 text-green-600">
+                          Tổng giá trị: {order.totalValue.toLocaleString()} VND
+                        </Text>
+                        <Text
+                          className="text-lg font-bold block mt-2"
+                          style={{ color: getStatusColor(order.status) }}
                         >
-                          <Title level={4} className="text-gray-800">Mã đặt chỗ: {order._id}</Title>
-                          <Text>Ngày đặt: {bookingDate.toLocaleDateString()}</Text>
-                          <Text className="text-gray-600 block mt-2">Mô tả Tour: {order.tour?.description}</Text>
-                          <Text className="block mt-2">
-                            Số lượng vé: {order.adultCount + order.childCount || 0}
-                          </Text>
-                          <Text className="text-lg font-bold block mt-2 text-green-600">
-                            Tổng giá trị: {order.totalValue.toLocaleString()} VND
-                          </Text>
-                          <Text
-                            className="text-lg font-bold block mt-2"
-                            style={{ color: getStatusColor(order.status) }}
-                          >
-                            Trạng thái: {order.status === 'canceled' ? 'Đã hủy' : order.status === 'pending' ? 'Đang chờ' : order.status === 'processing' ? 'Đang xử lý' : 'Đã thanh toán'}
-                          </Text>
+                          Trạng thái: {order.status === 'canceled' ? 'Đã hủy' : order.status}
+                        </Text>
 
-                          {order.status === 'canceled' ? (
-                            <Link to={`/ProDetail/${order.tour?._id}`}>
-                              <Button type="primary" size="middle" className="max-w-xs mt-4" block>
-                                Mua tiếp tục
-                              </Button>
-                            </Link>
-                          ) : order.status === 'paid' && canCancelTour(order.bookingDate) ? (
-                            <Button type="primary" danger size="middle" className="max-w-xs mt-4" block>
-                              Hủy Tour & Hoàn Tiền
-                            </Button>
-                          ) : (
-                            <Button type="default" danger size="middle" className="max-w-xs mt-4" block>
-                              Hủy Đơn Hàng
-                            </Button>
-                          )}
-                        </Card>
-                      );
-                    })}
+                        {canCancelTour(order.status) && (
+                          <Button
+                            type="default"
+                            danger
+                            size="middle"
+                            className="max-w-xs mt-4"
+                            block
+                            onClick={() => cancelOrder(order._id)}
+                          >
+                            Hủy Đơn Hàng
+                          </Button>
+                        )}
+                      </Card>
+                    ))}
 
                     <Pagination
                       current={currentPage}
