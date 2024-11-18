@@ -23,7 +23,7 @@ function Payment() {
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
   const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
-  const token = user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token;
+  const token =  user.accessToken || user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token  ;
 
   useEffect(() => {
     if (id) {

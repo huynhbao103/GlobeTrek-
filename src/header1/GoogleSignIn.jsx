@@ -122,7 +122,7 @@ const SsoPointerSignIn = () => {
     }, []);
 
     const handleLoginRedirect = () => {
-        window.location.href = `https://sso-pointer.vercel.app/authorize?clientId=67361f8fa2e9285438e3dab4`;
+        window.location.href = `https://sso-pointer.vercel.app/authorize?clientId=6736a8ab8fd09c530e4d6f2b`;
     };
 
     return (

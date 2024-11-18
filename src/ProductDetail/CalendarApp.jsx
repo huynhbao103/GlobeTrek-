@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import ModalCalendar from './ModalCalendar';
 import SidebarCalendar from './SidebarCalendar';
 import TourCard from './TourCard';
 import { useDate } from '../Context/DateContext';
@@ -9,7 +8,6 @@ import { fetchTourById } from '../API/apiService';
 
 function Calendar() {
     const { selectedDate, setSelectedDate } = useDate();
-    const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(true);
     const [tourPrice, setTourPrice] = useState(null);
     const [specialPrices, setSpecialPrices] = useState({});
@@ -35,16 +33,13 @@ function Calendar() {
 
     useEffect(() => {
         const storedData = JSON.parse(localStorage.getItem('selectedData')) || {};
-        const latestDate = Object.keys(storedData).pop(); // Lấy ngày cuối cùng
+        const latestDate = Object.keys(storedData).pop();
         if (latestDate) {
             setSelectedDate(new Date(latestDate));
-            setTourPrice(storedData[latestDate]); // Lấy giá tương ứng
+            setTourPrice(storedData[latestDate]);
         }
     }, [setSelectedDate]);
-
-    const openModal = () => setShowModal(true);
-    const closeModal = () => setShowModal(false);
-
+    
     const handleDateChange = (date, adjustedPrice) => {
         setSelectedDate(date);
         if (adjustedPrice !== undefined) {
@@ -58,21 +53,11 @@ function Calendar() {
     return (
         <div className="p-5 w-full justify-center items-center">
             <div className='bg-white border-2 w-full justify-center items-center'>
-                <div className="calendar-app max-w-6xl justify-between items-center sm:flex">
-                    {loading ? (
-                        <Skeleton height={64} width={100} borderRadius={8} />
-                    ) : (
-                        <button onClick={openModal} className="bg-[#f7f9fa] px-4 h-16 sm:mr-6 ml-2 border-gray-100 border text-[#4CA771] font-bold rounded-lg">
-                            Xem lịch
-                        </button>
-                    )}
+                <div className="calendar-app max-w-7xl justify-between items-center sm:flex">    
                     {loading ? (
                         <Skeleton height={64} width={200} borderRadius={8} />
                     ) : (
                         <SidebarCalendar selectedDate={selectedDate} onDateChange={handleDateChange} tourPrices={{ regular: tourPrice, special: specialPrices }} />
-                    )}
-                    {showModal && (
-                        <ModalCalendar setShowModal={setShowModal} onDateChange={handleDateChange} tourPrices={{ regular: tourPrice, special: specialPrices }} />
                     )}
                 </div>
             </div>
