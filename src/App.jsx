@@ -17,10 +17,12 @@ import SavedPassengers from './YourAccount/savedPassengers.jsx';
 import Refunds from './YourAccount/Refunds.jsx';
 import Savelist from './header1/Savelist.jsx';
 import LoadingLogin from './LoadingLogin';
+import ForgotPassword from './header1/Password/ForgotPassword.jsx';
+// import ResetPassword from './header1/Password/resetPass.jsx';
+
 
 function App() {
-  //status giả
-  const [status] = useState('pending');
+
   return (
     <DateProvider>
       <Router>
@@ -34,6 +36,8 @@ function App() {
           <Route path="/Payment/:id" element={<Payment />} />
           <Route path="/Statusorder" element={<MainStatus />} />
           <Route path="/LoadingLogin" element={<LoadingLogin />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          {/* <Route path="/reset-pass" element={<ResetPassword />} /> */}
 
           <Route path="/settings" element={<Settings />} />
           <Route path="/setplace" element={<SetPlace />} />
