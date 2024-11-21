@@ -10,6 +10,7 @@ import { checkUserEmail } from "../API/apiService";
 import { message } from 'antd';
 import { Input, Row, Col } from "antd";
 
+
 export default function Modal() {
   const [showModal, setShowModal] = useState(false);
   const [isRegistered, setIsRegistered] = useState(null);
@@ -266,6 +267,7 @@ export default function Modal() {
                       value={password}
                       onChange={handlePasswordChange}
                     />
+                    
                     {!isRegistered && (
                       <input
                         type="password"
@@ -277,6 +279,11 @@ export default function Modal() {
                     )}
                   </>
                 )}
+                <div className="text-right text-sm text-trek-color-1 hover:underline cursor-pointer">
+                  <button onClick={() => navigate("/forgot-password")}>
+                    Quên mật khẩu?
+                </button>
+                </div>
                 <button
                   disabled={!email || inputError}
                   type="submit"

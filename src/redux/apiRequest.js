@@ -9,9 +9,9 @@ import {
     registerStart,
     registerFailed,
     registerSuccess,
-    otpSent,
-    otpFailed,
-    otpVerified,
+    // otpSent,
+    // otpFailed,
+    // otpVerified,
     verifyAccountStart,
     verifyAccountSuccess,
     verifyAccountFailed
@@ -57,3 +57,15 @@ export const verifyAccount = async (email, otp, dispatch, closeModal, setShowVer
         message.error("Invalid OTP or OTP expired.");
     }
 };
+export const forgotPassword = async (email, dispatch, closeModal) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/forgot-password`, { email });
+      dispatch({ type: 'FORGOT_PASSWORD_SUCCESS', payload: res.data });
+      message.success("Liên kết khôi phục mật khẩu đã được gửi đến email của bạn!");
+      closeModal(); 
+    } catch (error) {
+      console.error("Error sending forgot password email:", error);
+      dispatch({ type: 'FORGOT_PASSWORD_FAILED', payload: error });
+      message.error("Không thể gửi email khôi phục mật khẩu. Vui lòng thử lại!");
+    }
+  };
