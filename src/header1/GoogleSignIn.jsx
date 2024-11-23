@@ -76,12 +76,12 @@
 // };
 
 // export default SsoPointerSignIn;
+// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 
 const SsoPointerSignIn = () => {
     const [user, setUser] = useState(null);

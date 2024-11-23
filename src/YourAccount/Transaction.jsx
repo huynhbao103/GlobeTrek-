@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+
+import  { useEffect, useState } from 'react';
 import { Select, Typography, Card, Pagination, message } from 'antd';
 import SidebarMenu from './SidebarMenu';
 import Header from '../header1/Header';
@@ -45,10 +46,10 @@ const Transaction = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, );
 
   const filterOrders = (orders) => {
-    const filtered = Object.entries(orders).reduce((acc, [monthYear, orderList]) => {
+    const filtered = Object.entries(orders).reduce((acc, [ orderList]) => {
       orderList.forEach(order => {
         const orderDate = new Date(order.bookingDate);  // Hoặc sử dụng order.createdAt nếu có trường này
         const today = new Date();
@@ -79,7 +80,6 @@ const Transaction = () => {
     filterOrders(groupedOrders);
   };
 
-  const pageCount = Math.ceil(filteredOrders.length / itemsPerPage);
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
