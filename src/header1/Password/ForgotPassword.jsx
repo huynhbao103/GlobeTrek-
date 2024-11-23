@@ -37,9 +37,6 @@ const ForgotPassword = () => {
     setIsLoading(false); 
   }
 };
- 
-
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
