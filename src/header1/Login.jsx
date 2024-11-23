@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 import SsoPointerSignIn from "./GoogleSignIn";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser, verifyAccount } from "../redux/apiRequest";
