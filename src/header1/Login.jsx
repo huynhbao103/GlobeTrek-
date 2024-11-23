@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { checkUserEmail } from "../API/apiService";
 import { message } from 'antd';
 import { Input, Row, Col } from "antd";
-
+import ForgotPassword from '../header1/Password/forgotPassword';
 
 export default function Modal() {
   const [showModal, setShowModal] = useState(false);
@@ -41,7 +41,7 @@ export default function Modal() {
     const storedUserNav = localStorage.getItem("userNav");
     if (userNav?.email) {
       const parsedUserNav = JSON.parse(storedUserNav);
-      setUser(parsedUserNav);
+      setUser(parsedUserNav);';;'
       setIsLoggedIn(true);
     }
   }, [userNav?.email]);
@@ -109,6 +109,15 @@ export default function Modal() {
     } else {
       setInputError("");
     }
+  };
+
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const openForgotPasswordModal = () => {
+    setShowForgotPasswordModal(true);  // Mở modal
+  };
+
+  const closeForgotPasswordModal = () => {
+    setShowForgotPasswordModal(false); // Đóng modal
   };
 
   const handlePasswordChange = (e) => {
@@ -279,11 +288,17 @@ export default function Modal() {
                     )}
                   </>
                 )}
-                <div className="text-right text-sm text-trek-color-1 hover:underline cursor-pointer">
-                  <button onClick={() => navigate("/forgot-password")}>
-                    Quên mật khẩu?
+                <button
+                  className="text-trek-color-1 text-sm"
+                  onClick={openForgotPasswordModal}
+                >
+                  Quên mật khẩu?
                 </button>
-                </div>
+
+                {showForgotPasswordModal && (
+                  <ForgotPassword closeModal={closeForgotPasswordModal} />
+                )}
+
                 <button
                   disabled={!email || inputError}
                   type="submit"
@@ -404,4 +419,4 @@ export default function Modal() {
       )}
     </>
   );
-}
+  }
