@@ -16,6 +16,7 @@ function Payment() {
 
   const navigate = useNavigate();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
   const user = JSON.parse(localStorage.getItem("userNav")) || {};
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo")) || {};
