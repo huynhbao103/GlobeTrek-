@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+/* eslint-disable react/prop-types */
+import  { useEffect, useRef, useState } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -8,22 +9,22 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
     const sliderRef = useRef(null);
     const [availabilities, setAvailabilities] = useState([]);
     const [storedDates, setStoredDates] = useState([]);
-    const [loading, setLoading] = useState(true); 
-
-    // Lấy dữ liệu ngày đã chọn từ localStorage
-    useEffect(() => {
-        const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
-        setStoredDates(loadedDates.map(date => new Date(date)));
-    }, []);
+    const [loading, setLoading] = useState(true);
 
     const selectedTourId = window.location.pathname.split('/').pop();
 
-    // Lấy thông tin tour từ API
+    // Fetch the selected tour's data from API (only future dates)
     useEffect(() => {
         const fetchTourData = async () => {
             try {
                 const tour = await fetchTourById(selectedTourId);
-                setAvailabilities(tour.availabilities); 
+                // Filter the availabilities to show only today and future dates
+                const today = new Date().toISOString().split('T')[0];  // Get today's date in 'YYYY-MM-DD' format
+                const futureAvailabilities = tour.availabilities.filter(item => {
+                    const availabilityDate = new Date(item.date).toISOString().split('T')[0];
+                    return availabilityDate >= today;  // Only show today and future dates
+                });
+                setAvailabilities(futureAvailabilities); 
             } catch (error) {
                 console.error('Error fetching tour data:', error);
             }
@@ -33,19 +34,22 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         fetchTourData();
     }, [selectedTourId]);
 
+    useEffect(() => {
+        const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+        setStoredDates(loadedDates.map(date => new Date(date)));
+    }, []);
+
+    // Get availability for a specific date
     const getAvailabilityForDate = (date) => {
         const formattedDate = date.toISOString().split('T')[0];
-        console.log("Formatted Date: ", formattedDate); // In ra ngày được chọn
         const availability = availabilities.find(item => {
             const availabilityDate = new Date(item.date).toISOString().split('T')[0];
-            console.log("Availability Date: ", availabilityDate); // In ra ngày trong availabilities
             return availabilityDate === formattedDate;
         });
-    
         return availability ? availability.availableSeats : 0;
     };
 
-    // Xử lý khi người dùng chọn một ngày
+    // Handle date selection and update selected date
     const handleDateChange = (date) => {
         const formattedDate = date.toISOString().split('T')[0];
         const adjustedPrice = tourPrices.special[formattedDate] || tourPrices.regular;
@@ -53,7 +57,7 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         saveSelectedDateToLocal(date);
     };
 
-    // Lưu ngày đã chọn vào localStorage
+    // Save selected date to localStorage
     const saveSelectedDateToLocal = (date) => {
         const formattedDate = date.toISOString();
         if (!storedDates.includes(formattedDate)) {
@@ -63,9 +67,9 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         }
     };
 
-    // Lọc ra các ngày có tour và có ghế còn lại
+    // Sort available dates and set up the slider
     const availableDates = availabilities.map(item => new Date(item.date));
-    const slideCount = availableDates.length; // Slide count based on available dates
+    const slideCount = availableDates.length;
 
     const settings = {
         infinite: false,
@@ -99,6 +103,7 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         ]
     };
 
+    // Sync the selected date with the slider
     useEffect(() => {
         const sortedAvailableDates = [...availableDates].sort((a, b) => a - b);
         const selectedDateIndex = sortedAvailableDates.findIndex(date => date.toDateString() === selectedDate.toDateString());

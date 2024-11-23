@@ -75,7 +75,7 @@ export const resetPassword = async (token, password, dispatch, closeModal) => {
 
         dispatch({ type: 'RESET_PASSWORD_SUCCESS', payload: res.data });
         message.success("Mật khẩu đã được thay đổi thành công!");
-        closeModal(); // Đóng modal sau khi reset thành công
+        closeModal(); 
     } catch (error) {
         console.error("Error resetting password:", error);
         dispatch({ type: 'RESET_PASSWORD_FAILED', payload: error });

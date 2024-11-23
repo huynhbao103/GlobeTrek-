@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 import SsoPointerSignIn from "./GoogleSignIn";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser, verifyAccount } from "../redux/apiRequest";
@@ -19,7 +18,7 @@ export default function Modal() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+  const [,setUser] = useState(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [inputError, setInputError] = useState("");
   const [showVerification, setShowVerification] = useState(false);
@@ -33,7 +32,7 @@ export default function Modal() {
       setIsLoggedIn(true);
       setUser(userNav);
     }
-  }, [userNav?.email]);
+  }, [userNav, userNav?.email]);
 
   useEffect(() => {
     const storedUserNav = localStorage.getItem("userNav");

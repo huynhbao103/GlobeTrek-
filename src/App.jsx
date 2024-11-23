@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Body from './main/Body.jsx';
@@ -8,7 +9,6 @@ import BookingForm from './Payment/BookingForm.jsx';
 import { DateProvider } from './Context/DateContext.jsx';
 
 import Payment from './Payment/Payment.jsx';
-import MainStatus from './Payment/statusPayment/mainstatus.jsx';
 
 import Settings from './YourAccount/Settings.jsx';
 import SetPlace from './YourAccount/SetPlace.jsx';
@@ -22,19 +22,16 @@ import ResetPassword from './header1/Password/ResetPassword.jsx';
 
 
 function App() {
-
   return (
     <DateProvider>
       <Router>
-        <Routes>
-
+        <Routes>  
           <Route path="/" element={<Body />} />
           <Route path="/product-body" element={<ProductBody />} />
           <Route path="/ProDetail/:id" element={<BodyProDetail />} />
           <Route path="/bodyPay/:id" element={<BodyPay />} />
           <Route path="/BookingForm/:id" element={<BookingForm />} />
           <Route path="/Payment/:id" element={<Payment />} />
-          <Route path="/Statusorder" element={<MainStatus />} />
           <Route path="/LoadingLogin" element={<LoadingLogin />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
