@@ -8,7 +8,6 @@ import BookingForm from './Payment/BookingForm.jsx';
 import { DateProvider } from './Context/DateContext.jsx';
 
 import Payment from './Payment/Payment.jsx';
-import MainStatus from './Payment/statusPayment/mainstatus.jsx';
 
 import Settings from './YourAccount/Settings.jsx';
 import SetPlace from './YourAccount/SetPlace.jsx';
@@ -32,7 +31,6 @@ function App() {
           <Route path="/bodyPay/:id" element={<BodyPay />} />
           <Route path="/BookingForm/:id" element={<BookingForm />} />
           <Route path="/Payment/:id" element={<Payment />} />
-          <Route path="/Statusorder" element={<MainStatus />} />
           <Route path="/LoadingLogin" element={<LoadingLogin />} />
 
           <Route path="/settings" element={<Settings />} />
