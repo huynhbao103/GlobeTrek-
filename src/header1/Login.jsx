@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 import SsoPointerSignIn from "./GoogleSignIn";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser, verifyAccount } from "../redux/apiRequest";
@@ -27,8 +26,6 @@ export default function Modal() {
   const [otp, setOtp] = useState(Array(6).fill("")); 
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (userNav?.email) {
       localStorage.setItem("userNav", JSON.stringify(userNav));
