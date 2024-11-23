@@ -53,11 +53,11 @@ const ForgotPassword = () => {
             </h2>
             <p className="mb-4">Nhập email của bạn để nhận liên kết khôi phục mật khẩu.</p>
             <Input
-              placeholder="Nhập email của bạn"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ marginBottom: "10px", width: "300px" }}
-            />
+                  placeholder="Email của bạn"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{ width: "100%" }}
+                />
             <Button
               className="bg-trek-color-1 text-white"
               type="primary"

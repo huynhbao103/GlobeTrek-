@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { checkUserEmail } from "../API/apiService";
 import { message } from 'antd';
 import { Input, Row, Col } from "antd";
+
 import ForgotPassword from './Password/ForgotPassword';
 
 export default function Modal() {
@@ -282,20 +283,16 @@ export default function Modal() {
                         value={confirmPassword}
                         onChange={handleConfirmPasswordChange}
                       />
+                      
                     )}
+                    <button
+                      className="text-trek-color-1 text-sm"
+                      onClick={openForgotPasswordModal}
+                    >
+                      Quên mật khẩu?
+                    </button>
                   </>
                 )}
-                <button
-                  className="text-trek-color-1 text-sm"
-                  onClick={openForgotPasswordModal}
-                >
-                  Quên mật khẩu?
-                </button>
-
-                {showForgotPasswordModal && (
-                  <ForgotPassword closeModal={closeForgotPasswordModal} />
-                )}
-
                 <button
                   disabled={!email || inputError}
                   type="submit"
@@ -308,6 +305,7 @@ export default function Modal() {
                       : "Đăng ký"}
                 </button>
               </form>
+              
               <div className="flex items-center justify-between mt-4">
                 <div className="h-px bg-gray-300 flex-grow" />
                 <span className="mx-4 text-gray-500">Hoặc</span>
@@ -327,10 +325,24 @@ export default function Modal() {
               </div>
 
             </div>
+            {showForgotPasswordModal && (
+              <div className="fixed inset-0 z-50 flex justify-center items-center">
+                <div
+                  className="fixed inset-0 w-full h-full opacity-40"
+                  onClick={closeModal}
+                />
+                <div className="relative bg-white p-6 rounded-lg shadow-lg w-full max-w-md z-10 border-2 border-trek-color-1 border-opacity-50 ">
+                  <ForgotPassword closeModal={closeForgotPasswordModal} />
+                </div>
+              </div>
+            )}
+
 
           </div>
+          
         </div>
       )}
+      
       {showLogoutModal && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div
@@ -414,6 +426,7 @@ export default function Modal() {
           </div>
         </div>
       )}
+      
     </>
   );
   }

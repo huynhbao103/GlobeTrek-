@@ -89,6 +89,16 @@ const authSlice = createSlice({
       state.forgotPassword.success = false;
       state.forgotPassword.error = true;
     },
+    resetPasswordStart: (state) => {
+      state.isResettingPassword = true;
+    },
+    resetPasswordSuccess: (state) => {
+        state.isResettingPassword = false;
+    },
+    resetPasswordFailed: (state) => {
+        state.isResettingPassword = false;
+        state.error = "Password reset failed!";
+    },
   },
 });
 
@@ -108,6 +118,9 @@ export const {
   forgotPasswordStart,
   forgotPasswordSuccess,
   forgotPasswordFailed,
+  resetPasswordStart,
+  resetPasswordSuccess,
+  resetPasswordFailed,
 } = authSlice.actions;
 
 export default authSlice.reducer;
