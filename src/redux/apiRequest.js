@@ -68,4 +68,17 @@ export const forgotPassword = async (email, dispatch, closeModal) => {
       dispatch({ type: 'FORGOT_PASSWORD_FAILED', payload: error });
       message.error("Không thể gửi email khôi phục mật khẩu. Vui lòng thử lại!");
     }
-  };
+};
+export const resetPassword = async (token, password, dispatch, closeModal) => {
+    try {
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/reset-password`, { token, password });
+
+        dispatch({ type: 'RESET_PASSWORD_SUCCESS', payload: res.data });
+        message.success("Mật khẩu đã được thay đổi thành công!");
+        closeModal(); // Đóng modal sau khi reset thành công
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        dispatch({ type: 'RESET_PASSWORD_FAILED', payload: error });
+        message.error("Không thể thay đổi mật khẩu. Vui lòng thử lại!");
+    }
+};
