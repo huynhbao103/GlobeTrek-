@@ -24,7 +24,7 @@ const ForgotPassword = () => {
   try {
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/forgot-password`, { email });
     
-    console.log(response.data);  
+    console.log(response.data);       
     
     dispatch(forgotPasswordSuccess());
     message.success("Email khôi phục đã được gửi!");
