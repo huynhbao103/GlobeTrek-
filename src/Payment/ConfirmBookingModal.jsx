@@ -1,8 +1,10 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 
+// eslint-disable-next-line react/prop-types
 const ConfirmBookingModal = ({ isOpen, onRequestClose, onConfirm }) => {
   return (
     <Modal

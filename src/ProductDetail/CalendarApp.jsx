@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import SidebarCalendar from './SidebarCalendar';
@@ -47,7 +47,6 @@ function Calendar() {
             localStorage.setItem('tourPrice', adjustedPrice);
         }
         localStorage.setItem('selectedData', JSON.stringify({ ...JSON.parse(localStorage.getItem('selectedData') || '{}'), [date.toISOString()]: adjustedPrice }));
-        closeModal();
     };
 
     return (

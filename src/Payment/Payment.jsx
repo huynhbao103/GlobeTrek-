@@ -1,10 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Pointer } from "pointer-wallet";
 import { message, Button } from 'antd'; // import Button from Ant Design
-import LoadingLogin from '../../src/LoadingLogin';
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -12,10 +12,11 @@ function Payment() {
   const { id } = useParams();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [timeRemaining, setTimeRemaining] = useState(600);
-  const [loading, setLoading] = useState(false); // Trạng thái loading cho button
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
   const user = JSON.parse(localStorage.getItem("userNav")) || {};
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo")) || {};
@@ -23,7 +24,7 @@ function Payment() {
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
   const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
-  const token =  user.accessToken || user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token  ;
+  const token =  user.accessToken || user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token ;
 
   useEffect(() => {
     if (id) {
@@ -74,7 +75,7 @@ function Payment() {
         message: "Payment with Pointer",
         userID: user._id || user.userId,
         orderID: orderData.orderId,
-        returnUrl: `${VITE_REDIRECT_URL}`,
+        returnUrl: `${VITE_REDIRECT_URL}/setplace`,
         orders: orderData.orders?.map(order => ({
           name: order.name,
           image: order.images,
@@ -107,7 +108,11 @@ function Payment() {
       console.log('User:', user);
       return;
     }
-
+    if (!token) {
+      message.error('đéo có token dumamay ');
+      console.log('token:', token);
+      return;
+    }
     if (!bookingData) {
       message.error('Dữ liệu đặt chỗ không hợp lệ. Vui lòng kiểm tra lại.');
       console.log('Booking Data:', bookingData);
@@ -156,7 +161,10 @@ function Payment() {
 
     try {
       setLoading(true); 
-
+      if (!token) {
+        console.error("Access token is missing");
+        return;
+      }
       const response = await fetch(`${VITE_BASE_URL}/orders/api/create`, {
         method: 'POST',
         headers: {
@@ -166,6 +174,10 @@ function Payment() {
         body: JSON.stringify(orderData),
       });
 
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
       if (response.ok) {
         const data = await response.json();
         console.log("Response Data:", data); // Kiểm tra phản hồi

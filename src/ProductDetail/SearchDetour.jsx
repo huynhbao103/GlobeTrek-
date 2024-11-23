@@ -76,5 +76,5 @@ const SeachDetour = () => {
     </div>
   );
 };
-
+  
 export default SeachDetour;
