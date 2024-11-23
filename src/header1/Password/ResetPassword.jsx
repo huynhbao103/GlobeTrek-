@@ -30,11 +30,7 @@
 //     setIsLoading(true);
 
 //     try {
-//       const response = await axios.post(
-//         `${import.meta.env.VITE_BASE_URL}/reset-password/${token}`, // Sử dụng VITE_BASE_URL cho Vite
-//         { password }
-//       );
-
+//       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/auth/reset-password/:token`, { password });
 //       if (response.data.success) {
 //         message.success(response.data.message);
 //         // Redirect về trang login sau khi reset thành công
