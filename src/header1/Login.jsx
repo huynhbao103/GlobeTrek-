@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
 import SsoPointerSignIn from "./GoogleSignIn";
 import { useDispatch } from "react-redux"; // Redux Hook
 import { registerUser, signinUser, verifyAccount } from "../redux/apiRequest";
@@ -9,6 +8,7 @@ import { useSelector } from "react-redux";
 import { checkUserEmail } from "../API/apiService";
 import { message } from 'antd';
 import { Input, Row, Col } from "antd";
+import ForgotPassword from '../header1/Password/forgotPassword';
 
 export default function Modal() {
   const [showModal, setShowModal] = useState(false);
@@ -26,8 +26,6 @@ export default function Modal() {
   const [otp, setOtp] = useState(Array(6).fill("")); 
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (userNav?.email) {
       localStorage.setItem("userNav", JSON.stringify(userNav));
@@ -40,7 +38,7 @@ export default function Modal() {
     const storedUserNav = localStorage.getItem("userNav");
     if (userNav?.email) {
       const parsedUserNav = JSON.parse(storedUserNav);
-      setUser(parsedUserNav);
+      setUser(parsedUserNav);';;'
       setIsLoggedIn(true);
     }
   }, [userNav?.email]);
@@ -108,6 +106,15 @@ export default function Modal() {
     } else {
       setInputError("");
     }
+  };
+
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+  const openForgotPasswordModal = () => {
+    setShowForgotPasswordModal(true);  // Mở modal
+  };
+
+  const closeForgotPasswordModal = () => {
+    setShowForgotPasswordModal(false); // Đóng modal
   };
 
   const handlePasswordChange = (e) => {
@@ -266,6 +273,7 @@ export default function Modal() {
                       value={password}
                       onChange={handlePasswordChange}
                     />
+                    
                     {!isRegistered && (
                       <input
                         type="password"
@@ -277,6 +285,17 @@ export default function Modal() {
                     )}
                   </>
                 )}
+                <button
+                  className="text-trek-color-1 text-sm"
+                  onClick={openForgotPasswordModal}
+                >
+                  Quên mật khẩu?
+                </button>
+
+                {showForgotPasswordModal && (
+                  <ForgotPassword closeModal={closeForgotPasswordModal} />
+                )}
+
                 <button
                   disabled={!email || inputError}
                   type="submit"
@@ -397,4 +416,4 @@ export default function Modal() {
       )}
     </>
   );
-}
+  }
