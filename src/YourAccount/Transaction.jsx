@@ -46,34 +46,46 @@ const Transaction = () => {
     };
 
     fetchOrders();
-  }, );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const filterOrders = (orders) => {
-    const filtered = Object.entries(orders).reduce((acc, [ orderList]) => {
-      orderList.forEach(order => {
-        const orderDate = new Date(order.bookingDate);  // Hoặc sử dụng order.createdAt nếu có trường này
-        const today = new Date();
-
-        if (dateFilter === '90-days' || dateFilter === '3-months') {
-          if ((today - orderDate) / (1000 * 60 * 60 * 24) <= 90) {
-            acc.push(order);
-          }
-        } else if (dateFilter === '6-months') {
-          if ((today - orderDate) / (1000 * 60 * 60 * 24) <= 180) {
-            acc.push(order);
-          }
-        } else {
-          acc.push(order);
+    let allOrders = [];
+  
+    // Handle grouped or flat data
+    if (typeof orders === 'object' && !Array.isArray(orders)) {
+      Object.values(orders).forEach(orderList => {
+        if (Array.isArray(orderList)) {
+          allOrders = allOrders.concat(orderList);
         }
       });
-      return acc;
-    }, []);
-
-    // Sắp xếp đơn hàng theo ngày tạo từ mới nhất đến cũ nhất (sử dụng createdAt hoặc bookingDate)
-    const sortedOrders = filtered.sort((a, b) => new Date(b.createdAt || b.bookingDate) - new Date(a.createdAt || a.bookingDate));
-
+    } else if (Array.isArray(orders)) {
+      allOrders = orders;
+    } else {
+      console.error('Unexpected orders format:', orders);
+      return;
+    }
+  
+    // Apply date filter
+    const today = new Date();
+    const filtered = allOrders.filter(order => {
+      const orderDate = new Date(order.bookingDate);
+      if (dateFilter === '90-days' || dateFilter === '3-months') {
+        return (today - orderDate) / (1000 * 60 * 60 * 24) <= 90;
+      } else if (dateFilter === '6-months') {
+        return (today - orderDate) / (1000 * 60 * 60 * 24) <= 180;
+      }
+      return true; // No filter
+    });
+  
+    // Sort by date
+    const sortedOrders = filtered.sort((a, b) =>
+      new Date(b.createdAt || b.bookingDate) - new Date(a.createdAt || a.bookingDate)
+    );
+  
     setFilteredOrders(sortedOrders);
   };
+  
 
   const handleFilterChange = (value) => {
     setDateFilter(value);

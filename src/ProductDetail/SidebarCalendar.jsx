@@ -32,7 +32,7 @@ function SidebarCalendar({ selectedDate, onDateChange, tourPrices }) {
         };
 
         fetchTourData();
-    }, [selectedTourId]);
+    }, []);
 
     useEffect(() => {
         const loadedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];

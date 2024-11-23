@@ -16,9 +16,12 @@ import Transaction from './YourAccount/Transaction.jsx';
 import SavedPassengers from './YourAccount/savedPassengers.jsx';
 import Refunds from './YourAccount/Refunds.jsx';
 import Savelist from './header1/Savelist.jsx';
-import LoadingLogin from './LoadingLogin';
+import LoadingLogin from './LoadingLogin
 import ForgotPassword from './header1/Password/forgotPassword.jsx';
 import ResetPassword from './header1/Password/ResetPassword.jsx';
+// import ForgotPassword from './header1/Password/ForgotPassword.jsx';
+import ForgotPassword from './header1/Password/ForgotPassword.jsx';
+// import ResetPassword from './header1/Password/ResetPassword.jsx';
 
 
 function App() {
@@ -48,4 +51,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;     
