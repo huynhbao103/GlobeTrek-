@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { checkUserEmail } from "../API/apiService";
 import { message } from 'antd';
 import { Input, Row, Col } from "antd";
-import ForgotPassword from '../header1/Password/forgotPassword';
+import ForgotPassword from './Password/forgotPassword';
 
 export default function Modal() {
   const [showModal, setShowModal] = useState(false);
