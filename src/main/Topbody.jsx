@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; // Để điều hướng trang
 import Skeleton from "react-loading-skeleton";
 import imgtopbody from "../assets/imgtopbody.png";

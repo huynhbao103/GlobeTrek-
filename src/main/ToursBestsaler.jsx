@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, setTourTypeId] = useState("6724442a1f084a315e2eb0b3");
+  const [tourTypeId, ] = useState("6724442a1f084a315e2eb0b3");
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -86,8 +86,7 @@ const BestsalerTour = () => {
 
   useEffect(() => {
     getToursData();
-  }, [tourTypeId]); // Lọc lại khi thay đổi tourTypeId
-
+  }, [tourTypeId]); 
   // Lọc theo địa điểm được chọn
   const filteredToursByLocation = tours.filter(
     (tour) => tour.destination?.name === activeLocation?.name
