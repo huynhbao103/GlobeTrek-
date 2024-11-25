@@ -23,50 +23,47 @@ const SetPlace = ({ setSelectedSection }) => {
       try {
         const user = JSON.parse(localStorage.getItem('userNav'));
         const accessToken = user?.accessToken;
-
+  
         if (!accessToken) {
           throw new Error("Access token not found");
         }
-
+  
         const response = await fetch(`${BASE_URL}/orders/api/list`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         });
-
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+  
         const data = await response.json();
-        filterRecentOrders(data); // Lọc các đơn hàng gần đây
+        filterRecentOrders(data); // Lọc các đơn hàng gần đây (trong 7 ngày)
       } catch (error) {
         console.error('Error fetching orders:', error);
         message.error('Không thể tải dữ liệu đơn hàng');
       }
     };
-
+  
     const filterRecentOrders = (orders) => {
       const today = new Date();
-      const twoDaysAgo = new Date(today);
-      twoDaysAgo.setDate(today.getDate() - 2);
-
-      const todayISOString = today.toISOString().split('T')[0];
-      const twoDaysAgoISOString = twoDaysAgo.toISOString().split('T')[0];
-
-      const filteredOrders = Object.values(orders).flat().filter(order => {
-        const createdAtDate = new Date(order.createdAt).toISOString().split('T')[0];
-        return createdAtDate === todayISOString || createdAtDate === twoDaysAgoISOString;
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
+  
+      const filteredOrders = Object.values(orders).flat().filter((order) => {
+        const createdAtDate = new Date(order.createdAt);
+        return createdAtDate >= sevenDaysAgo && createdAtDate <= today;
       });
-
+  
       filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
       setTodayOrders(filteredOrders);
     };
-
+  
     fetchOrders();
   }, []);
+  
 
   const handleClick = () => {
     setSelectedSection('Transaction');
@@ -88,21 +85,89 @@ const SetPlace = ({ setSelectedSection }) => {
     }
   };
 
-
   const canCancelTour = (status) => {
     return status !== 'canceled' && status !== 'paid';
   };
+
+  const canRefundTour = (status, bookingDate) => {
+    if (status !== 'paid') return false;
+
+    const today = new Date();
+    const booking = new Date(bookingDate);
+    const diffDays = Math.ceil((today - booking) / (1000 * 60 * 60 * 24)); // Tính số ngày chênh lệch
+
+    return diffDays <= 2; // Hoàn tiền nếu chưa quá 2 ngày
+  };
+
   const cancelOrder = async (orderId) => {
     try {
-      const response = await pointerPayment.cancelOrder(orderId);
-      console.log('Order canceled successfully:', response);
+      const user = JSON.parse(localStorage.getItem('userNav'));
+      const accessToken = user?.accessToken;
+
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await fetch(`${BASE_URL}/orders/api/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Order canceled successfully:', data);
+
+      setTodayOrders((prevOrders) => {
+        const updatedOrders = prevOrders.filter((order) => order._id !== orderId);
+        return updatedOrders;
+      });
+
       message.success('Hủy đơn hàng thành công');
-      setTodayOrders((prevOrders) => prevOrders.filter((order) => order._id !== orderId));
     } catch (error) {
       console.error('Error canceling order:', error.message);
       message.error('Không thể hủy đơn hàng');
     }
   };
+
+  const refundOrder = async (orderID) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('userNav'));
+      const accessToken = user?.accessToken;
+
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      const response = await fetch(`${BASE_URL}/orders/api/refund`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderID }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Order refunded successfully:', data);
+
+      message.success('Hoàn tiền thành công');
+    } catch (error) {
+      console.error('Error refunding order:', error.message);
+      message.error('Không thể hoàn tiền');
+    }
+  };
+
   return (
     <>
       <Header />
@@ -161,6 +226,18 @@ const SetPlace = ({ setSelectedSection }) => {
                             Hủy Đơn Hàng
                           </Button>
                         )}
+
+                        {canRefundTour(order.status, order.bookingDate) && (
+                          <Button
+                            type="default"
+                            size="middle"
+                            className="max-w-xs mt-4"
+                            block
+                            onClick={() => refundOrder(order._id)}
+                          >
+                            Hoàn Tiền
+                          </Button>
+                        )}
                       </Card>
                     ))}
 
@@ -169,20 +246,10 @@ const SetPlace = ({ setSelectedSection }) => {
                       pageSize={itemsPerPage}
                       total={todayOrders.length}
                       onChange={handlePageChange}
-                      showSizeChanger={false}
-                      className="mt-4 text-center"
+                      className="mt-4"
                     />
                   </div>
                 )}
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-700">Lịch sử giao dịch</h3>
-              <div className="bg-white shadow-lg rounded-xl p-4 mt-2 text-center">
-                <p>
-                  Xem <Link to='/Transaction'><span className="text-green-500 font-semibold cursor-pointer" onClick={handleClick}>Lịch sử giao dịch</span></Link> của bạn
-                </p>
               </div>
             </div>
           </div>
@@ -194,3 +261,5 @@ const SetPlace = ({ setSelectedSection }) => {
 };
 
 export default SetPlace;
+
+
