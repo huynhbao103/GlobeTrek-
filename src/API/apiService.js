@@ -2,6 +2,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const TOUR_API_URL = `${BASE_URL}`;
 const AUTH_API_URL = `${BASE_URL}/api/auth`;
 const ORDER_API_URL = `${BASE_URL}/orders/api`;
+const ORDER_API = `${BASE_URL}/orders/`;
 export const FAVORITE_API_URL = `${BASE_URL}/favorite-tours`;
 
 export const fetchTours = async (tourTypeId) => {
@@ -207,6 +208,27 @@ export const removeFavoriteTour = async (userId, tourId) => {
     }
   } catch (error) {
     console.error("Error removing favorite tour:", error);
+    throw error;
+  }
+};
+export const connectWallet = async (authToken) => {
+  try {
+    const response = await fetch(`${ORDER_API}/connect_wallet`, {
+      method: 'GET', // Using GET method
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, // Add the Bearer token here
+      },
+      credentials: 'include', // Include cookies if authentication is needed
+    });
+
+    if (!response.ok) {
+      throw new Error('Không thể kết nối ví');
+    }
+
+    return await response.json(); // Return the response from the server
+  } catch (error) {
+    console.error('Error connecting wallet:', error);
     throw error;
   }
 };

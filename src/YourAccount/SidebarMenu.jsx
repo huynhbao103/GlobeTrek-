@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import { Menu, Button, Avatar } from 'antd';
 import { Link } from 'react-router-dom';
@@ -8,11 +7,11 @@ import icon4 from '../assets/icon4.png';
 import icon5 from '../assets/icon5.png';
 import icon7 from '../assets/icon7.png';
 import icon9 from '../assets/icon9.png';
-
+import { connectWallet } from '../API/apiService';
 const SidebarMenu = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activeSection, setActiveSection] = useState('Settings');
-  const user = JSON.parse(localStorage.getItem("userNav"));
+  const user = JSON.parse(localStorage.getItem('userNav'));
 
   if (!user) {
     return <p className="text-center">Chưa có người dùng đăng nhập</p>;
@@ -23,17 +22,38 @@ const SidebarMenu = () => {
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("usernav");
+    localStorage.removeItem('usernav');
     window.location.reload();
   };
 
   const menuItemClass = (section) =>
-    `px-4 py-2 mt-2 cursor-pointer flex items-center rounded-lg transition duration-200 hover:bg-green-500 ${activeSection === section ? '' : ''
-    }`;
+    `px-4 py-2 mt-2 cursor-pointer flex items-center rounded-lg transition duration-200 hover:bg-green-500 ${activeSection === section ? '' : ''}`;
 
+  const handleConnectWallet = async () => {
+    try {
+      const authToken = user?.accessToken // Retrieve the token
+      if (!authToken) {
+        throw new Error('No authentication token found');
+      }
+  
+      const response = await connectWallet(authToken); // Call your API function
+      if (response.redirectUrl) {
+        // Redirect to the provided URL
+        window.location.href = response.redirectUrl;
+      } else {
+        console.error('No redirect URL found in response');
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+    }
+  };
+  
+  // Button to trigger the function
+  <button onClick={handleConnectWallet}>Connect Wallet</button>;
+  
   return (
     <div className="mt-2 w-auto p-4 bg-white border border-gray-200 rounded-lg shadow-lg">
-      <div className='flex items-center mb-4'>
+      <div className="flex items-center mb-4">
         <Avatar src={user.avatar || '../assets/User.png'} size={64} />
         <div className="ml-4">
           <p className="font-semibold text-lg">{user.name}</p>
@@ -76,6 +96,15 @@ const SidebarMenu = () => {
             Tài Khoản
           </Link>
         </Menu.Item>
+
+        {/* Connect Wallet Button */}
+        <Menu.Item key="connectWallet" className={menuItemClass('ConnectWallet')}>
+          <button onClick={handleConnectWallet} className="flex items-center w-full text-left">
+            <img src={icon3} alt="ConnectWallet" className="inline-block w-5 h-5 mr-2" />
+            Kết nối ví
+          </button>
+        </Menu.Item>
+
         <Menu.Item key="logout">
           <Button type="link" onClick={() => setShowLogoutModal(true)} className="flex items-center w-full text-left">
             <img src={icon9} alt="Đăng xuất" className="inline-block w-5 h-5 mr-2" />
