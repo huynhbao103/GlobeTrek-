@@ -173,17 +173,52 @@ export default function Modal() {
     registerUser(newUser, dispatch, setShowVerification);
   };
 
+  // const handleLogout = () => {
+  //   setShowLogoutModal(true);
+  // };
+
+  // const confirmLogout = () => {
+  //   localStorage.removeItem("userNav");
+  //   setIsLoggedIn(false);
+  //   setUser(null);
+  //   setShowLogoutModal(false);
+  //   window.location.reload();
+  // };
+
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
-
+  
   const confirmLogout = () => {
-    localStorage.removeItem("userNav");
+    // Clear all cookies
+    document.cookie.split(";").forEach((cookie) => {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+    });
+  
+    // Clear local storage
+    localStorage.clear();
+  
+    // Clear session storage (if used)
+    sessionStorage.clear();
+  
+    // Clear URL parameters without page reload
+    const url = new URL(window.location.href);
+    url.search = ""; // Clear all query parameters
+    window.history.replaceState({}, '', url.href); // Update URL in browser without reload
+  
+    // Clear state variables
     setIsLoggedIn(false);
     setUser(null);
     setShowLogoutModal(false);
-    window.location.reload();
+  
+    // Reload the page
+    window.location.reload(); // Page will reload to clear everything and reset the state
   };
+  
+  
+  
 
   const cancelLogout = () => {
     setShowLogoutModal(false);
