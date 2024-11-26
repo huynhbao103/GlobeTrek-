@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, ] = useState("6724442a1f084a315e2eb0b3");
+  const [tourTypeId, ] = useState("6746215d3007b29853d47efc");
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
