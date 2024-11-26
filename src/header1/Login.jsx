@@ -64,12 +64,14 @@ export default function Modal() {
   };
 
   const validateInput = (input) => {
-    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (emailPattern.test(input)) {
-      return "email";
+      return "email"; // return email if it's valid
+    } else {
+      return "invalid"; // return invalid if not a valid email
     }
   };
-
+  
   const handleOtpChange = (index, value) => {
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1); 
@@ -100,12 +102,12 @@ export default function Modal() {
   const handleChange = (e) => {
     const value = e.target.value;
     setEmail(value);
-
+  
     const validationResult = validateInput(value);
     if (validationResult === "invalid") {
       setInputError("Vui lòng nhập địa chỉ email hợp lệ.");
     } else {
-      setInputError("");
+      setInputError(""); // Clear the error when the email is valid
     }
   };
 

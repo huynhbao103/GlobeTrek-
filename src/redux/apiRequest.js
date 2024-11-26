@@ -47,8 +47,9 @@ export const verifyAccount = async (email, otp, dispatch, closeModal, setShowVer
     try {
         const res = await axios.post(`${VITE_BASE_URL}/api/auth/verify-account`, { email, otp });
         dispatch(verifyAccountSuccess(res.data));
-        message.success("Tài khoản xác nhận thành công vui lòng đăng nhập!");
         closeModal();
+        window.location.reload();
+        message.success("Tài khoản xác nhận thành công vui lòng đăng nhập!");
         setShowVerification(false);
 
     } catch (error) {
