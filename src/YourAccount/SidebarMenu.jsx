@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Menu, Button, Avatar } from 'antd';
 import { Link } from 'react-router-dom';
 import icon1 from '../assets/icon1.png';

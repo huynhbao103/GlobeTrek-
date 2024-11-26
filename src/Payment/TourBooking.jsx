@@ -67,12 +67,21 @@ const TourBooking = () => {
 
     // Handle booking submission
     const handleBooking = () => {
+        // Check if any price is 0
+        const adultPrice = isSpecialDay(selectedDate) ? prices.specialAdultPrice : prices.adultPrice;
+        const childPrice = isSpecialDay(selectedDate) ? prices.specialChildPrice : prices.childPrice;
+        
+        if (adultCount === 0 ) {
+            setErrorMessage('số lương vé người lớn bằng 0.');
+            return;  
+        }
+
         const bookingData = {
             adultCount,
             childCount,
             totalPrice,
-            adultPrice: isSpecialDay(selectedDate) ? prices.specialAdultPrice : prices.adultPrice,
-            childPrice: isSpecialDay(selectedDate) ? prices.specialChildPrice : prices.childPrice,
+            adultPrice,
+            childPrice,
         };
         localStorage.setItem('bookingData', JSON.stringify(bookingData));
         navigate(`/BookingForm/${id}`);
@@ -83,7 +92,7 @@ const TourBooking = () => {
         const newCount = count + increment;
         if (newCount >= 0 && (adultCount + childCount + increment) <= 30) {
             setter(newCount);
-            setErrorMessage('');
+            setErrorMessage('');  // Reset error message
         } else if (newCount < 0) {
             setErrorMessage('Số lượng không thể nhỏ hơn 0.');
         } else {
@@ -162,7 +171,7 @@ const TourBooking = () => {
                             {errorMessage && <p className="text-red-500 mt-2">{errorMessage}</p>}
 
                             <h4 className="text-lg font-bold mt-4">Tổng giá: {totalPrice.toLocaleString('vi-VN')} VND</h4>
-                            <button className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4" onClick={handleBooking}>Đặt vé</button>
+                            <button className="bg-green-500 text-white px-4 py-2 rounded-lg mt-4" onClick={handleBooking}>Đặt tour</button>
                         </div>
                     </div>
                 </div>

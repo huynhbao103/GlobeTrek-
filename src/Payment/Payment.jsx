@@ -1,12 +1,14 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect } from 'react';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Pointer } from "pointer-wallet";
-import { message, Button } from 'antd'; // import Button from Ant Design
+import { message, Button } from 'antd'; 
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+const secretKey = import.meta.env.VITE_POINTER_SECRET_KEY;
+const pointerPayment = new Pointer(secretKey); 
 
 function Payment() {
   const { id } = useParams();
@@ -16,15 +18,14 @@ function Payment() {
 
   const navigate = useNavigate();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // Get booking data and user information from localStorage
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
   const user = JSON.parse(localStorage.getItem("userNav")) || {};
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo")) || {};
   const passengerInfo = JSON.parse(localStorage.getItem("passengerInfo")) || {};
   const selectedDates = JSON.parse(localStorage.getItem("selectedDates")) || [];
 
-  const pointerPayment = new Pointer(import.meta.env.VITE_POINTER_SECRET_KEY);
-  const token =  user.accessToken || user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token ;
+  const token = user.accessToken || user?.accessToken || user?.accesstoken || user?.token?.accessToken || user?.token;
 
   useEffect(() => {
     if (id) {
@@ -62,12 +63,14 @@ function Payment() {
     switch (selectedPaymentMethod) {
       case 'pointer-wallet':
         return 'Thanh toán bằng ví điện tử';
+      case 'connected-wallet':
+        return 'Thanh toán qua ví liên kết';
       default:
         return 'Thanh toán';
     }
   };
 
-  const processPayment = async (orderData) => {
+  const processPointerPayment = async (orderData) => {
     try {
       const { url } = await pointerPayment.createPayment({
         amount: orderData.totalPrice,
@@ -97,6 +100,38 @@ function Payment() {
     }
   };
 
+  const processConnectedPayment = async (orderData) => {
+    try {
+      if (!pointerPayment) {
+        throw new Error("Pointer Payment instance is not initialized.");
+      }
+  
+      if (!orderData.orderId || !orderData.totalPrice) {
+        throw new Error("Order data is incomplete.");
+      }
+      const response = await pointerPayment.connectedPayment({
+        signature: user?.signature,
+        amount: orderData.totalPrice,
+        currency: "VND",
+        message: `Payment for order ${orderData.orderId}`,
+        userID: user._id || user.userId,
+        orderID: orderData.orderId,
+        returnUrl: `${VITE_REDIRECT_URL}/setplace`,
+      });
+  console.log(response);
+      // Kiểm tra phản hồi từ API
+      if (response?.status === 200 ) {
+        message.success("Thanh toán qua ví liên kết thành công!");
+      } else {
+        throw new Error("Lỗi khi thực hiện thanh toán qua ví liên kết.");
+      }
+    } catch (error) {
+      console.error("Connected Payment Error:", error);
+      message.error("Lỗi khi thanh toán qua ví liên kết. Vui lòng thử lại.");
+    }
+  };
+  
+
   const handlePaymentSubmit = async () => {
     if (!selectedPaymentMethod) {
       message.warning('Vui lòng chọn phương thức thanh toán.');
@@ -105,39 +140,36 @@ function Payment() {
 
     if (!user) {
       message.error('Thông tin người dùng không hợp lệ. Vui lòng đăng nhập lại.');
-      console.log('User:', user);
       return;
     }
+
     if (!token) {
-      message.error('đéo có token dumamay ');
-      console.log('token:', token);
+      message.error('Không có token. Vui lòng thử lại.');
       return;
     }
+
     if (!bookingData) {
       message.error('Dữ liệu đặt chỗ không hợp lệ. Vui lòng kiểm tra lại.');
-      console.log('Booking Data:', bookingData);
       return;
     }
 
     if (!customerInfo) {
       message.error('Thông tin khách hàng không hợp lệ. Vui lòng kiểm tra lại.');
-      console.log('Customer Info:', customerInfo);
       return;
     }
 
     if (selectedDates.length === 0) {
       message.error('Vui lòng chọn ngày đặt.');
-      console.log('Selected Dates:', selectedDates);
       return;
     }
 
     if (!bookingData.tourId) {
       message.error('Mã tour không hợp lệ. Vui lòng kiểm tra lại.');
-      console.log('Booking Tour ID:', bookingData.tourId);
       return;
     }
 
     const orderData = {
+      signature: user?.signature,
       userId: user._id || user.userId,
       tour: bookingData.tourId,
       adultCount: bookingData.adultCount,
@@ -155,12 +187,11 @@ function Payment() {
       adultPrice: bookingData.adultPrice,
       childPrice: bookingData.childPrice,
       bookingDate: selectedDates[selectedDates.length - 1],
+      orders: bookingData.orders || [],
     };
 
-    console.log(orderData);
-
     try {
-      setLoading(true); 
+      setLoading(true);
       if (!token) {
         console.error("Access token is missing");
         return;
@@ -174,36 +205,26 @@ function Payment() {
         body: JSON.stringify(orderData),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Response Data:", data); // Kiểm tra phản hồi
+      const data = await response.json();
+      const orderId = data.order._id;
+      localStorage.setItem('orderID', orderId); 
 
-        const orderId = data.order._id;
-        localStorage.setItem('orderID', orderId);
+      message.success('Đơn hàng đã được tạo thành công!');
 
-        message.success('Đơn hàng đã được tạo thành công!');
-        await processPayment({ ...orderData, orderId });
-      } else {
-        const errorData = await response.json();
-        if (response.status === 401) {
-          message.error('Bạn không có quyền thực hiện hành động này. Vui lòng đăng nhập lại.');
-          navigate('/LoadingLogin');
-        } else if (response.status === 403) {
-          message.error('Bạn không có quyền truy cập vào hành động này.');
-          navigate('/LoadingLogin');
-        } else {
-          message.error(`Có lỗi xảy ra: ${errorData.message || 'Vui lòng thử lại.'}`);
-        }
+      if (selectedPaymentMethod === 'pointer-wallet') {
+        await processPointerPayment({ ...orderData, orderId });
+      } else if (selectedPaymentMethod === 'connected-wallet') {
+        await processConnectedPayment({...orderData, orderId}); 
       }
     } catch (error) {
       console.error('Error:', error);
       message.error('Lỗi khi kết nối đến server. Vui lòng thử lại.');
     } finally {
-      setLoading(true); 
+      setLoading(false);
     }
   };
 
@@ -221,33 +242,36 @@ function Payment() {
           <h2 className="text-xl font-bold mb-6">Bạn muốn thanh toán thế nào?</h2>
           <div className="flex">
             <div className="w-2/3 pr-4">
-              <h3 className="text-lg font-semibold mb-4">Chọn phương thức thanh toán</h3>
-              <div className="mb-4">
+              <h3 className="text-lg font-medium">Chọn phương thức thanh toán</h3>
+              <div className='mt-5'>
                 <input
                   type="radio"
                   id="pointer-wallet"
-                  name="payment"
+                  name="paymentMethod"
                   value="pointer-wallet"
+                  checked={selectedPaymentMethod === 'pointer-wallet'}
                   onChange={handlePaymentChange}
-                  className="mr-2"
                 />
-                <label htmlFor="pointer-wallet" className="font-semibold">Ví Press Pay </label>
+                <label htmlFor="pointer-wallet">Ví điện tử Pointer</label>
+              </div>
+              <div className='mt-5'>
+                <input
+                  type="radio"
+                  id="connected-wallet"
+                  name="paymentMethod"
+                  value="connected-wallet"
+                  checked={selectedPaymentMethod === 'connected-wallet'}
+                  onChange={handlePaymentChange}
+                />
+                <label htmlFor="connected-wallet">Thanh toán nhanh với Pointer</label>
               </div>
             </div>
           </div>
-
-          <div className="mt-8 p-4 bg-gray-50 rounded-lg shadow-inner">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Tổng giá tiền</h3>
-              <p className="text-xl font-bold">{bookingData.totalPrice.toLocaleString()} VND</p>
-            </div>
-
+          <div className="flex justify-center mt-6 w-full">
             <Button
-             className={`w-full bg-trek-color-1 text-white py-3 px-6 rounded-lg hover:bg-trek-color-1-dark transition duration-300 ${selectedPaymentMethod ? '' : 'opacity-50 cursor-not-allowed'
-             }`}
-              type="#95de64"
-              
-              loading={loading} // Button sẽ hiển thị loading khi đang xử lý thanh toán
+             className='bg-green-500 text-white font-bold'
+              size="large"
+              loading={loading}
               onClick={handlePaymentSubmit}
             >
               {getPaymentButtonLabel()}
