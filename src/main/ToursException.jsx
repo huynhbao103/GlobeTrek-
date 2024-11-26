@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, ] = useState("6724442a1f084a315e2eb0b3"); // Example: set your tourTypeId here
+  const [tourTypeId, ] = useState("674621403007b29853d47ef6"); 
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -23,13 +23,11 @@ const BestsalerTour = () => {
     try {
       const fetchedTours = await fetchTours();
 
-      // Lọc tours theo tourType đã chọn và kiểm tra trạng thái của tour
       const filteredTours = fetchedTours.filter(
-        (tour) => tour.tourType === tourTypeId && !tour.isDisabled // Chỉ lấy tour không bị tắt
+        (tour) => tour.tourType === tourTypeId && !tour.isDisabled 
       );
       setTours(filteredTours);
 
-      // Lấy danh sách các điểm đến duy nhất
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
           acc.push(tour.destination);
@@ -89,9 +87,8 @@ const BestsalerTour = () => {
 
   useEffect(() => {
     getToursData();
-  }, [tourTypeId]); // Lọc lại khi thay đổi tourTypeId
+  }, [tourTypeId]); 
 
-  // Lọc theo địa điểm được chọn
   const filteredToursByLocation = tours.filter(
     (tour) => tour.destination?.name === activeLocation?.name
   );
@@ -99,7 +96,7 @@ const BestsalerTour = () => {
   return (
     <div className="w-full flex justify-center pb-10">
       <div className="max-w-[1280px] w-[68%]">
-        <h1 className="font-bold text-2xl">Tour theo chủ đề</h1>
+        <h1 className="font-bold text-2xl">Tour đi biển</h1>
         <p className="text-slate-500">Khám phá loại tour bạn yêu thích</p>
         <div className="w-full mx-auto pt-10">
           <div className="flex overflow-x-auto space-x-4 mb-6 hide-scrollbar">
