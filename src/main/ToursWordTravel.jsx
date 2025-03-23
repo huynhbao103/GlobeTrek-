@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, ] = useState("674621493007b29853d47ef9"); 
+  const [tourTypeId, setTourTypeId] = useState("674621493007b29853d47ef9"); 
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -99,7 +99,7 @@ const BestsalerTour = () => {
   return (
     <div className="w-full flex justify-center pb-10">
       <div className="max-w-[1280px] w-[68%]">
-        <h1 className="font-bold text-2xl">Tour nước ngoài</h1>
+        <h1 className="font-bold text-2xl">Tour theo chủ đề</h1>
         <p className="text-slate-500">Khám phá loại tour bạn yêu thích</p>
         <div className="w-full mx-auto pt-10">
           <div className="flex overflow-x-auto space-x-4 mb-6 hide-scrollbar">
