@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, ] = useState("6746215d3007b29853d47efc");
+  const [tourTypeId, setTourTypeId] = useState("6746215d3007b29853d47efc");
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -46,31 +46,28 @@ const BestsalerTour = () => {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: Math.min(tours.length, 5),
-    slidesToScroll: Math.min(tours.length, 5),
-    variableWidth: true, // Cho phép các phần tử có độ rộng thay đổi tùy thuộc vào số lượng
-    centerMode: true, // Căn giữa các phần tử
-    centerPadding: "0", // Giảm bớt khoảng cách thừa
+    slidesToShow: Math.min(tours.length, 4), // Tối đa 4 tour trên màn hình lớn
+    slidesToScroll: 2, // Cuộn 2 tour mỗi lần
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: Math.min(tours.length, 2),
+          slidesToShow: Math.min(tours.length, 3), // Tối đa 3 tour trên màn hình trung
           slidesToScroll: 1,
-          infinite: false,
-          dots: false,
-          variableWidth: true,
-          centerMode: true,
         },
       },
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: Math.min(tours.length, 1),
+          slidesToShow: Math.min(tours.length, 2), // Tối đa 2 tour trên màn hình nhỏ
           slidesToScroll: 1,
-          initialSlide: 1,
-          variableWidth: true,
-          centerMode: true,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1, // Chỉ 1 tour trên màn hình rất nhỏ
+          slidesToScroll: 1,
         },
       },
     ],
@@ -86,8 +83,8 @@ const BestsalerTour = () => {
 
   useEffect(() => {
     getToursData();
-  }, [tourTypeId]); 
-  // Lọc theo địa điểm được chọn
+  }, [tourTypeId]);
+
   const filteredToursByLocation = tours.filter(
     (tour) => tour.destination?.name === activeLocation?.name
   );

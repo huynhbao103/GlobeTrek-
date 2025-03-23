@@ -1,4 +1,4 @@
-import  { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -15,7 +15,7 @@ const BestsalerTour = () => {
   const [uniqueDestinations, setUniqueDestinations] = useState([]);
   const [activeLocation, setActiveLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [tourTypeId, ] = useState("674621383007b29853d47ef3");
+  const [tourTypeId, setTourTypeId] = useState("674621403007b29853d47ef6");
   const sliderRef = useRef(null);
 
   const getToursData = async () => {
@@ -23,9 +23,10 @@ const BestsalerTour = () => {
     try {
       const fetchedTours = await fetchTours();
       const filteredTours = fetchedTours.filter(
-        (tour) => tour.tourType === tourTypeId
+        (tour) => tour.tourType === tourTypeId && !tour.isDisabled
       );
       setTours(filteredTours);
+
       const destinations = filteredTours.reduce((acc, tour) => {
         if (!acc.find(dest => dest.name === tour.destination.name)) {
           acc.push(tour.destination);
@@ -40,55 +41,58 @@ const BestsalerTour = () => {
       setLoading(false);
     }
   };
+
   const settings = {
     dots: false,
     infinite: false,
     speed: 500,
-    slidesToShow: Math.min(tours.length, 5),
-    slidesToScroll: Math.min(tours.length, 5),
-    variableWidth: true, // Cho phép các phần tử có độ rộng thay đổi tùy thuộc vào số lượng
-    centerMode: true, // Căn giữa các phần tử
-    centerPadding: "0", // Giảm bớt khoảng cách thừa
+    slidesToShow: Math.min(tours.length, 4), // Tối đa 4 tour trên màn hình lớn
+    slidesToScroll: 2, // Cuộn 2 tour mỗi lần
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: Math.min(tours.length, 2),
+          slidesToShow: Math.min(tours.length, 3), // Tối đa 3 tour trên màn hình trung
           slidesToScroll: 1,
-          infinite: false,
-          dots: false,
-          variableWidth: true,
-          centerMode: true,
         },
       },
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: Math.min(tours.length, 1),
+          slidesToShow: Math.min(tours.length, 2), // Tối đa 2 tour trên màn hình nhỏ
           slidesToScroll: 1,
-          initialSlide: 1,
-          variableWidth: true,
-          centerMode: true,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1, // Chỉ 1 tour trên màn hình rất nhỏ
+          slidesToScroll: 1,
         },
       },
     ],
   };
+
   const nextSlide = () => {
     sliderRef.current.slickNext();
   };
+
   const prevSlide = () => {
     sliderRef.current.slickPrev();
   };
+
   useEffect(() => {
     getToursData();
   }, [tourTypeId]);
+
   const filteredToursByLocation = tours.filter(
     (tour) => tour.destination?.name === activeLocation?.name
   );
+
   return (
     <div className="w-full flex justify-center pb-10">
       <div className="max-w-[1280px] w-[68%]">
-        <h1 className="font-bold text-2xl">Tour đi núi</h1>
+        <h1 className="font-bold text-2xl">Tour theo chủ đề</h1>
         <p className="text-slate-500">Khám phá loại tour bạn yêu thích</p>
         <div className="w-full mx-auto pt-10">
           <div className="flex overflow-x-auto space-x-4 mb-6 hide-scrollbar">
@@ -109,6 +113,7 @@ const BestsalerTour = () => {
               ))
             )}
           </div>
+
           <div className="relative">
             <Slider ref={sliderRef} {...settings}>
               {loading ? (
@@ -152,6 +157,7 @@ const BestsalerTour = () => {
                 ))
               )}
             </Slider>
+
             <button
               className="absolute top-1/2 transform -translate-y-1/2 left-0 z-10 bg-white bg-opacity-50 p-2 rounded-full cursor-pointer"
               onClick={prevSlide}
@@ -165,15 +171,10 @@ const BestsalerTour = () => {
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
           </div>
-          <Link
-            to="product-body"
-            className="mx-auto flex text-lg font-bold text-[#4CA771] w-full justify-center items-center"
-          >
-            Xem thêm
-          </Link>
         </div>
       </div>
     </div>
   );
 };
+
 export default BestsalerTour;
