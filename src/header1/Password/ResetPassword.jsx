@@ -13,7 +13,7 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);  
   const [isError, setIsError] = useState(false);  
   useEffect(() => {
-    if (!token) {
+    if (!token) { 
       message.error("Invalid or expired token.");
       setIsError(true);
     }
