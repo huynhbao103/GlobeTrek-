@@ -1,4 +1,4 @@
-import React from 'react'
+
 import Topbody from './Topbody.jsx';
 import Location from './Location.jsx';
 import BestsalerTour from './ToursBestsaler.jsx';

@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState } from 'react';
+import  { createContext, useContext, useState } from 'react';
 
 const DateContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export function DateProvider({ children }) {
     const [selectedDate, setSelectedDate] = useState(new Date());
 
