@@ -1,28 +1,25 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react';
-import Header from '../header1/Header';
-import Footer from '../footer/Footer';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import Header from "../header1/Header";
+import Footer from "../footer/Footer";
+import { useNavigate, useParams } from "react-router-dom";
 import { Pointer } from "pointer-wallet";
-import { message, Button, Card } from 'antd'; 
-import { WalletOutlined, CreditCardOutlined, PayCircleOutlined } from '@ant-design/icons';
-import partner from '../assets/partner.png';
+import { message, Button, Card } from "antd";
+import { WalletOutlined, CreditCardOutlined, PayCircleOutlined } from "@ant-design/icons";
+import partner from "../assets/partner.png";
 
-// Add PayPal base URL constant
 const VITE_REDIRECT_URL = import.meta.env.VITE_REDIRECT_URL;
 const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
 const secretKey = import.meta.env.VITE_POINTER_SECRET_KEY;
-const pointerPayment = new Pointer(secretKey); 
+const pointerPayment = new Pointer(secretKey);
 
 function Payment() {
   const { id } = useParams();
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
   const [timeRemaining, setTimeRemaining] = useState(600);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  // Get booking data and user information from localStorage
   const bookingData = JSON.parse(localStorage.getItem("bookingData")) || {};
   const user = JSON.parse(localStorage.getItem("userNav")) || {};
   const customerInfo = JSON.parse(localStorage.getItem("customerInfo")) || {};
@@ -33,10 +30,7 @@ function Payment() {
 
   useEffect(() => {
     if (id) {
-      const bookingDataWithTourId = {
-        ...bookingData,
-        tourId: id,
-      };
+      const bookingDataWithTourId = { ...bookingData, tourId: id };
       localStorage.setItem("bookingData", JSON.stringify(bookingDataWithTourId));
     }
   }, [id, bookingData]);
@@ -48,7 +42,7 @@ function Payment() {
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   useEffect(() => {
@@ -58,21 +52,21 @@ function Payment() {
       }, 1000);
       return () => clearInterval(timer);
     } else {
-      message.error('Thời gian thanh toán đã hết, vui lòng thử lại.');
-      navigate('/');
+      message.error("Thời gian thanh toán đã hết, vui lòng thử lại.");
+      navigate("/");
     }
   }, [timeRemaining, navigate]);
 
   const getPaymentButtonLabel = () => {
     switch (selectedPaymentMethod) {
-      case 'pointer-wallet':
-        return 'Thanh toán bằng ví điện tử';
-      case 'connected-wallet':
-        return 'Thanh toán qua ví liên kết';
-      case 'paypal':
-          return 'Thanh toán qua ví liên kết paypal';
+      case "pointer-wallet":
+        return "Thanh toán bằng ví điện tử";
+      case "connected-wallet":
+        return "Thanh toán qua ví liên kết";
+      case "paypal":
+        return "Thanh toán qua PayPal";
       default:
-        return 'Thanh toán';
+        return "Thanh toán";
     }
   };
 
@@ -142,28 +136,98 @@ function Payment() {
   const processPayPalPayment = async (orderData) => {
     try {
       const response = await fetch(`${VITE_BASE_URL}/orders/api/paypal/create-payment`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          orderID: orderData.orderId
+          orderID: orderData.orderId,
+          amount: orderData.totalPrice,
+          returnUrl: `${VITE_REDIRECT_URL}/setplace`, // Sửa lại để redirect về /setplace
+          cancelUrl: `${VITE_REDIRECT_URL}/payment/${id}`,
+          customerInfo: orderData.customerInfo,
+          orderDetails: {
+            tourId: orderData.tour,
+            adultCount: orderData.adultCount,
+            childCount: orderData.childCount,
+            selectedDates: orderData.selectedDates,
+          },
         }),
       });
   
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to create PayPal payment');
+        throw new Error(data.message || "Failed to create PayPal payment");
       }
   
       if (data.paypalUrl) {
+        localStorage.setItem(
+          "pendingPayPalOrder",
+          JSON.stringify({
+            orderId: orderData.orderId,
+            paymentId: data.paymentId,
+            amount: orderData.totalPrice,
+            status: "pending",
+          })
+        );
+        message.success("Redirecting to PayPal...");
         window.location.href = data.paypalUrl;
+      } else {
+        throw new Error("PayPal URL not received");
       }
     } catch (error) {
-      message.error('Payment processing failed. Please try again.');
+      console.error("PayPal Payment Error:", error);
+      message.error("Payment processing failed. Please try again.");
     }
   };
+  // Add this useEffect to handle PayPal callback
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentId = urlParams.get('paymentId');
+    const payerId = urlParams.get('PayerID');
+    const token = urlParams.get('token');
+  
+    const pendingOrder = localStorage.getItem('pendingPayPalOrder');
+  
+    if (paymentId && payerId && token && pendingOrder) {
+      const orderDetails = JSON.parse(pendingOrder);
+  
+      const confirmPayPalPayment = async () => {
+        try {
+          const response = await fetch(`${VITE_BASE_URL}/orders/api/paypal/capture-payment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`, // Token của người dùng, không phải token PayPal
+            },
+            body: JSON.stringify({
+              orderID: orderDetails.orderId,
+              paypalOrderId: token, // Sử dụng token từ URL làm paypalOrderId
+              paymentId: paymentId, // Truyền thêm paymentId nếu backend cần
+              payerId: payerId, // Truyền thêm PayerID nếu backend cần
+            }),
+          });
+  
+          const data = await response.json();
+  
+          if (response.ok && data.success) {
+            message.success('Payment completed successfully!');
+            localStorage.removeItem('pendingPayPalOrder');
+            navigate('/setplace');
+          } else {
+            throw new Error(data.message || 'Payment confirmation failed');
+          }
+        } catch (error) {
+          console.error('PayPal Confirmation Error:', error);
+          message.error('Payment confirmation failed. Please contact support.');
+          navigate(`/payment/${id}`);
+        }
+      };
+  
+      confirmPayPalPayment();
+    }
+  }, [navigate, id, token]);
   // Modify handlePaymentSubmit to include PayPal
   const handlePaymentSubmit = async () => {
     if (!selectedPaymentMethod) {
