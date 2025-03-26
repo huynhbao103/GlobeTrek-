@@ -1,14 +1,11 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Card, Typography, Pagination, Button, message } from 'antd';
 import SidebarMenu from './SidebarMenu';
 import Header from '../header1/Header';
 import Footer from '../footer/Footer';
-import { Pointer } from "pointer-wallet";
-const secretKey = import.meta.env.VITE_POINTER_SECRET_KEY;
-const pointerPayment = new Pointer(secretKey); 
 
 const { Title, Text } = Typography;
 const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -17,56 +14,177 @@ const SetPlace = ({ setSelectedSection }) => {
   const [todayOrders, setTodayOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(2);
+  const [paypalToken, setPaypalToken] = useState(null); // State để lưu token từ URL
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  // Xử lý redirect từ PayPal và lưu token
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const token = query.get('token'); // paypalOrderId
+    const payerId = query.get('PayerID');
+
+    if (token && payerId) {
+      setPaypalToken(token); // Lưu token vào state
+      // Không gọi capture ngay, chờ người dùng nhấn nút
+    }
+  }, [location]);
+
+  // Lấy danh sách đơn hàng
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const user = JSON.parse(localStorage.getItem('userNav'));
         const accessToken = user?.accessToken;
-  
+
         if (!accessToken) {
           throw new Error("Access token not found");
         }
-  
+
         const response = await fetch(`${BASE_URL}/orders/api/list`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         });
-  
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-  
+
         const data = await response.json();
-        filterRecentOrders(data); // Lọc các đơn hàng gần đây (trong 7 ngày)
+        filterRecentOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
         message.error('Không thể tải dữ liệu đơn hàng');
       }
     };
-  
+
     const filterRecentOrders = (orders) => {
       const today = new Date();
       const sevenDaysAgo = new Date(today);
       sevenDaysAgo.setDate(today.getDate() - 7);
-  
+
       const filteredOrders = Object.values(orders).flat().filter((order) => {
         const createdAtDate = new Date(order.createdAt);
         return createdAtDate >= sevenDaysAgo && createdAtDate <= today;
       });
-  
+
       filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setTodayOrders(filteredOrders);
     };
-  
+
     fetchOrders();
   }, []);
-  
 
-  const handleClick = () => {
-    setSelectedSection('Transaction');
+  // Hàm xác nhận thanh toán PayPal
+  const capturePaypalPayment = async (orderId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('userNav'));
+      const accessToken = user?.accessToken;
+
+      if (!accessToken) {
+        throw new Error("Access token not found");
+      }
+
+      if (!paypalToken) {
+        throw new Error("Không tìm thấy PayPal token");
+      }
+
+      const response = await fetch(`${BASE_URL}/orders/api/paypal/capture-payment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderID: orderId,
+          paypalOrderId: paypalToken, // Sử dụng token từ URL
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        // Cập nhật trạng thái đơn hàng trong UI
+        setTodayOrders((prevOrders) =>
+          prevOrders.map((o) =>
+            o._id === orderId ? { ...o, status: 'paid' } : o
+          )
+        );
+        message.success('Thanh toán PayPal thành công!');
+        setPaypalToken(null); // Xóa token sau khi sử dụng
+        navigate('/setplace', { replace: true }); // Xóa query params khỏi URL
+      } else {
+        message.error('Xác nhận thanh toán thất bại');
+      }
+    } catch (error) {
+      console.error('Error capturing PayPal payment:', error);
+      message.error('Không thể xác nhận thanh toán PayPal');
+    }
+  };
+
+  const cancelOrder = async (orderId) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('userNav'));
+      const accessToken = user?.accessToken;
+
+      const response = await fetch(`${BASE_URL}/orders/api/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setTodayOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderId ? { ...order, status: 'canceled' } : order
+        )
+      );
+      message.success('Hủy đơn hàng thành công');
+    } catch (error) {
+      console.error('Error canceling order:', error.message);
+      message.error('Không thể hủy đơn hàng');
+    }
+  };
+
+  const refundOrder = async (orderID) => {
+    try {
+      const user = JSON.parse(localStorage.getItem('userNav'));
+      const accessToken = user?.accessToken;
+
+      const response = await fetch(`${BASE_URL}/orders/api/refund`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderID }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setTodayOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order._id === orderID ? { ...order, status: 'canceled' } : order
+        )
+      );
+      message.success('Hoàn tiền thành công');
+    } catch (error) {
+      console.error('Error refunding order:', error.message);
+      message.error('Không thể hoàn tiền');
+    }
   };
 
   const handlePageChange = (page) => {
@@ -91,87 +209,16 @@ const SetPlace = ({ setSelectedSection }) => {
 
   const canRefundTour = (status, bookingDate) => {
     if (status !== 'paid') return false;
-
     const today = new Date();
     const booking = new Date(bookingDate);
-    const diffDays = Math.ceil((today - booking) / (1000 * 60 * 60 * 24)); // Tính số ngày chênh lệch
-
-    return diffDays <= 2; // Hoàn tiền nếu chưa quá 2 ngày
-  };
-
-  const cancelOrder = async (orderId) => {
-    try {
-      const user = JSON.parse(localStorage.getItem('userNav'));
-      const accessToken = user?.accessToken;
-
-      if (!accessToken) {
-        throw new Error("Access token not found");
-      }
-
-      const response = await fetch(`${BASE_URL}/orders/api/cancel`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Order canceled successfully:', data);
-
-      setTodayOrders((prevOrders) => {
-        const updatedOrders = prevOrders.filter((order) => order._id !== orderId);
-        return updatedOrders;
-      });
-
-      message.success('Hủy đơn hàng thành công');
-    } catch (error) {
-      console.error('Error canceling order:', error.message);
-      message.error('Không thể hủy đơn hàng');
-    }
-  };
-
-  const refundOrder = async (orderID) => {
-    try {
-      const user = JSON.parse(localStorage.getItem('userNav'));
-      const accessToken = user?.accessToken;
-
-      if (!accessToken) {
-        throw new Error("Access token not found");
-      }
-
-      const response = await fetch(`${BASE_URL}/orders/api/refund`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderID }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Order refunded successfully:', data);
-
-      message.success('Hoàn tiền thành công');
-    } catch (error) {
-      console.error('Error refunding order:', error.message);
-      message.error('Không thể hoàn tiền');
-    }
+    const diffDays = Math.ceil((booking - today) / (1000 * 60 * 60 * 24));
+    return diffDays >= 2;
   };
 
   return (
     <>
       <Header />
-      <div className='w-full mt-36 h-auto'>
+      <div className="w-full mt-36 h-auto">
         <div className="flex max-w-[1280px] justify-center mx-auto flex-row items-start pb-10">
           <SidebarMenu setSelectedSection={setSelectedSection} />
           <div className="w-full max-w-5xl ml-5 mx-auto rounded-lg">
@@ -214,6 +261,20 @@ const SetPlace = ({ setSelectedSection }) => {
                           Trạng thái: {order.status === 'canceled' ? 'Đã hủy' : order.status}
                         </Text>
 
+                        {/* Hiển thị nút "Thanh toán bằng PayPal" nếu có token và trạng thái phù hợp */}
+                        {(order.status === 'pending' || order.status === 'processing') &&
+                          order.paymentMethod === 'paypal' && paypalToken && (
+                            <Button
+                              type="primary"
+                              size="middle"
+                              className="max-w-xs mt-4"
+                              block
+                              onClick={() => capturePaypalPayment(order._id)}
+                            >
+                              Xác nhận thanh toán PayPal
+                            </Button>
+                          )}
+
                         {canCancelTour(order.status) && (
                           <Button
                             type="default"
@@ -240,16 +301,15 @@ const SetPlace = ({ setSelectedSection }) => {
                         )}
                       </Card>
                     ))}
-
-                    <Pagination
-                      current={currentPage}
-                      pageSize={itemsPerPage}
-                      total={todayOrders.length}
-                      onChange={handlePageChange}
-                      className="mt-4"
-                    />
                   </div>
                 )}
+                <Pagination
+                  current={currentPage}
+                  pageSize={itemsPerPage}
+                  total={todayOrders.length}
+                  onChange={handlePageChange}
+                  className="mt-4"
+                />
               </div>
             </div>
           </div>
@@ -261,5 +321,3 @@ const SetPlace = ({ setSelectedSection }) => {
 };
 
 export default SetPlace;
-
-
