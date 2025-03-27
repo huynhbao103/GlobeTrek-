@@ -92,7 +92,7 @@ const BestsalerTour = () => {
   return (
     <div className="w-full flex justify-center pb-10">
       <div className="max-w-[1280px] w-[68%]">
-        <h1 className="font-bold text-2xl">Tour theo chủ đề</h1>
+        <h1 className="font-bold text-2xl">Tour theo chủ đề Núi</h1>
         <p className="text-slate-500">Khám phá loại tour bạn yêu thích</p>
         <div className="w-full mx-auto pt-10">
           <div className="flex overflow-x-auto space-x-4 mb-6 hide-scrollbar">
